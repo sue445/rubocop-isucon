@@ -13,22 +13,29 @@ module RuboCop
       #   db.xquery('SELECT id, name FROM users')
       #
       class AvoidSelectAsterisk < Base
-        # TODO: Implement the cop in here.
-        #
         # In many cases, you can use a node matcher for matching node pattern.
         # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
         #
-        # For example
-        MSG = 'Use `#good_method` instead of `#bad_method`.'
+        MSG = 'Use SELECT with column names. (e.g. `SELECT id, name FROM`)'
 
-        def_node_matcher :bad_method?, <<~PATTERN
-          (send nil? :bad_method ...)
+        def_node_search :find_xquery, <<-PATTERN
+          (send (send nil? _) :xquery (str $_) ...)
         PATTERN
 
         def on_send(node)
-          return unless bad_method?(node)
+          find_xquery(node) do |sql|
+            if sql.match?(/^\s*SELECT\s+\*/i)
+              loc = sql_select_location(node, sql)
+              add_offense(loc)
+            end
+          end
+        end
 
-          add_offense(node)
+        def sql_select_location(node, sql)
+          asterisk_pos = sql.index("*")
+          begin_pos = node.child_nodes[1].loc.begin.end_pos
+          end_pos = begin_pos + asterisk_pos + 1
+          Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
         end
       end
     end
