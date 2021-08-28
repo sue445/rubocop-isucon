@@ -1,5 +1,5 @@
 # Rubocop::Isucon
-Rubocop plugin for ISUCON's ruby reference implementation
+Rubocop plugin for [ISUCON](https://github.com/isucon)'s ruby reference implementation
 
 ## Installation
 
@@ -38,7 +38,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rubocop-isucon.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sue445/rubocop-isucon.
 
 ## License
 
