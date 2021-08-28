@@ -1,0 +1,29 @@
+require:
+  - rubocop-performance
+
+Bundler:
+  Enabled: false
+
+Gemspec:
+  Enabled: false
+
+Layout:
+  Enabled: false
+
+Lint:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Naming:
+  Enabled: false
+
+Performance:
+  Enabled: true
+
+Security:
+  Enabled: false
+
+Style:
+  Enabled: false
