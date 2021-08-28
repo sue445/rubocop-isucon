@@ -31,6 +31,8 @@ module RuboCop
           end
         end
 
+        private
+
         def sql_select_location(node, sql)
           asterisk_pos = sql.index("*")
 
