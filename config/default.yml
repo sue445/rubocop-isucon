@@ -1,1 +1,6 @@
 # Write it!
+
+Isucon/AvoidSelectAsterisk:
+  Description: 'Avoid `SELECT *` in `db.xquery`'
+  Enabled: pending
+  VersionAdded: '<<next>>'
