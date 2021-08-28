@@ -1,1 +1,6 @@
 # Write it!
+
+Isucon/AvoidSelectAsterisk:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
