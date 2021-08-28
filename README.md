@@ -1,4 +1,4 @@
-# Rubocop::Isucon
+# RuboCop Isucon
 Rubocop plugin for [ISUCON](https://github.com/isucon)'s ruby reference implementation
 
 ## Installation
