@@ -24,10 +24,32 @@ Add this line to your application's `.rubocop.yml`
 ```yaml
 require:
   - rubocop-isucon
+  - rubocop-performance
 
-inherit_gem:
-  rubocop-isucon:
-    - "config/rubocop.yml"
+# Disable default cops (except Performance cops)
+Bundler:
+  Enabled: false
+
+Gemspec:
+  Enabled: false
+
+Layout:
+  Enabled: false
+
+Lint:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Naming:
+  Enabled: false
+
+Security:
+  Enabled: false
+
+Style:
+  Enabled: false
 ```
 
 ## Development
