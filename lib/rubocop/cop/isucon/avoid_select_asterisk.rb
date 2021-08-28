@@ -35,14 +35,14 @@ module RuboCop
           asterisk_pos = sql.index("*")
 
           if node.child_nodes.count >= 2
-            # without substitution
+            # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
             begin_pos = node.child_nodes[1].loc.begin.end_pos
             end_pos = begin_pos + asterisk_pos + 1
             return Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
           if node.child_nodes.count == 1
-            # with substitution
+            # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
             begin_pos = node.child_nodes[0].child_nodes[1].loc.begin.end_pos
             end_pos = begin_pos + asterisk_pos + 1
             return Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
