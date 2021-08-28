@@ -1,6 +1,6 @@
 # Write it!
 
 Isucon/AvoidSelectAsterisk:
-  Description: 'TODO: Write a description of the cop.'
+  Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: pending
   VersionAdded: '<<next>>'
