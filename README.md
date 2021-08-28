@@ -6,7 +6,9 @@ RuboCop plugin for [ISUCON](https://github.com/isucon)'s ruby reference implemen
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rubocop-isucon', require: false
+group :development do
+  gem 'rubocop-isucon', require: false
+end
 ```
 
 And then execute:
