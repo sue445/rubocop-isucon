@@ -7,7 +7,7 @@ RSpec.describe RuboCop::Cop::Isucon::AvoidSelectAsterisk, :config do
     it 'registers an offense' do
       expect_offense(<<~RUBY)
         db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-                   ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM`)
+                   ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
       RUBY
     end
 
@@ -15,7 +15,7 @@ RSpec.describe RuboCop::Cop::Isucon::AvoidSelectAsterisk, :config do
       it 'registers an offense' do
         expect_offense(<<~RUBY)
           isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
-                           ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM`)
+                           ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
         RUBY
       end
     end
@@ -27,7 +27,7 @@ RSpec.describe RuboCop::Cop::Isucon::AvoidSelectAsterisk, :config do
             return nil unless current_user
     
             db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
-                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM`)
+                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
           end
         RUBY
       end
