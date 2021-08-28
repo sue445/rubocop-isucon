@@ -1,6 +1,7 @@
 require:
   - rubocop-performance
 
+# Disable default cops (except Performance cops)
 Bundler:
   Enabled: false
 
@@ -18,9 +19,6 @@ Metrics:
 
 Naming:
   Enabled: false
-
-Performance:
-  Enabled: true
 
 Security:
   Enabled: false
