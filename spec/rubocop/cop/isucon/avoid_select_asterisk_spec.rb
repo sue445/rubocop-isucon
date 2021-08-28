@@ -19,6 +19,19 @@ RSpec.describe RuboCop::Cop::Isucon::AvoidSelectAsterisk, :config do
         RUBY
       end
     end
+
+    context "end of method" do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          def last_login
+            return nil unless current_user
+    
+            db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM`)
+          end
+        RUBY
+      end
+    end
   end
 
   context "When using `SELECT` with column names" do
