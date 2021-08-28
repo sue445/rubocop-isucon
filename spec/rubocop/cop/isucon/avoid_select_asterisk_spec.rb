@@ -10,6 +10,15 @@ RSpec.describe RuboCop::Cop::Isucon::AvoidSelectAsterisk, :config do
                    ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM`)
       RUBY
     end
+
+    context "with substitution" do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+                           ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM`)
+        RUBY
+      end
+    end
   end
 
   context "When using `SELECT` with column names" do
