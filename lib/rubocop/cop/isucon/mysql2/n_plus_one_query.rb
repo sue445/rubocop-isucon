@@ -44,7 +44,7 @@ module RuboCop
           ENUMERABLE_METHOD_NAMES = (Enumerable.instance_methods + [:each]).to_set.freeze
 
           def_node_search :find_xquery, <<-PATTERN
-          (send (send nil? _) :xquery ...)
+            (send (send nil? _) {:xquery | :query} ...)
           PATTERN
 
           def_node_matcher :csv_loop?, <<~PATTERN
