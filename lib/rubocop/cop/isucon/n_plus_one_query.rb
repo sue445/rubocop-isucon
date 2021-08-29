@@ -39,7 +39,7 @@ module RuboCop
 
         def on_send(node)
           find_xquery(node) do |sql|
-            return unless sql.match?(/^\s*SELECT\s+/i)
+            return unless sql.match?(/^\s*(SELECT|INSERT|UPDATE|DELETE)\s+/i)
 
             receiver, _, = *node.children
 
