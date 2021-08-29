@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Isucon::SelectAsterisk, :config do
+RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
   let(:config) { RuboCop::Config.new }
 
   context "When using `SELECT *`" do

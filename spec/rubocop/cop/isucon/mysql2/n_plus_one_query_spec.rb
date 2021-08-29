@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
+RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
   let(:config) { RuboCop::Config.new }
 
   context "exists no N+1 query" do
