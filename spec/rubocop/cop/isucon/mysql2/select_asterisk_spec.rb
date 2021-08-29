@@ -22,6 +22,15 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
       end
     end
 
+    context "with select" do
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
+                                ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+        RUBY
+      end
+    end
+
     context "with substitution" do
       it "registers an offense" do
         expect_offense(<<~RUBY)
