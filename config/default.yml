@@ -7,3 +7,8 @@ Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: true
   VersionAdded: '<<next>>'
+
+Isucon/Sinatra/DisableLogging:
+  Description: 'Disable sinatra logging'
+  Enabled: true
+  VersionAdded: '<<next>>'
