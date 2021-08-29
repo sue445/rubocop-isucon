@@ -42,7 +42,7 @@ module RuboCop
           Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
         end
 
-        def sql_select_location_begin_position(node)
+        def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize
           if node.child_nodes.count >= 2
             # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
             return node.child_nodes[1].loc.begin.end_pos
