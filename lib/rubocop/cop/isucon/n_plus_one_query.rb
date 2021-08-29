@@ -37,6 +37,12 @@ module RuboCop
           (send (send nil? _) :xquery ...)
         PATTERN
 
+        def_node_matcher :csv_loop?, <<~PATTERN
+          (block
+            (send (const nil? :CSV) :parse ...)
+            ...)
+        PATTERN
+
         def on_send(node)
           find_xquery(node) do
             receiver, _, = *node.children
@@ -76,7 +82,8 @@ module RuboCop
         def loop?(ancestor, node)
           keyword_loop?(ancestor.type) ||
             kernel_loop?(ancestor) ||
-            node_within_enumerable_loop?(node, ancestor)
+            node_within_enumerable_loop?(node, ancestor) ||
+            csv_loop?(ancestor)
         end
 
         def keyword_loop?(type)

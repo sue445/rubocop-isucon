@@ -56,4 +56,16 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
       RUBY
     end
   end
+
+  context "exists N+1 query in CSV.parse" do
+    it 'registers an offense' do
+      expect_offense(<<~RUBY)
+        CSV.parse(params[:chairs][:tempfile].read, skip_blanks: true) do |row|
+          sql = 'INSERT INTO chair(id, name, description, thumbnail, price, height, width, depth, color, features, kind, popularity, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          db.xquery(sql, *row.map(&:to_s))
+          ^^ This looks like N+1 query.
+        end
+      RUBY
+    end
+  end
 end
