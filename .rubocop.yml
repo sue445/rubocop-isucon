@@ -1,6 +1,7 @@
 AllCops:
   NewCops: enable
   SuggestExtensions: false
+  TargetRubyVersion: 2.5
 
 Layout/LineLength:
   Max: 130
