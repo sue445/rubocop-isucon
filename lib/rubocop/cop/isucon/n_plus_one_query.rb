@@ -41,11 +41,10 @@ module RuboCop
           find_xquery(node) do |sql|
             return unless sql.match?(/^\s*SELECT\s+/i)
 
-            receiver, method, = *node.children
+            receiver, _, = *node.children
 
             return unless receiver.send_type?
 
-            # return unless check_literal?(receiver, method) && parent_is_loop?(receiver)
             return unless parent_is_loop?(receiver)
 
             add_offense(receiver)
@@ -59,31 +58,6 @@ module RuboCop
         LOOP_TYPES = (POST_CONDITION_LOOP_TYPES + %i[while until for]).freeze
 
         ENUMERABLE_METHOD_NAMES = (Enumerable.instance_methods + [:each]).to_set.freeze
-        NONMUTATING_ARRAY_METHODS = %i[& * + - <=> == [] all? any? assoc at
-                                       bsearch bsearch_index collect combination
-                                       compact count cycle deconstruct difference dig
-                                       drop drop_while each each_index empty? eql?
-                                       fetch filter find_index first flatten hash
-                                       include? index inspect intersection join
-                                       last length map max min minmax none? one? pack
-                                       permutation product rassoc reject
-                                       repeated_combination repeated_permutation reverse
-                                       reverse_each rindex rotate sample select shuffle
-                                       size slice sort sum take take_while
-                                       to_a to_ary to_h to_s transpose union uniq
-                                       values_at zip |].freeze
-
-        ARRAY_METHODS = (ENUMERABLE_METHOD_NAMES | NONMUTATING_ARRAY_METHODS).to_set.freeze
-
-        NONMUTATING_HASH_METHODS = %i[< <= == > >= [] any? assoc compact dig
-                                      each each_key each_pair each_value empty?
-                                      eql? fetch fetch_values filter flatten has_key?
-                                      has_value? hash include? inspect invert key key?
-                                      keys? length member? merge rassoc rehash reject
-                                      select size slice to_a to_h to_hash to_proc to_s
-                                      transform_keys transform_values value? values values_at].freeze
-
-        HASH_METHODS = (ENUMERABLE_METHOD_NAMES | NONMUTATING_HASH_METHODS).to_set.freeze
 
         def_node_matcher :kernel_loop?, <<~PATTERN
           (block
@@ -96,18 +70,6 @@ module RuboCop
             (send $_ #enumerable_method? ...)
             ...)
         PATTERN
-
-        def check_literal?(node, method)
-          !node.nil? &&
-            nonmutable_method_of_array_or_hash?(node, method) &&
-            node.children.size >= min_size &&
-            node.recursive_basic_literal?
-        end
-
-        def nonmutable_method_of_array_or_hash?(node, method)
-          (node.array_type? && ARRAY_METHODS.include?(method)) ||
-            (node.hash_type? && HASH_METHODS.include?(method))
-        end
 
         def parent_is_loop?(node)
           node.each_ancestor.any? { |ancestor| loop?(ancestor, node) }
