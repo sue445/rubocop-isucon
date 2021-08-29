@@ -35,7 +35,7 @@ module RuboCop
 
         # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
         POST_CONDITION_LOOP_TYPES = %i[while_post until_post].freeze
-        
+
         # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L39
         LOOP_TYPES = (POST_CONDITION_LOOP_TYPES + %i[while until for]).freeze
 
