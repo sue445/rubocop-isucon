@@ -4,55 +4,32 @@ module RuboCop
   module Cop
     module Isucon
       module Sinatra
-        # TODO: Write cop description and example of bad / good code. For every
-        # `SupportedStyle` and unique configuration, there needs to be examples.
-        # Examples must have valid Ruby syntax. Do not use upticks.
+        # Disable sinatra logging
         #
-        # @example EnforcedStyle: bar (default)
-        #   # Description of the `bar` style.
-        #
+        # @example
         #   # bad
-        #   bad_bar_method
-        #
-        #   # bad
-        #   bad_bar_method(args)
+        #   class App < Sinatra::Base
+        #     enable :logging
+        #   end
         #
         #   # good
-        #   good_bar_method
+        #   class App < Sinatra::Base
+        #     disable :logging
+        #   end
         #
         #   # good
-        #   good_bar_method(args)
-        #
-        # @example EnforcedStyle: foo
-        #   # Description of the `foo` style.
-        #
-        #   # bad
-        #   bad_foo_method
-        #
-        #   # bad
-        #   bad_foo_method(args)
-        #
-        #   # good
-        #   good_foo_method
-        #
-        #   # good
-        #   good_foo_method(args)
+        #   class App < Sinatra::Base
+        #   end
         #
         class DisableLogging < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = 'Use `#good_method` instead of `#bad_method`.'
+          MSG = "Disable sinatra logging."
 
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
+          def_node_matcher :logging_enabled?, <<~PATTERN
+            (send nil? :enable (sym :logging))
           PATTERN
 
           def on_send(node)
-            return unless bad_method?(node)
+            return unless logging_enabled?(node)
 
             add_offense(node)
           end

@@ -9,6 +9,6 @@ Isucon/Mysql2/SelectAsterisk:
   VersionAdded: '<<next>>'
 
 Isucon/Sinatra/DisableLogging:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
+  Description: 'Disable sinatra logging'
+  Enabled: true
   VersionAdded: '<<next>>'
