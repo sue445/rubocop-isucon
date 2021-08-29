@@ -2,6 +2,16 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
+Layout/LineLength:
+  Max: 130
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
 Naming/FileName:
  Exclude:
    - lib/rubocop-isucon.rb
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
