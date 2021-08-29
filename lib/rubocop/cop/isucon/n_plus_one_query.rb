@@ -68,7 +68,7 @@ module RuboCop
 
         def on_send(node)
           find_xquery(node) do
-            receiver, _, = *node.children
+            receiver, = *node.children
 
             return unless receiver.send_type?
 
