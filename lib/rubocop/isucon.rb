@@ -3,7 +3,7 @@
 require_relative "isucon/version"
 
 module RuboCop
-  module Isucon
+  module Isucon # rubocop:disable Style/Documentation
     class Error < StandardError; end
     # Your code goes here...
     PROJECT_ROOT   = Pathname.new(__dir__).parent.parent.expand_path.freeze
