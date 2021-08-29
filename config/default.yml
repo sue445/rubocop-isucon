@@ -1,11 +1,9 @@
-# Write it!
-
-Isucon/AvoidSelectAsterisk:
-  Description: 'Avoid `SELECT *` in `db.xquery`'
-  Enabled: true
-  VersionAdded: '<<next>>'
-
 Isucon/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
   Enabled: pending
+  VersionAdded: '<<next>>'
+
+Isucon/SelectAsterisk:
+  Description: 'Avoid `SELECT *` in `db.xquery`'
+  Enabled: true
   VersionAdded: '<<next>>'
