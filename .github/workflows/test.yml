@@ -24,10 +24,10 @@ jobs:
       matrix:
         ruby:
           - ruby:3.0
-          - rubylang/ruby:master-nightly-bionic
-        include:
-          - ruby: rubylang/ruby:master-nightly-bionic
-            allow_failures: "true"
+          # - rubylang/ruby:master-nightly-bionic
+        # include:
+        #   - ruby: rubylang/ruby:master-nightly-bionic
+        #     allow_failures: "true"
 
     steps:
       - uses: actions/checkout@v2
