@@ -43,4 +43,17 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
       RUBY
     end
   end
+
+  context "exists N+1 any query in map" do
+    it 'registers an offense' do
+      expect_offense(<<~RUBY)
+        reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
+          sql = 'SELECT * FROM `users` WHERE `id` = ? LIMIT 1'
+          reservation[:user] = db.xquery(sql, id).first
+                               ^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+          reservation
+        end
+      RUBY
+    end
+  end
 end

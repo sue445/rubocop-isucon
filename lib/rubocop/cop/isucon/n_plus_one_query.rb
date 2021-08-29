@@ -34,13 +34,11 @@ module RuboCop
         MSG = 'This looks like N+1 query.'
 
         def_node_search :find_xquery, <<-PATTERN
-          (send (send nil? _) :xquery (str $_) ...)
+          (send (send nil? _) :xquery ...)
         PATTERN
 
         def on_send(node)
-          find_xquery(node) do |sql|
-            return unless sql.match?(/^\s*(SELECT|INSERT|UPDATE|DELETE)\s+/i)
-
+          find_xquery(node) do
             receiver, _, = *node.children
 
             return unless receiver.send_type?
