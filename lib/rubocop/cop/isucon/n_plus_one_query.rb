@@ -33,6 +33,15 @@ module RuboCop
       class NPlusOneQuery < Base
         MSG = 'This looks like N+1 query.'
 
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
+        POST_CONDITION_LOOP_TYPES = %i[while_post until_post].freeze
+        
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L39
+        LOOP_TYPES = (POST_CONDITION_LOOP_TYPES + %i[while until for]).freeze
+
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L41
+        ENUMERABLE_METHOD_NAMES = (Enumerable.instance_methods + [:each]).to_set.freeze
+
         def_node_search :find_xquery, <<-PATTERN
           (send (send nil? _) :xquery ...)
         PATTERN
@@ -40,6 +49,20 @@ module RuboCop
         def_node_matcher :csv_loop?, <<~PATTERN
           (block
             (send (const nil? :CSV) :parse ...)
+            ...)
+        PATTERN
+
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L68
+        def_node_matcher :kernel_loop?, <<~PATTERN
+          (block
+            (send {nil? (const nil? :Kernel)} :loop)
+            ...)
+        PATTERN
+
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L74
+        def_node_matcher :enumerable_loop?, <<~PATTERN
+          (block
+            (send $_ #enumerable_method? ...)
             ...)
         PATTERN
 
@@ -57,28 +80,12 @@ module RuboCop
 
         private
 
-        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb
-        POST_CONDITION_LOOP_TYPES = %i[while_post until_post].freeze
-        LOOP_TYPES = (POST_CONDITION_LOOP_TYPES + %i[while until for]).freeze
-
-        ENUMERABLE_METHOD_NAMES = (Enumerable.instance_methods + [:each]).to_set.freeze
-
-        def_node_matcher :kernel_loop?, <<~PATTERN
-          (block
-            (send {nil? (const nil? :Kernel)} :loop)
-            ...)
-        PATTERN
-
-        def_node_matcher :enumerable_loop?, <<~PATTERN
-          (block
-            (send $_ #enumerable_method? ...)
-            ...)
-        PATTERN
-
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L102
         def parent_is_loop?(node)
           node.each_ancestor.any? { |ancestor| loop?(ancestor, node) }
         end
 
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L106
         def loop?(ancestor, node)
           keyword_loop?(ancestor.type) ||
             kernel_loop?(ancestor) ||
@@ -86,16 +93,19 @@ module RuboCop
             csv_loop?(ancestor)
         end
 
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L112
         def keyword_loop?(type)
           LOOP_TYPES.include?(type)
         end
 
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L116
         def node_within_enumerable_loop?(node, ancestor)
           enumerable_loop?(ancestor) do |receiver|
             receiver != node && !receiver&.descendants&.include?(node)
           end
         end
 
+        # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L130
         def enumerable_method?(method_name)
           ENUMERABLE_METHOD_NAMES.include?(method_name)
         end
