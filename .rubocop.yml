@@ -1,3 +1,7 @@
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+
 Naming/FileName:
  Exclude:
    - lib/rubocop-isucon.rb
