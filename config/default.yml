@@ -7,3 +7,8 @@ Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: true
   VersionAdded: '<<next>>'
+
+Isucon/DisableLogging:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
