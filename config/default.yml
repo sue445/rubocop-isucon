@@ -4,3 +4,8 @@ Isucon/AvoidSelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: true
   VersionAdded: '<<next>>'
+
+Isucon/NPlusOneQuery:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
