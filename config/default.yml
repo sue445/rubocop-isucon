@@ -1,6 +1,6 @@
 Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
-  Enabled: pending
+  Enabled: true
   VersionAdded: '<<next>>'
 
 Isucon/Mysql2/SelectAsterisk:
