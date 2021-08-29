@@ -4,11 +4,22 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
   let(:config) { RuboCop::Config.new }
 
   context "When using `SELECT *`" do
-    it "registers an offense" do
-      expect_offense(<<~RUBY)
-        db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-                   ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-      RUBY
+    context "with xquery" do
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+                     ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+        RUBY
+      end
+    end
+
+    context "with query" do
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          db.query('SELECT * FROM `isu` WHERE `jia_user_id` = 1 ORDER BY `id` DESC')
+                    ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+        RUBY
+      end
     end
 
     context "with substitution" do

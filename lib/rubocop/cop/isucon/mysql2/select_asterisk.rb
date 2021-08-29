@@ -20,7 +20,7 @@ module RuboCop
           MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
           def_node_search :find_xquery, <<-PATTERN
-          (send (send nil? _) :xquery (str $_) ...)
+            (send (send nil? _) {:xquery | :query} (str $_) ...)
           PATTERN
 
           def on_send(node)
