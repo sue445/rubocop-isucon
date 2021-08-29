@@ -27,7 +27,8 @@ module RuboCop
             find_xquery(node) do |sql|
               if sql.match?(/^\s*SELECT\s+\*/i)
                 loc = sql_select_location(node, sql)
-                add_offense(loc)
+
+                add_offense(loc) if loc
               end
             end
           end
@@ -38,25 +39,36 @@ module RuboCop
             asterisk_pos = sql.index("*")
 
             begin_pos = sql_select_location_begin_position(node)
-            end_pos   = begin_pos + asterisk_pos + 1
+            return nil unless begin_pos
+
+            end_pos = begin_pos + asterisk_pos + 1
 
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
-          def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize
+          def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
             if node.child_nodes.count >= 2
               # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
-              return node.child_nodes[1].loc.begin.end_pos
+              query_node = node.child_nodes.find(&:str_type?)
+              return nil unless query_node
+
+              return query_node.loc.begin.end_pos
             end
 
             if node.child_nodes.count == 1
               if node.child_nodes[0].child_nodes.count > 1
                 # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
-                return node.child_nodes[0].child_nodes[1].loc.begin.end_pos
+                query_node = node.child_nodes[0].child_nodes.find(&:str_type?)
+                return nil unless query_node
+
+                return query_node.loc.begin.end_pos
               end
 
               # end of method
-              return node.child_nodes[0].child_nodes[0].child_nodes[1].loc.begin.end_pos
+              query_node = node.child_nodes[0].child_nodes[0].child_nodes.find(&:str_type?)
+              return nil unless query_node
+
+              return query_node.loc.begin.end_pos
             end
 
             raise "node.child_nodes is empty"
