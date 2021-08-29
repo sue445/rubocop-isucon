@@ -31,7 +31,7 @@ module RuboCop
       #   rows = db.xquery(sql, schedule_id)
       #
       class NPlusOneQuery < Base
-        MSG = 'This looks like N+1 query.'
+        MSG = "This looks like N+1 query."
 
         # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
         POST_CONDITION_LOOP_TYPES = %i[while_post until_post].freeze

@@ -4,7 +4,7 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
   let(:config) { RuboCop::Config.new }
 
   context "exists no N+1 query" do
-    it 'does not register an offense' do
+    it "does not register an offense" do
       expect_no_offenses(<<~RUBY)
         db.xquery('SELECT * FROM `users` WHERE `id` = ? LIMIT 1', id).first
       RUBY
@@ -12,7 +12,7 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
   end
 
   context "exists N+1 SELECT query in map" do
-    it 'registers an offense' do
+    it "registers an offense" do
       expect_offense(<<~RUBY)
         reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
           reservation[:user] = db.xquery('SELECT * FROM `users` WHERE `id` = ? LIMIT 1', id).first
@@ -24,7 +24,7 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
   end
 
   context "exists N+1 INSERT query in map" do
-    it 'registers an offense' do
+    it "registers an offense" do
       expect_offense(<<~RUBY)
         json_params.each do |cond|
           timestamp = Time.at(cond.fetch(:timestamp))
@@ -45,7 +45,7 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
   end
 
   context "exists N+1 any query in map" do
-    it 'registers an offense' do
+    it "registers an offense" do
       expect_offense(<<~RUBY)
         reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
           sql = 'SELECT * FROM `users` WHERE `id` = ? LIMIT 1'
@@ -58,7 +58,7 @@ RSpec.describe RuboCop::Cop::Isucon::NPlusOneQuery, :config do
   end
 
   context "exists N+1 query in CSV.parse" do
-    it 'registers an offense' do
+    it "registers an offense" do
       expect_offense(<<~RUBY)
         CSV.parse(params[:chairs][:tempfile].read, skip_blanks: true) do |row|
           sql = 'INSERT INTO chair(id, name, description, thumbnail, price, height, width, depth, color, features, kind, popularity, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
