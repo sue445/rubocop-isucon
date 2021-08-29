@@ -6,6 +6,6 @@ Isucon/AvoidSelectAsterisk:
   VersionAdded: '<<next>>'
 
 Isucon/NPlusOneQuery:
-  Description: 'TODO: Write a description of the cop.'
+  Description: 'Checks that N+1 query is not used'
   Enabled: pending
   VersionAdded: '<<next>>'

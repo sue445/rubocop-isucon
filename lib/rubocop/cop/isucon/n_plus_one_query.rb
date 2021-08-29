@@ -3,39 +3,32 @@
 module RuboCop
   module Cop
     module Isucon
-      # TODO: Write cop description and example of bad / good code. For every
-      # `SupportedStyle` and unique configuration, there needs to be examples.
-      # Examples must have valid Ruby syntax. Do not use upticks.
+      # Checks that N+1 query is not used
       #
-      # @example EnforcedStyle: bar (default)
-      #   # Description of the `bar` style.
-      #
+      # @example
       #   # bad
-      #   bad_bar_method
-      #
-      #   # bad
-      #   bad_bar_method(args)
+      #   reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
+      #     reservation[:user] = db.xquery('SELECT * FROM `users` WHERE `id` = ? LIMIT 1', id).first
+      #     reservation
+      #   end
       #
       #   # good
-      #   good_bar_method
-      #
-      #   # good
-      #   good_bar_method(args)
-      #
-      # @example EnforcedStyle: foo
-      #   # Description of the `foo` style.
-      #
-      #   # bad
-      #   bad_foo_method
-      #
-      #   # bad
-      #   bad_foo_method(args)
-      #
-      #   # good
-      #   good_foo_method
-      #
-      #   # good
-      #   good_foo_method(args)
+      #   sql = <<~SQL
+      #     SELECT
+      #       r.id AS reservation_id,
+      #       r.schedule_id AS reservation_schedule_id,
+      #       r.user_id AS reservation_user_id,
+      #       r.created_at AS reservation_created_at,
+      #       u.id AS user_id,
+      #       u.email AS user_email,
+      #       u.nickname AS user_nickname,
+      #       u.staff AS user_staff,
+      #       u.created_at AS user_created_at
+      #     FROM `reservations` AS r
+      #     INNER JOIN users u ON u.id = r.user_id
+      #     WHERE r.schedule_id = ?
+      #   SQL
+      #   rows = db.xquery(sql, schedule_id)
       #
       class NPlusOneQuery < Base
         # TODO: Implement the cop in here.
