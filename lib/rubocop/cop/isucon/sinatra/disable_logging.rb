@@ -22,6 +22,8 @@ module RuboCop
         #   end
         #
         class DisableLogging < Base
+          extend AutoCorrector
+
           MSG = "Disable sinatra logging."
 
           def_node_matcher :logging_enabled?, <<~PATTERN
@@ -31,7 +33,15 @@ module RuboCop
           def on_send(node)
             return unless logging_enabled?(node)
 
-            add_offense(node)
+            add_offense(node) do |corrector|
+              perform_autocorrect(corrector, node)
+            end
+          end
+
+          private
+
+          def perform_autocorrect(corrector, node)
+            corrector.replace(node, "disable :logging")
           end
         end
       end

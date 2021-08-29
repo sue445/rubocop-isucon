@@ -11,6 +11,12 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
           ^^^^^^^^^^^^^^^ Disable sinatra logging.
         end
       RUBY
+
+      expect_correction(<<~RUBY)
+        class App < Sinatra::Base
+          disable :logging
+        end
+      RUBY
     end
   end
 
