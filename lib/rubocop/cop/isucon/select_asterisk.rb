@@ -16,7 +16,7 @@ module RuboCop
         # In many cases, you can use a node matcher for matching node pattern.
         # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
         #
-        MSG = 'Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)'
+        MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
         def_node_search :find_xquery, <<-PATTERN
           (send (send nil? _) :xquery (str $_) ...)
@@ -36,25 +36,29 @@ module RuboCop
         def sql_select_location(node, sql)
           asterisk_pos = sql.index("*")
 
-          begin_pos =
-            if node.child_nodes.count >= 2
-              # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
-              node.child_nodes[1].loc.begin.end_pos
-            elsif node.child_nodes.count == 1
-              if node.child_nodes[0].child_nodes.count > 1
-                # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
-                node.child_nodes[0].child_nodes[1].loc.begin.end_pos
-              else
-                # end of method
-                node.child_nodes[0].child_nodes[0].child_nodes[1].loc.begin.end_pos
-              end
-            else
-              raise "node.child_nodes is empty"
-            end
-
-          end_pos = begin_pos + asterisk_pos + 1
+          begin_pos = sql_select_location_begin_position(node)
+          end_pos   = begin_pos + asterisk_pos + 1
 
           Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+        end
+
+        def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize
+          if node.child_nodes.count >= 2
+            # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
+            return node.child_nodes[1].loc.begin.end_pos
+          end
+
+          if node.child_nodes.count == 1
+            if node.child_nodes[0].child_nodes.count > 1
+              # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
+              return node.child_nodes[0].child_nodes[1].loc.begin.end_pos
+            end
+
+            # end of method
+            return node.child_nodes[0].child_nodes[0].child_nodes[1].loc.begin.end_pos
+          end
+
+          raise "node.child_nodes is empty"
         end
       end
     end

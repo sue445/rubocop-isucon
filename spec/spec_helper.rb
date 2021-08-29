@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rubocop-isucon'
-require 'rubocop/rspec/support'
+require "rubocop-isucon"
+require "rubocop/rspec/support"
 require "pry"
 
 RSpec.configure do |config|

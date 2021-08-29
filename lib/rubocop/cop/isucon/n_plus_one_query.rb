@@ -31,11 +31,11 @@ module RuboCop
       #   rows = db.xquery(sql, schedule_id)
       #
       class NPlusOneQuery < Base
-        MSG = 'This looks like N+1 query.'
+        MSG = "This looks like N+1 query."
 
         # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
         POST_CONDITION_LOOP_TYPES = %i[while_post until_post].freeze
-        
+
         # c.f. https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L39
         LOOP_TYPES = (POST_CONDITION_LOOP_TYPES + %i[while until for]).freeze
 
@@ -68,7 +68,7 @@ module RuboCop
 
         def on_send(node)
           find_xquery(node) do
-            receiver, _, = *node.children
+            receiver, = *node.children
 
             return unless receiver.send_type?
 

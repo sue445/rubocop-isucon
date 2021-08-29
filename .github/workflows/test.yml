@@ -52,6 +52,9 @@ jobs:
       - run: bundle exec rspec
         continue-on-error: ${{ matrix.allow_failures == 'true' }}
 
+      - run: bundle exec rubocop
+        continue-on-error: ${{ matrix.allow_failures == 'true' }}
+
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
         if: "! success()"
