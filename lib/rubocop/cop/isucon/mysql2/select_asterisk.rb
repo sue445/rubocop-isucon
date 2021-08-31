@@ -14,9 +14,6 @@ module RuboCop
         #   db.xquery('SELECT id, name FROM users')
         #
         class SelectAsterisk < Base
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
           MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
           def_node_search :find_xquery, <<-PATTERN
