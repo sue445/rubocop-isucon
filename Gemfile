@@ -10,3 +10,7 @@ gem "rake", "~> 13.0"
 gem "rspec", "~> 3.0"
 gem "rubocop_auto_corrector"
 gem "yard"
+
+# for database
+gem "activerecord", "~> 6.1"
+gem "sqlite3"
