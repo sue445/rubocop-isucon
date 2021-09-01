@@ -2,6 +2,7 @@
 
 module RuboCop
   module Isucon
+    # Manage database connection
     class DatabaseConnection
       # @param [Hash]
       def initialize(database_config)
