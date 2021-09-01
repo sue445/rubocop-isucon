@@ -28,6 +28,11 @@ jobs:
         # include:
         #   - ruby: rubylang/ruby:master-nightly-bionic
         #     allow_failures: "true"
+        gemfile:
+          - activerecord_6_1
+
+    env:
+      BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
 
     steps:
       - uses: actions/checkout@v2
@@ -37,8 +42,9 @@ jobs:
         id: cache_gem
         with:
           path: vendor/bundle
-          key: v1-gem-${{ runner.os }}-${{ matrix.ruby }}-${{ github.sha }}
+          key: v1-gem-${{ runner.os }}-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ github.sha }}
           restore-keys: |
+            v1-gem-${{ runner.os }}-${{ matrix.ruby }}-${{ matrix.gemfile }}-
             v1-gem-${{ runner.os }}-${{ matrix.ruby }}-
         continue-on-error: ${{ matrix.allow_failures == 'true' }}
 
@@ -60,7 +66,7 @@ jobs:
         if: "! success()"
         continue-on-error: true
         with:
-          job_name: ${{ format('*build* ({0})', matrix.ruby) }}
+          job_name: ${{ format('*build* ({0}, {1})', matrix.ruby, matrix.gemfile) }}
           type: ${{ job.status }}
           icon_emoji: ":octocat:"
           url: ${{ secrets.SLACK_WEBHOOK }}

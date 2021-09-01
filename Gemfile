@@ -5,12 +5,4 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in rubocop-isucon.gemspec
 gemspec
 
-gem "pry-byebug"
-gem "rake", "~> 13.0"
-gem "rspec", "~> 3.0"
-gem "rubocop_auto_corrector"
-gem "yard"
-
-# for database
-gem "activerecord", "~> 6.1"
-gem "sqlite3"
+# eval_gemfile "#{__dir__}/gemfiles/common.gemfile"
