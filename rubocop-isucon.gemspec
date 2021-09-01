@@ -33,6 +33,14 @@ Gem::Specification.new do |spec|
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 
+  spec.add_runtime_dependency "activerecord", ">= 6.1.0"
   spec.add_runtime_dependency "rubocop", "~> 1.7"
   spec.add_runtime_dependency "rubocop-performance"
+
+  spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rubocop_auto_corrector"
+  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "yard"
 end
