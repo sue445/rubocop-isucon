@@ -3,9 +3,9 @@ RSpec.describe RuboCop::Isucon::DatabaseConnection do
 
   let(:database_config) do
     {
-      adapter:  "sqlite3",
+      adapter: "sqlite3",
       database: ":memory:",
-      timeout:  500,
+      timeout: 500,
     }.transform_keys(&:to_s)
   end
 
