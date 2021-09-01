@@ -20,23 +20,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
       end
 
       context "with Database config" do
-        let(:cop_config) do
-          {
-            "Database" => {
-              "adapter" => "sqlite3",
-              "database" => ":memory:",
-              "timeout" => 500
-            }
-          }
-        end
-
-        before do
-          cop.connection
-
-          # db:create
-          ActiveRecord::Tasks::DatabaseTasks.create(cop_config["Database"])
-
-          load schema_dir.join("isu.rb")
+        include_context :database_cop do
+          let(:schema) { "isu.rb" }
         end
 
         it "registers an offense" do

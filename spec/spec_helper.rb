@@ -5,6 +5,8 @@ require "rubocop/rspec/support"
 require "pry"
 require "active_record/tasks/database_tasks"
 
+Dir["#{__dir__}/support/**/*.rb"].sort.each { |f| require f }
+
 RSpec.configure do |config|
   config.include RuboCop::RSpec::ExpectOffense
 
