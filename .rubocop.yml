@@ -17,6 +17,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
+    - "*.gemspec"
 
 Naming/FileName:
  Exclude:
