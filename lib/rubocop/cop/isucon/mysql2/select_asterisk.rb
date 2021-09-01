@@ -87,13 +87,13 @@ module RuboCop
 
             asterisk_pos = loc.source.index("*")
             begin_pos = loc.begin_pos + asterisk_pos
-            asterisk_node = Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
+            asterisk_range = Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
 
             table_name = table_names[0]
             column_names = connection.column_names(table_name)
             select_columns = column_names.map { |column| "`#{column}`" }.join(", ")
 
-            corrector.replace(asterisk_node, select_columns)
+            corrector.replace(asterisk_range, select_columns)
           end
         end
       end
