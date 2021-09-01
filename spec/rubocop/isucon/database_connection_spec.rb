@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.describe RuboCop::Isucon::DatabaseConnection do
   let(:connection) { RuboCop::Isucon::DatabaseConnection.new(database_config) }
 
