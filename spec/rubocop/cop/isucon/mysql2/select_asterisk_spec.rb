@@ -1,15 +1,39 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
-  let(:config) { RuboCop::Config.new }
+  let(:config) { RuboCop::Config.new("Isucon/Mysql2/SelectAsterisk" => cop_config) }
+  let(:cop_config) { {} }
 
   context "When using `SELECT *`" do
     context "with xquery" do
-      it "registers an offense" do
-        expect_offense(<<~RUBY)
-          db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-                     ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-        RUBY
+      context "without Database config" do
+        it "registers an offense and not correct" do
+          expect_offense(<<~RUBY)
+            db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          RUBY
+
+          expect_correction(<<~RUBY)
+            db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+          RUBY
+        end
+      end
+
+      context "with Database config" do
+        include_context :database_cop do
+          let(:schema) { "schemas/isu.rb" }
+        end
+
+        it "registers an offense and correct" do
+          expect_offense(<<~RUBY)
+            db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          RUBY
+
+          expect_correction(<<~RUBY)
+            db.xquery('SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+          RUBY
+        end
       end
     end
 
@@ -23,33 +47,114 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
     end
 
     context "with select" do
-      it "registers an offense" do
-        expect_offense(<<~RUBY)
-          event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
-                                ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-        RUBY
+      context "without Database config" do
+        include_context :database_cop do
+          let(:schema) { "schemas/events.rb" }
+        end
+
+        it "registers an offense and not correct" do
+          expect_offense(<<~RUBY)
+            event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
+                                  ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          RUBY
+
+          expect_correction(<<~RUBY)
+            event_ids = db.query('SELECT `id`, `title`, `public_fg`, `closed_fg`, `price`, `created_at`, `updated_at` FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
+          RUBY
+        end
+      end
+
+      context "with Database config" do
+        it "registers an offense and correct" do
+          expect_offense(<<~RUBY)
+            event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
+                                  ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          RUBY
+
+          expect_correction(<<~RUBY)
+            event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
+          RUBY
+        end
       end
     end
 
     context "with substitution" do
-      it "registers an offense" do
-        expect_offense(<<~RUBY)
-          isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
-                           ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-        RUBY
+      context "without Database config" do
+        it "registers an offense and not correct" do
+          expect_offense(<<~RUBY)
+            isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+                             ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          RUBY
+
+          expect_correction(<<~RUBY)
+            isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+          RUBY
+        end
+      end
+
+      context "with Database config" do
+        include_context :database_cop do
+          let(:schema) { "schemas/isu.rb" }
+        end
+
+        it "registers an offense and correct" do
+          expect_offense(<<~RUBY)
+            isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+                             ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          RUBY
+
+          expect_correction(<<~RUBY)
+            isu = db.xquery('SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
+          RUBY
+        end
       end
     end
 
     context "end of method" do
-      it "registers an offense" do
-        expect_offense(<<~RUBY)
-          def last_login
-            return nil unless current_user
+      context "without Database config" do
+        it "registers an offense and not correct" do
+          expect_offense(<<~RUBY)
+            def last_login
+              return nil unless current_user
 
-            db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
-                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-          end
-        RUBY
+              db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+                         ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            def last_login
+              return nil unless current_user
+
+              db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+            end
+          RUBY
+        end
+      end
+
+      context "with Database config" do
+        include_context :database_cop do
+          let(:schema) { "schemas/login_log.rb" }
+        end
+
+        it "registers an offense and correct" do
+          expect_offense(<<~RUBY)
+            def last_login
+              return nil unless current_user
+
+              db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+                         ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            def last_login
+              return nil unless current_user
+
+              db.xquery('SELECT `id`, `created_at`, `user_id`, `login`, `ip`, `succeeded` FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+            end
+          RUBY
+        end
       end
     end
   end

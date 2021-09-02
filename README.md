@@ -31,6 +31,16 @@ inherit_gem:
   rubocop-isucon:
     # Disable default cops (except Performance cops)
     - "config/rubocop.yml"
+
+Isucon/Mysql2:
+  Database:
+    adapter: mysql2
+    host: # TODO: Fix this
+    database: # TODO: Fix this
+    username: isucon
+    password: isucon
+    encoding: utf8
+    port: 3306
 ```
 
 ## Development

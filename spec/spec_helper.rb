@@ -5,6 +5,8 @@ require "rubocop/rspec/support"
 require "pry"
 require "active_record/tasks/database_tasks"
 
+Dir["#{__dir__}/support/**/*.rb"].sort.each { |f| require f }
+
 RSpec.configure do |config|
   config.include RuboCop::RSpec::ExpectOffense
 
@@ -17,16 +19,12 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-def spec_root
+def spec_dir
   Pathname(__dir__)
-end
-
-def schema_dir
-  spec_root.join("schemas")
 end
 
 module Rails
   def self.root
-    spec_root
+    spec_dir
   end
 end
