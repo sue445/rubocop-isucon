@@ -19,16 +19,12 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-def spec_root
+def spec_dir
   Pathname(__dir__)
-end
-
-def schema_dir
-  spec_root.join("schemas")
 end
 
 module Rails
   def self.root
-    spec_root
+    spec_dir
   end
 end

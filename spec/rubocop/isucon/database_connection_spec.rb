@@ -15,12 +15,13 @@ RSpec.describe RuboCop::Isucon::DatabaseConnection do
     subject { connection.column_names("users") }
 
     before do
+      # Setup active_record connection before create database and schema
       connection
 
       # db:create
       ActiveRecord::Tasks::DatabaseTasks.create(database_config)
 
-      load schema_dir.join("users.rb")
+      load spec_dir.join("schemas/users.rb")
     end
 
     it { should contain_exactly("id", "name", "created_at", "updated_at") }

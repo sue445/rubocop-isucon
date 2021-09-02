@@ -7,7 +7,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
   context "When using `SELECT *`" do
     context "with xquery" do
       context "without Database config" do
-        it "registers an offense" do
+        it "registers an offense and not correct" do
           expect_offense(<<~RUBY)
             db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
                        ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
@@ -21,10 +21,10 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
 
       context "with Database config" do
         include_context :database_cop do
-          let(:schema) { "isu.rb" }
+          let(:schema) { "schemas/isu.rb" }
         end
 
-        it "registers an offense" do
+        it "registers an offense and correct" do
           expect_offense(<<~RUBY)
             db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
                        ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)

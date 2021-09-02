@@ -20,6 +20,6 @@ RSpec.shared_context :database_cop, shared_context: :metadata do
     # db:create
     ActiveRecord::Tasks::DatabaseTasks.create(cop_config["Database"])
 
-    load schema_dir.join(schema) unless schema.empty?
+    load spec_dir.join(schema) unless schema.empty?
   end
 end
