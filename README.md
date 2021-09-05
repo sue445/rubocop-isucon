@@ -1,6 +1,8 @@
 # RuboCop Isucon
 RuboCop plugin for [ISUCON](https://github.com/isucon)'s ruby reference implementation
 
+[![Build Status](https://github.com/sue445/rubocop-isucon/workflows/test/badge.svg?branch=master)](https://github.com/sue445/rubocop-isucon/actions?query=workflow%3Atest)
+
 ## Installation
 
 Add this line to your application's Gemfile:
