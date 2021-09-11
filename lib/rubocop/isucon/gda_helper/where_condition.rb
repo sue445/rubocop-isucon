@@ -21,10 +21,11 @@ class RuboCop::Isucon::GdaHelper::WhereCondition # rubocop:disable Style/ClassAn
   def column_operand
     return operands[0] if operands.count == 1
 
-    return operands[0] if operand_type(operands[0]) == :column
-    return operands[1] if operand_type(operands[1]) == :column
-    return operands[0] if operand_type(operands[1]) == :value
-    return operands[1] if operand_type(operands[0]) == :value
+    operand0_type = operand_type(operands[0])
+    operand1_type = operand_type(operands[1])
+
+    return operands[0] if operand0_type == :column || operand1_type == :value
+    return operands[1] if operand1_type == :column || operand0_type == :value
 
     nil
   end
@@ -33,10 +34,11 @@ class RuboCop::Isucon::GdaHelper::WhereCondition # rubocop:disable Style/ClassAn
   def value_operand
     return nil if operands.count == 1
 
-    return operands[0] if operand_type(operands[0]) == :value
-    return operands[1] if operand_type(operands[1]) == :value
-    return operands[0] if operand_type(operands[1]) == :column
-    return operands[1] if operand_type(operands[0]) == :column
+    operand0_type = operand_type(operands[0])
+    operand1_type = operand_type(operands[1])
+
+    return operands[0] if operand0_type == :value || operand1_type == :column
+    return operands[1] if operand1_type == :value || operand0_type == :column
 
     nil
   end
