@@ -22,9 +22,28 @@ Or install it yourself as:
     $ gem install rubocop-isucon
 
 ## Requires
-* `libgda`
-  * Mac: `brew install libgda`
-  * Ubuntu, Debian: `apt-get install libgda-5.0`
+### `libgda`
+#### for Mac
+```bash
+brew install libgda
+```
+
+#### for Ubuntu, Debian
+```bash
+apt-get install libgda-5.0
+```
+
+#### for CentOS 7
+```bash
+yum install epel-release
+yum --enablerepo=epel install libgda
+```
+
+#### for CentOS 8+
+```bash
+dnf install https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm
+dnf --enablerepo=raven install libgda
+```
 
 ## Usage
 
