@@ -12,6 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install packages
+        run: |
+          set -xe
+          apt-get update
+          apt-get install -y libgda-5.0
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.0
