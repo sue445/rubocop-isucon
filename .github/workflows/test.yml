@@ -16,18 +16,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    container: ${{ matrix.ruby }}
-
     strategy:
       fail-fast: false
 
       matrix:
         ruby:
-          - ruby:3.0
-          # - rubylang/ruby:master-nightly-bionic
-        # include:
-        #   - ruby: rubylang/ruby:master-nightly-bionic
-        #     allow_failures: "true"
+          - 3.0
         gemfile:
           - activerecord_6_1
 
@@ -40,32 +34,24 @@ jobs:
       - name: Install packages
         run: |
           set -xe
-          apt-get update
-          apt-get install -y libgda-5.0
+          sudo apt-get update
+          sudo apt-get install -y libgda-5.0
 
-      - name: Cache vendor/bundle
-        uses: actions/cache@v1
-        id: cache_gem
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: v1-gem-${{ runner.os }}-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ github.sha }}
-          restore-keys: |
-            v1-gem-${{ runner.os }}-${{ matrix.ruby }}-${{ matrix.gemfile }}-
-            v1-gem-${{ runner.os }}-${{ matrix.ruby }}-
-        continue-on-error: ${{ matrix.allow_failures == 'true' }}
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          cache-version: ${{ matrix.gemfile }}
 
       - name: bundle update
         run: |
           set -xe
           bundle config path vendor/bundle
           bundle update --jobs $(nproc) --retry 3
-        continue-on-error: ${{ matrix.allow_failures == 'true' }}
 
       - run: bundle exec rspec
-        continue-on-error: ${{ matrix.allow_failures == 'true' }}
 
       - run: bundle exec rubocop
-        continue-on-error: ${{ matrix.allow_failures == 'true' }}
 
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
