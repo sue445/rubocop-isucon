@@ -30,19 +30,19 @@ brew install libgda
 
 #### for Ubuntu, Debian
 ```bash
-apt-get install libgda-5.0
+apt-get install -y libgda-5.0
 ```
 
 #### for CentOS 7
 ```bash
-yum install epel-release
-yum --enablerepo=epel install libgda
+yum install -y epel-release
+yum --enablerepo=epel install -y libgda
 ```
 
 #### for CentOS 8+
 ```bash
-dnf install https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm
-dnf --enablerepo=raven install libgda
+dnf install -y https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm
+dnf --enablerepo=raven install -y libgda
 ```
 
 ## Usage
