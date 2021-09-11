@@ -16,4 +16,31 @@ class RuboCop::Isucon::GdaHelper::WhereCondition # rubocop:disable Style/ClassAn
     @operator = operator
     @operands = operands
   end
+
+  # @return [String,nil]
+  def column_operand
+    return operands[0] if operands.count == 1
+
+    return operands[0] if operand_type(operands[0]) == :column
+    return operands[1] if operand_type(operands[1]) == :column
+    return operands[0] if operand_type(operands[1]) == :value
+    return operands[1] if operand_type(operands[0]) == :value
+
+    nil
+  end
+
+  private
+
+  # @param operand [String]
+  # @return [Symbol]
+  def operand_type(operand)
+    case operand
+    when RuboCop::Isucon::GdaHelper::PRACEHOLDER, /^'.+'$/, /^[0-9.]+$/
+      :value
+    when /^[A-Za-z0-9_$]*$/
+      :column
+    else
+      :unknown
+    end
+  end
 end
