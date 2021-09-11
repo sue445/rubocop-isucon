@@ -21,6 +21,11 @@ Or install it yourself as:
 
     $ gem install rubocop-isucon
 
+## Requires
+* `libgda`
+  * Mac: `brew install libgda`
+  * Ubuntu, Debian: `apt-get install libgda-5.0`
+
 ## Usage
 
 Add this line to your application's `.rubocop.yml`
