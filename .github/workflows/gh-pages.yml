@@ -34,7 +34,7 @@ jobs:
 
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
-        if: always()
+        if: "! success()"
         continue-on-error: true
         with:
           job_name: ${{ format('*publish_yard*') }}
