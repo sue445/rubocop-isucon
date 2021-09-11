@@ -11,6 +11,9 @@ AllCops:
     - 'vendor/**/*'
     - '.git/**/*'
 
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
 Layout/LineLength:
   Max: 130
 
