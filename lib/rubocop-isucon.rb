@@ -10,6 +10,7 @@ require_relative "rubocop/isucon/inject"
 require_relative "rubocop/isucon/database_connection"
 require_relative "rubocop/isucon/sql_parser"
 require_relative "rubocop/isucon/gda_helper"
+require_relative "rubocop/isucon/gda_helper/where_condition"
 
 RuboCop::Isucon::Inject.defaults!
 

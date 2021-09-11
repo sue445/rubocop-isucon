@@ -16,6 +16,18 @@ module RuboCop
         ast.from.targets.map(&:table_name)
       end
 
+      # @return [Array<RuboCop::Isucon::GdaHelper::WhereCondition>]
+      def where_clause
+        ast.where_cond.to_a.
+          select { |node| node.instance_of?(GDA::Nodes::Operation) && node.operator }.
+          map do |node|
+            WhereCondition.new(
+              operator: node.operator,
+              operands: node.operands.map(&:value),
+            )
+          end
+      end
+
       # @param sql [String]
       # @return [String]
       def self.normalize_sql(sql)

@@ -40,6 +40,49 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
     end
   end
 
+  describe "#where_clause" do
+    context "single condition" do
+      let(:sql) do
+        # https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L118
+        <<~SQL
+          SELECT * FROM chair WHERE `stock` > 0 ORDER BY price ASC, id ASC LIMIT 10
+        SQL
+      end
+
+      it "returns response" do
+        result = helper.where_clause
+
+        expect(result.count).to eq 1
+
+        expect(result[0].operator).to eq ">"
+        expect(result[0].operands).to contain_exactly("stock", "0")
+      end
+    end
+
+    context "multiple conditions" do
+      let(:sql) do
+        <<~SQL
+          SELECT * FROM chair WHERE id = ? AND stock > 0 AND name IS NOT NULL
+        SQL
+      end
+
+      it "returns response" do
+        result = helper.where_clause
+
+        expect(result.count).to eq 3
+
+        expect(result[0].operator).to eq "="
+        expect(result[0].operands).to contain_exactly("id", "'__PRACEHOLDER__'")
+
+        expect(result[1].operator).to eq ">"
+        expect(result[1].operands).to contain_exactly("stock", "0")
+
+        expect(result[2].operator).to eq "IS NOT NULL"
+        expect(result[2].operands).to contain_exactly("name")
+      end
+    end
+  end
+
   describe ".normalize_sql" do
     subject { RuboCop::Isucon::GdaHelper.normalize_sql(sql) }
 
