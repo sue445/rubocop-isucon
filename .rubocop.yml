@@ -18,6 +18,9 @@ Layout/DotPosition:
 Layout/LineLength:
   Max: 130
 
+Metrics/AbcSize:
+  Max: 18
+
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
