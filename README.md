@@ -24,6 +24,7 @@ Or install it yourself as:
 ## Requires
 * `libgda`
   * Mac: `brew install libgda`
+  * Ubuntu, Debian: `apt-get install libgda-5.0`
 
 ## Usage
 

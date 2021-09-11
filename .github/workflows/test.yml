@@ -37,6 +37,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install packages
+        run: |
+          set -xe
+          apt-get update
+          apt-get install -y libgda-5.0
+
       - name: Cache vendor/bundle
         uses: actions/cache@v1
         id: cache_gem
