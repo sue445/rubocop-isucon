@@ -14,8 +14,8 @@ module RuboCop
         # Remove `ON DUPLICATE KEY UPDATE` in `INSERT`
         sql = sql.gsub(/ON\s+DUPLICATE\s+KEY\s+UPDATE/i, "")
 
-        sql.scan(/(?:FROM|INTO|UPDATE|JOIN)\s+([^(]+?)[\s(]/i)
-           .map { |matched| matched[0].strip.gsub("`", "") }.reject(&:empty?).uniq
+        sql.scan(/(?:FROM|INTO|UPDATE|JOIN)\s+([^(]+?)[\s(]/i).
+          map { |matched| matched[0].strip.gsub("`", "") }.reject(&:empty?).uniq
       end
     end
   end
