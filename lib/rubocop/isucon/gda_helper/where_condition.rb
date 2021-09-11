@@ -29,6 +29,18 @@ class RuboCop::Isucon::GdaHelper::WhereCondition # rubocop:disable Style/ClassAn
     nil
   end
 
+  # @return [String,nil]
+  def value_operand
+    return nil if operands.count == 1
+
+    return operands[0] if operand_type(operands[0]) == :value
+    return operands[1] if operand_type(operands[1]) == :value
+    return operands[0] if operand_type(operands[1]) == :column
+    return operands[1] if operand_type(operands[0]) == :column
+
+    nil
+  end
+
   private
 
   # @param operand [String]
