@@ -4,6 +4,7 @@ AllCops:
   TargetRubyVersion: 2.5
   Exclude:
     - 'gemfiles/vendor/**/*'
+    - 'benchmark/**/*'
 
     # https://github.com/rubocop/rubocop/blob/v1.20.0/config/default.yml
     - 'node_modules/**/*'

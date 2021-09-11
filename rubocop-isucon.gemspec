@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "rubocop", "~> 1.7"
   spec.add_runtime_dependency "rubocop-performance"
 
+  spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "pry-byebug"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
