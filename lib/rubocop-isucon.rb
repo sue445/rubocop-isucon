@@ -2,6 +2,7 @@
 
 require "rubocop"
 require "active_record"
+require "gda"
 
 require_relative "rubocop/isucon"
 require_relative "rubocop/isucon/version"

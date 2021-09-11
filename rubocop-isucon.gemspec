@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   # guide at: https://bundler.io/guides/creating_gem.html
 
   spec.add_runtime_dependency "activerecord", ">= 6.1.0"
+  spec.add_runtime_dependency "gda"
   spec.add_runtime_dependency "rubocop", "~> 1.7"
   spec.add_runtime_dependency "rubocop-performance"
 
