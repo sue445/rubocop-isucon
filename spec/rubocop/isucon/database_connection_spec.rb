@@ -21,7 +21,7 @@ RSpec.describe RuboCop::Isucon::DatabaseConnection do
       # db:create
       ActiveRecord::Tasks::DatabaseTasks.create(database_config)
 
-      load spec_dir.join("schemas/users.rb")
+      load spec_dir.join("schemas/create_users.rb")
     end
 
     it { should contain_exactly("id", "name", "created_at", "updated_at") }
