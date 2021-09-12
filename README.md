@@ -36,13 +36,13 @@ apt-get install -y libgda-5.0
 #### for CentOS 7
 ```bash
 yum install -y epel-release
-yum --enablerepo=epel install -y libgda
+yum --enablerepo=epel install -y libgda-devel
 ```
 
 #### for CentOS 8+
 ```bash
 dnf install -y https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm
-dnf --enablerepo=raven install -y libgda
+dnf --enablerepo=raven install -y libgda-devel
 ```
 
 ## Usage
