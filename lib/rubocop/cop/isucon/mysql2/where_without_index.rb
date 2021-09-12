@@ -6,6 +6,8 @@ module RuboCop
       module Mysql2
         # Check for `WHERE` without index
         #
+        # @note If `Database` isn't configured, this cop's feature (offense detection and auto-correct) will not be available.
+        #
         # @example
         #   # bad (user_id is not indexed)
         #   db.xquery('SELECT id, title FROM articles WHERE used_id = ?', user_id)
@@ -24,6 +26,7 @@ module RuboCop
             (send (send nil? _) {:xquery | :query} (str $_) ...)
           PATTERN
 
+          # @param node [RuboCop::AST::Node]
           def on_send(node) # rubocop:disable Metrics/MethodLength
             return unless enabled_database?
 

@@ -67,6 +67,7 @@ module RuboCop
               ...)
           PATTERN
 
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
             find_xquery(node) do
               receiver, = *node.children

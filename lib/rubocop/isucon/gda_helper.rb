@@ -2,7 +2,10 @@
 
 module RuboCop
   module Isucon
-    # Wrapper for #{GDA}
+    # Wrapper for `GDA`
+    #
+    # @see https://github.com/tenderlove/gda
+    # @see https://gitlab.gnome.org/GNOME/libgda
     class GdaHelper
       PRACEHOLDER = "'__PRACEHOLDER__'"
 
