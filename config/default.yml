@@ -26,12 +26,12 @@ Isucon/Mysql2/SelectAsterisk:
   #   encoding: utf8
   #   port: 3306
 
+Isucon/Mysql2/WhereWithoutIndex:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
+
 Isucon/Sinatra/DisableLogging:
   Description: 'Disable sinatra logging'
   Enabled: true
-  VersionAdded: '<<next>>'
-
-Isucon/WhereWithoutIndex:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
   VersionAdded: '<<next>>'
