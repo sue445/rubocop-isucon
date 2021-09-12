@@ -26,14 +26,13 @@ module RuboCop
 
           def on_send(node)
             find_xquery(node) do |sql|
-              if sql.match?(/^\s*SELECT\s+\*/i)
-                loc = sql_select_location(node, sql)
+              next unless sql.match?(/^\s*SELECT\s+\*/i)
 
-                if loc
-                  add_offense(loc) do |corrector|
-                    perform_autocorrect(corrector, loc, sql)
-                  end
-                end
+              loc = sql_select_location(node, sql)
+              next unless loc
+
+              add_offense(loc) do |corrector|
+                perform_autocorrect(corrector, loc, sql)
               end
             end
           end
