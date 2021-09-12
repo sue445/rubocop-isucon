@@ -4,7 +4,8 @@ module RuboCop
   module Isucon
     # Manage database connection
     class DatabaseConnection
-      # @param [Hash]
+      # @param database_config [Hash] Same as `ActiveRecord::Base.establish_connection` argument
+      # @see https://api.rubyonrails.org/classes/ActiveRecord/ConnectionHandling.html#method-i-establish_connection
       def initialize(database_config)
         ActiveRecord::Base.establish_connection(database_config)
         @column_names_by_table = {}
