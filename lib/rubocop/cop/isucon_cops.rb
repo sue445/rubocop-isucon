@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "isucon/mixin/database_methods"
+require_relative "isucon/mixin/sql_location_methods"
 
 require_relative "isucon/mysql2/select_asterisk"
 require_relative "isucon/mysql2/n_plus_one_query"
