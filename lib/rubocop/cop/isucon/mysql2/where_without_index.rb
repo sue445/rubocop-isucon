@@ -10,7 +10,7 @@ module RuboCop
         #   # bad (user_id is not indexed)
         #   db.xquery('SELECT id, title FROM articles WHERE used_id = ?', user_id)
         #
-        #   # good (user_id is indexed
+        #   # good (user_id is indexed)
         #   db.xquery('SELECT id, title FROM articles WHERE used_id = ?', user_id)
         #
         #   # good (id is primary key)
