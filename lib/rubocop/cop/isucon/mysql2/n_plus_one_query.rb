@@ -71,9 +71,7 @@ module RuboCop
             find_xquery(node) do
               receiver, = *node.children
 
-              return unless receiver.send_type?
-
-              return unless parent_is_loop?(receiver)
+              next if !receiver.send_type? || !parent_is_loop?(receiver)
 
               add_offense(receiver)
             end
