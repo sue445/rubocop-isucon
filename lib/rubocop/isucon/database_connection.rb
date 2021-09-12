@@ -9,6 +9,7 @@ module RuboCop
         ActiveRecord::Base.establish_connection(database_config)
         @column_names_by_table = {}
         @indexes_by_table = {}
+        @primary_keys_by_table = {}
       end
 
       # @param table_name [String]
@@ -27,6 +28,14 @@ module RuboCop
         return @indexes_by_table[table_name] if @indexes_by_table[table_name]
 
         @indexes_by_table[table_name] = ActiveRecord::Base.connection.indexes(table_name)
+      end
+
+      # @param table_name [String]
+      # @return [Array<String>]
+      def primary_keys(table_name)
+        return @primary_keys_by_table[table_name] if @primary_keys_by_table[table_name]
+
+        @primary_keys_by_table[table_name] = ActiveRecord::Base.connection.primary_keys(table_name)
       end
     end
   end
