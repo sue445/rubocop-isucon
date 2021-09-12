@@ -22,6 +22,9 @@ module RuboCop
           include Mixin::DatabaseMethods
           include Mixin::SqlLocationMethods
 
+          MSG = "This where clause doesn't seem to have an index. " \
+                "(e.g. 'ALTER TABLE `%<table_name>s` ADD INDEX `index_%<column_name>s` (%<column_name>s)')"
+
           def_node_search :find_xquery, <<-PATTERN
             (send (send nil? _) {:xquery | :query} (str $_) ...)
           PATTERN
@@ -46,8 +49,7 @@ module RuboCop
               next unless loc
 
               column_name = gda.where_clause[0].column_operand
-              message = "This where clause doesn't seem to have an index. " \
-                        "(e.g. 'ALTER TABLE `#{table_name}` ADD INDEX `index_#{column_name}` (#{column_name})')"
+              message = format(MSG, table_name: table_name, column_name: column_name)
               add_offense(loc, message: message)
             end
           end
