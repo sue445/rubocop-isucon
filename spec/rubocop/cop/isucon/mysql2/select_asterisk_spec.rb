@@ -21,7 +21,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
 
       context "with Database config" do
         include_context :database_cop do
-          let(:schema) { "schemas/isu.rb" }
+          let(:schema) { "schemas/create_isu.rb" }
         end
 
         it "registers an offense and correct" do
@@ -49,7 +49,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
     context "with select" do
       context "without Database config" do
         include_context :database_cop do
-          let(:schema) { "schemas/events.rb" }
+          let(:schema) { "schemas/create_events.rb" }
         end
 
         it "registers an offense and not correct" do
@@ -94,7 +94,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
 
       context "with Database config" do
         include_context :database_cop do
-          let(:schema) { "schemas/isu.rb" }
+          let(:schema) { "schemas/create_isu.rb" }
         end
 
         it "registers an offense and correct" do
@@ -134,7 +134,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
 
       context "with Database config" do
         include_context :database_cop do
-          let(:schema) { "schemas/login_log.rb" }
+          let(:schema) { "schemas/create_login_log.rb" }
         end
 
         it "registers an offense and correct" do
