@@ -7,7 +7,7 @@ module RuboCop
         # Database util methods for Isucon/Mysql cops
         module DatabaseMethods
           # @return [RuboCop::Isucon::DatabaseConnection]
-          # @raise [RuboCop::Cop::Isucon::DatabaseConfigurationError] Database isn't configured in .rubocop.yml
+          # @raise [RuboCop::Cop::Isucon::DatabaseConfigurationError] `Database` isn't configured in `.rubocop.yml`
           def connection
             unless enabled_database?
               raise RuboCop::Cop::Isucon::DatabaseConfigurationError, "`Database` isn't configured in `.rubocop.yml`"
