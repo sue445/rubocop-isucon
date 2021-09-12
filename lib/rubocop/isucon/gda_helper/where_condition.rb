@@ -12,7 +12,7 @@ class RuboCop::Isucon::GdaHelper::WhereCondition # rubocop:disable Style/ClassAn
 
   # @param operator [String]
   # @param operands [Array<String>]
-  def initialize(operator: nil, operands: nil)
+  def initialize(operator: nil, operands: [])
     @operator = operator
     @operands = operands
   end
