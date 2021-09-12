@@ -15,6 +15,7 @@ module RuboCop
         #
         class SelectAsterisk < Base
           include Mixin::DatabaseMethods
+          include Mixin::SqlLocationMethods
 
           extend AutoCorrector
 
@@ -48,34 +49,6 @@ module RuboCop
             end_pos = begin_pos + asterisk_pos + 1
 
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
-          end
-
-          def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
-            if node.child_nodes.count >= 2
-              # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
-              query_node = node.child_nodes.find(&:str_type?)
-              return nil unless query_node
-
-              return query_node.loc.begin.end_pos
-            end
-
-            if node.child_nodes.count == 1
-              if node.child_nodes[0].child_nodes.count > 1
-                # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
-                query_node = node.child_nodes[0].child_nodes.find(&:str_type?)
-                return nil unless query_node
-
-                return query_node.loc.begin.end_pos
-              end
-
-              # end of method
-              query_node = node.child_nodes[0].child_nodes[0].child_nodes.find(&:str_type?)
-              return nil unless query_node
-
-              return query_node.loc.begin.end_pos
-            end
-
-            raise "loc.child_nodes is empty"
           end
 
           def perform_autocorrect(corrector, loc, sql) # rubocop:disable Metrics/AbcSize
