@@ -6,6 +6,8 @@ module RuboCop
       module Mysql2
         # Avoid `SELECT *` in `db.xquery`
         #
+        # @note If `Database` isn't configured, auto-correct will not be available. (Only offense detection can be used)
+        #
         # @example
         #   # bad
         #   db.xquery('SELECT * FROM users')
@@ -25,6 +27,7 @@ module RuboCop
             (send (send nil? _) {:xquery | :query} (str $_) ...)
           PATTERN
 
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
             find_xquery(node) do |sql|
               next unless sql.match?(/^\s*SELECT\s+\*/i)

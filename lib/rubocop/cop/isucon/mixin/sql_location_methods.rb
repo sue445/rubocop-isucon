@@ -6,6 +6,8 @@ module RuboCop
       module Mixin
         # Helper methods for `db.xquery` in AST
         module SqlLocationMethods
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer]
           def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
             if node.child_nodes.count >= 2
               # without substitution (e.g. `db.xquery("SELECT * FROM users")`)

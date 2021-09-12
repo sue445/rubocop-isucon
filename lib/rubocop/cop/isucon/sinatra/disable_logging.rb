@@ -30,6 +30,7 @@ module RuboCop
             (send nil? :enable (sym :logging))
           PATTERN
 
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
             return unless logging_enabled?(node)
 

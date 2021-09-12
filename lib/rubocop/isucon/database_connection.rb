@@ -23,7 +23,7 @@ module RuboCop
 
       # @param table_name [String]
       # @return [Array<ActiveRecord::ConnectionAdapters::IndexDefinition>]
-      # @see ActiveRecord::ConnectionAdapters::TableDefinition#indexes
+      # @see https://github.com/rails/rails/blob/v6.1.4.1/activerecord/lib/active_record/connection_adapters/abstract/schema_definitions.rb#L8
       def indexes(table_name)
         return @indexes_by_table[table_name] if @indexes_by_table[table_name]
 
@@ -31,7 +31,7 @@ module RuboCop
       end
 
       # @param table_name [String]
-      # @return [Array<String>]
+      # @return [Array<String>] primary key's column names
       def primary_keys(table_name)
         return @primary_keys_by_table[table_name] if @primary_keys_by_table[table_name]
 
