@@ -23,7 +23,7 @@ module RuboCop
 
       # @param table_name [String]
       # @return [Array<ActiveRecord::ConnectionAdapters::IndexDefinition>]
-      # @see [ActiveRecord::ConnectionAdapters::TableDefinition#indexes]
+      # @see ActiveRecord::ConnectionAdapters::TableDefinition#indexes
       def indexes(table_name)
         return @indexes_by_table[table_name] if @indexes_by_table[table_name]
 

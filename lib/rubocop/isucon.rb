@@ -6,7 +6,7 @@ module RuboCop
   module Isucon # rubocop:disable Style/Documentation
     class Error < StandardError; end
 
-    # Database isn't configured in .rubocop.yml
+    # `Database` isn't configured in `.rubocop.yml`
     class DatabaseConfigurationError < Error; end
 
     # Your code goes here...
