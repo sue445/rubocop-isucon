@@ -41,6 +41,12 @@ module RuboCop
 
               next if gda.where_clause.any? { |condition| index_first_columns.include?(condition.column_operand) }
 
+              primary_keys = connection.primary_keys(table_name)
+              unless primary_keys.empty?
+                where_columns = gda.where_clause.map(&:column_operand)
+                next if primary_keys.all? { |column| where_columns.include?(column) }
+              end
+
               loc = sql_where_location(node, sql)
               next unless loc
 

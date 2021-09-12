@@ -29,15 +29,15 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
     end
   end
 
-  # context "WHERE with id" do
-  #   include_context :database_cop do
-  #     let(:schema) { "schemas/create_isu.rb" }
-  #   end
-  #
-  #   it "does not register an offense" do
-  #     expect_no_offenses(<<~RUBY)
-  #       db.xquery('SELECT * FROM `isu` WHERE `id` = ? ORDER BY `id` DESC', id)
-  #     RUBY
-  #   end
-  # end
+  context "WHERE with id" do
+    include_context :database_cop do
+      let(:schema) { "schemas/create_isu.rb" }
+    end
+
+    it "does not register an offense" do
+      expect_no_offenses(<<~RUBY)
+        db.xquery('SELECT * FROM `isu` WHERE `id` = ? ORDER BY `id` DESC', id)
+      RUBY
+    end
+  end
 end
