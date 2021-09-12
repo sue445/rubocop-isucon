@@ -30,3 +30,8 @@ Isucon/Sinatra/DisableLogging:
   Description: 'Disable sinatra logging'
   Enabled: true
   VersionAdded: '<<next>>'
+
+Isucon/WhereWithoutIndex:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
