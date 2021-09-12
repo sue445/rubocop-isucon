@@ -6,6 +6,9 @@ module RuboCop
   module Isucon # rubocop:disable Style/Documentation
     class Error < StandardError; end
 
+    # Database isn't configured in .rubocop.yml
+    class DatabaseConfigurationError < Error; end
+
     # Your code goes here...
     PROJECT_ROOT   = Pathname.new(__dir__).parent.parent.expand_path.freeze
     CONFIG_DEFAULT = PROJECT_ROOT.join("config", "default.yml").freeze
