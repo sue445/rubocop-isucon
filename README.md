@@ -22,7 +22,7 @@ Or install it yourself as:
     $ gem install rubocop-isucon
 
 ## Requires
-### `libgda`
+### libgda
 #### for Mac
 ```bash
 brew install libgda
