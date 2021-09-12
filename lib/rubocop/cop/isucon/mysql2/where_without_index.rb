@@ -4,57 +4,65 @@ module RuboCop
   module Cop
     module Isucon
       module Mysql2
-        # TODO: Write cop description and example of bad / good code. For every
-        # `SupportedStyle` and unique configuration, there needs to be examples.
-        # Examples must have valid Ruby syntax. Do not use upticks.
+        # Check for `WHERE` without index
         #
-        # @example EnforcedStyle: bar (default)
-        #   # Description of the `bar` style.
+        # @example
+        #   # bad (user_id is not indexed)
+        #   db.xquery('SELECT id, title FROM articles WHERE used_id = ?', user_id)
         #
-        #   # bad
-        #   bad_bar_method
+        #   # good (user_id is indexed
+        #   db.xquery('SELECT id, title FROM articles WHERE used_id = ?', user_id)
         #
-        #   # bad
-        #   bad_bar_method(args)
-        #
-        #   # good
-        #   good_bar_method
-        #
-        #   # good
-        #   good_bar_method(args)
-        #
-        # @example EnforcedStyle: foo
-        #   # Description of the `foo` style.
-        #
-        #   # bad
-        #   bad_foo_method
-        #
-        #   # bad
-        #   bad_foo_method(args)
-        #
-        #   # good
-        #   good_foo_method
-        #
-        #   # good
-        #   good_foo_method(args)
+        #   # good (id is primary key)
+        #   db.xquery('SELECT id, title FROM articles WHERE id = ?', id)
         #
         class WhereWithoutIndex < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = 'Use `#good_method` instead of `#bad_method`.'
+          include Mixin::DatabaseMethods
+          include Mixin::SqlLocationMethods
 
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
+          def_node_search :find_xquery, <<-PATTERN
+            (send (send nil? _) {:xquery | :query} (str $_) ...)
           PATTERN
 
-          def on_send(node)
-            return unless bad_method?(node)
+          def on_send(node) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+            return unless enabled_database?
 
-            add_offense(node)
+            find_xquery(node) do |sql|
+              gda = RuboCop::Isucon::GdaHelper.new(sql)
+
+              table_names = gda.table_names
+
+              # TODO: Support join, subquery
+              next unless table_names.count == 1
+
+              table_name = table_names[0]
+              indexes = connection.indexes(table_name)
+              index_first_columns = indexes.map { |index| index.columns[0] }
+
+              next if gda.where_clause.any? { |condition| index_first_columns.include?(condition.column_operand) }
+
+              loc = sql_where_location(node, sql)
+              next unless loc
+
+              column_name = gda.where_clause[0].column_operand
+              message = "This where clause doesn't seem to have an index. " \
+                        "(e.g. 'ALTER TABLE `#{table_name}` ADD INDEX `index_#{column_name}` (#{column_name})')"
+              add_offense(loc, message: message)
+            end
+          end
+
+          private
+
+          def sql_where_location(node, sql)
+            select_pos = sql_select_location_begin_position(node)
+            return nil unless select_pos
+
+            where_pos = sql.index(/WHERE/i)
+
+            begin_pos = select_pos + where_pos
+            end_pos = begin_pos + 5
+
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
         end
       end
