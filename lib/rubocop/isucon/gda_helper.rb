@@ -39,9 +39,14 @@ module RuboCop
 
       private
 
+      # @return [GDA::SQL::Statement]
+      def statement
+        @statement ||= GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
+      end
+
       # @return [GDA::Nodes::Select]
       def ast
-        @ast ||= GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql)).ast
+        @ast ||= statement.ast
       end
     end
   end
