@@ -38,17 +38,13 @@ module RuboCop
 
               table_names = gda.table_names
 
-              # TODO: Support join, subquery
-              next unless table_names.count == 1
-
-              table_name = table_names[0]
-
-              next if exists_index_in_where_clause_columns?(gda, table_name)
+              next if exists_index_in_where_clause_columns?(gda, table_names)
 
               loc = sql_where_location(node, sql)
               next unless loc
 
               column_name = gda.where_clause[0].column_operand
+              table_name = find_table_name_from_column_name(table_names, column_name)
               message = format(MSG, table_name: table_name, column_name: column_name)
               add_offense(loc, message: message)
             end
@@ -69,21 +65,34 @@ module RuboCop
           end
 
           # @param gda [RuboCop::Isucon::GdaHelper]
-          # @param table_name [String]
+          # @param table_names [Array<String>]
           # @return [Boolean]
-          def exists_index_in_where_clause_columns?(gda, table_name) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity
-            indexes = connection.indexes(table_name)
-            index_first_columns = indexes.map { |index| index.columns[0] }
+          def exists_index_in_where_clause_columns?(gda, table_names) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+            table_names.each do |table_name|
+              indexes = connection.indexes(table_name)
+              index_first_columns = indexes.map { |index| index.columns[0] }
 
-            return true if gda.where_clause.any? { |condition| index_first_columns.include?(condition.column_operand) }
+              return true if gda.where_clause.any? { |condition| index_first_columns.include?(condition.column_operand) }
 
-            primary_keys = connection.primary_keys(table_name)
-            unless primary_keys.empty?
-              where_columns = gda.where_clause.map(&:column_operand)
-              return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
+              primary_keys = connection.primary_keys(table_name)
+              unless primary_keys.empty?
+                where_columns = gda.where_clause.map(&:column_operand)
+                return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
+              end
             end
 
             false
+          end
+
+          # @param table_names [Array<String>]
+          # @param column_name [String]
+          # @return [String,nil]
+          def find_table_name_from_column_name(table_names, column_name)
+            table_names.each do |table_name|
+              column_names = connection.column_names(table_name)
+              return table_name if column_names.include?(column_name)
+            end
+            nil
           end
         end
       end
