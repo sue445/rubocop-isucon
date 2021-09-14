@@ -26,7 +26,7 @@ module RuboCop
           map do |node|
             WhereCondition.new(
               operator: node.operator,
-              operands: node.operands.map(&:value),
+              operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
             )
           end
       end
