@@ -24,15 +24,38 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
           let(:schema) { "schemas/create_isu.rb" }
         end
 
-        it "registers an offense and correct" do
-          expect_offense(<<~RUBY)
-            db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-                       ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-          RUBY
+        context "single line SQL" do
+          it "registers an offense and correct" do
+            expect_offense(<<~RUBY)
+              db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+                         ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+            RUBY
 
-          expect_correction(<<~RUBY)
-            db.xquery('SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-          RUBY
+            expect_correction(<<~RUBY)
+              db.xquery('SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+            RUBY
+          end
+        end
+
+        context "multiple line SQL" do
+          it "registers an offense and correct" do
+            expect_offense(<<~RUBY)
+              db.xquery(<<~SQL, jia_user_id)
+                SELECT * FROM `isu`
+                ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+                WHERE `jia_user_id` = ?
+                ORDER BY `id` DESC
+              SQL
+            RUBY
+
+            expect_correction(<<~RUBY)
+              db.xquery(<<~SQL, jia_user_id)
+                SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu`
+                WHERE `jia_user_id` = ?
+                ORDER BY `id` DESC
+              SQL
+            RUBY
+          end
         end
       end
     end
