@@ -7,35 +7,107 @@ GDA::Nodes::Node.class_eval do
 end
 
 GDA::Nodes::Select.class_eval do
-  def where_cond_with_cache
-    @where_cond_with_cache ||= where_cond_without_cache
-  end
+  extend RuboCop::Isucon::MemorizeMethods
 
-  alias_method :where_cond_without_cache, :where_cond
-  alias_method :where_cond, :where_cond_with_cache
+  memorize :distinct_expr
+  memorize :expr_list
+  memorize :from
+  memorize :where_cond
+  memorize :group_by
+  memorize :having_cond
+  memorize :order_by
+  memorize :limit_count
+  memorize :limit_offset
+end
+
+GDA::Nodes::Insert.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :table
+  memorize :fields_list
+  memorize :values_list
+  memorize :select
+end
+
+GDA::Nodes::Update.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :table
+  memorize :fields_list
+  memorize :expr_list
+  memorize :cond
+end
+
+GDA::Nodes::Join.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :expr
+  memorize :use
+end
+
+GDA::Nodes::Delete.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :table
+  memorize :cond
+end
+
+GDA::Nodes::SelectField.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :expr
 end
 
 GDA::Nodes::Expr.class_eval do
-  def cond_with_cache
-    @cond_with_cache ||= cond_without_cache
-  end
+  extend RuboCop::Isucon::MemorizeMethods
 
-  alias_method :cond_without_cache, :cond
-  alias_method :cond, :cond_with_cache
+  memorize :func
+  memorize :cond
+  memorize :select
+  memorize :case_s
+  memorize :param_spec
+end
+
+GDA::Nodes::From.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :targets
+  memorize :joins
+end
+
+GDA::Nodes::Target.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :expr
 end
 
 GDA::Nodes::Operation.class_eval do
-  def operands_with_cache
-    @operands_with_cache ||= operands_without_cache
-  end
+  extend RuboCop::Isucon::MemorizeMethods
 
-  alias_method :operands_without_cache, :operands
-  alias_method :operands, :operands_with_cache
+  memorize :operands
+  # memorize :operator
+end
 
-  def operator_with_cache
-    @operator_with_cache ||= operator_without_cache
-  end
+GDA::Nodes::Function.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
 
-  alias_method :operator_without_cache, :operator
-  alias_method :operator, :operator_with_cache
+  memorize :args_list
+end
+
+GDA::Nodes::Order.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :expr
+end
+
+GDA::Nodes::Unknown.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :expressions
+end
+
+GDA::Nodes::Compound.class_eval do
+  extend RuboCop::Isucon::MemorizeMethods
+
+  memorize :stmt_list
 end
