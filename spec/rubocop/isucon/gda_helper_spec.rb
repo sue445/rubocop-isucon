@@ -98,4 +98,17 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       it { should eq "SELECT id FROM categories WHERE parent_id = '__PRACEHOLDER__'" }
     end
   end
+
+  describe "#serialize_statement" do
+    subject { helper.serialize_statement }
+
+    let(:sql) do
+      # https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L118
+      <<~SQL
+        SELECT * FROM chair WHERE stock > 0 ORDER BY price ASC, id ASC LIMIT 10
+      SQL
+    end
+
+    it { should be_an_instance_of Hash }
+  end
 end
