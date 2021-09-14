@@ -31,6 +31,11 @@ module RuboCop
           end
       end
 
+      # @return [Hash]
+      def serialize_statement
+        JSON.parse(statement.serialize)
+      end
+
       # @param sql [String]
       # @return [String]
       def self.normalize_sql(sql)
