@@ -95,7 +95,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
         end
       end
 
-      it "registers an offense" do
+      it "does not register an offense" do
         expect_no_offenses(<<~RUBY)
           rows = db.xquery('SELECT r.*, s.rank AS sheet_rank, s.num AS sheet_num FROM reservations r INNER JOIN sheets s ON s.id = r.sheet_id WHERE  r.user_id = ? AND s.rank = ? ORDER BY IFNULL(r.canceled_at, r.reserved_at) DESC LIMIT 5', user['id'])
         RUBY
