@@ -37,6 +37,31 @@ module RuboCop
 
             raise "loc.child_nodes is empty"
           end
+
+          # @param dstr_node [RuboCop::AST::DstrNode]
+          # @param pattern [Regexp]
+          # @return [Integer]
+          def text_begin_position_within_heredoc(dstr_node, pattern)
+            pattern_str_node = dstr_node.child_nodes.find { |str_node| str_node.value.match?(pattern) }
+            return nil unless pattern_str_node
+
+            str_node_begin_pos = pattern_str_node.loc.expression.begin_pos
+            pattern_pos = pattern_str_node.value.index(pattern)
+
+            heredoc_body = dstr_node.loc.heredoc_body.source
+            heredoc_indent_level = indent_level(heredoc_body)
+            str_node_begin_pos + heredoc_indent_level + pattern_pos
+          end
+
+          # @param str [String]
+          # @return [Integer]
+          # @note https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/mixin/heredoc.rb#L23-L28
+          def indent_level(str)
+            indentations = str.lines.
+                           map { |line| line[/^\s*/] }.
+                           reject { |line| line.end_with?("\n") }
+            indentations.empty? ? 0 : indentations.min_by(&:size).size
+          end
         end
       end
     end

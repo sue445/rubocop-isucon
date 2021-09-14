@@ -26,21 +26,36 @@ module RuboCop
                 "(e.g. 'ALTER TABLE `%<table_name>s` ADD INDEX `index_%<column_name>s` (%<column_name>s)')"
 
           def_node_search :find_xquery, <<-PATTERN
-            (send (send nil? _) {:xquery | :query} (str $_) ...)
+            (send (send nil? _) {:xquery | :query} (${str dstr} $...) ...)
           PATTERN
 
           # @param node [RuboCop::AST::Node]
-          def on_send(node) # rubocop:disable Metrics/MethodLength
+          def on_send(node) # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
             return unless enabled_database?
 
-            find_xquery(node) do |sql|
+            find_xquery(node) do |type, params|
+              sql =
+                case type
+                when :str
+                  params[0]
+                when :dstr
+                  params.map(&:value).join
+                end
+
               gda = RuboCop::Isucon::GdaHelper.new(sql)
 
               table_names = gda.table_names
 
               next if exists_index_in_where_clause_columns?(gda, table_names)
 
-              loc = sql_where_location(node, sql)
+              loc =
+                case type
+                when :str
+                  sql_where_location_for_str(node, sql)
+                when :dstr
+                  sql_where_location_for_dstr(node)
+                end
+
               next unless loc
 
               column_name = gda.where_clause[0].column_operand
@@ -52,13 +67,26 @@ module RuboCop
 
           private
 
-          def sql_where_location(node, sql)
+          # @param node [RuboCop::AST::StrNode]
+          # @param sql [String]
+          def sql_where_location_for_str(node, sql)
             select_pos = sql_select_location_begin_position(node)
             return nil unless select_pos
 
             where_pos = sql.index(/WHERE/i)
 
             begin_pos = select_pos + where_pos
+            end_pos = begin_pos + 5
+
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+          end
+
+          # @param node [RuboCop::AST::DstrNode]
+          def sql_where_location_for_dstr(node)
+            dstr_node = node.child_nodes[1]
+            begin_pos = text_begin_position_within_heredoc(dstr_node, /WHERE/i)
+            return nil unless begin_pos
+
             end_pos = begin_pos + 5
 
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
