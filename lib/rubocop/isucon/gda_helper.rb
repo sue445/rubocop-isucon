@@ -35,8 +35,10 @@ module RuboCop
           end
       end
 
-      # @return [Hash]
+      # @return [Hash,nil]
       def serialize_statement
+        return nil unless @sql
+
         JSON.parse(statement.serialize)
       end
 
