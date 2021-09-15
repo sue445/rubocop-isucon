@@ -5,7 +5,7 @@ module RuboCop
     module Isucon
       module Mixin
         # Helper methods for `db.xquery` in AST
-        module SqlLocationMethods
+        module Mysql2Methods
           extend NodePattern::Macros
 
           def_node_search :find_xquery, <<~PATTERN

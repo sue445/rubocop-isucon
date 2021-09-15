@@ -20,7 +20,7 @@ module RuboCop
         #
         class WhereWithoutIndex < Base
           include Mixin::DatabaseMethods
-          include Mixin::SqlLocationMethods
+          include Mixin::Mysql2Methods
 
           MSG = "This where clause doesn't seem to have an index. " \
                 "(e.g. 'ALTER TABLE `%<table_name>s` ADD INDEX `index_%<column_name>s` (%<column_name>s)')"
