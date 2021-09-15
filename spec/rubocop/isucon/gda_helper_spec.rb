@@ -136,4 +136,29 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
     it { expect { |b| gda.walk_within_subquery(&b) }.to yield_with_args(RuboCop::Isucon::GdaHelper) }
     it { expect { |b| gda.walk_within_subquery(&b) }.to yield_control.at_least(1).times }
   end
+
+  describe "#walk_all" do
+    let(:sql) do
+      <<~SQL
+        SELECT m.t AS time, a.price AS open, b.price AS close, m.h AS high, m.l AS low
+        FROM (
+          SELECT
+            STR_TO_DATE(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS t,
+            MIN(id) AS min_id,
+            MAX(id) AS max_id,
+            MAX(price) AS h,
+            MIN(price) AS l
+          FROM trade
+          WHERE created_at >= ?
+          GROUP BY t
+        ) m
+        JOIN trade a ON a.id = m.min_id
+        JOIN trade b ON b.id = m.max_id
+        ORDER BY m.t
+      SQL
+    end
+
+    it { expect { |b| gda.walk_all(&b) }.to yield_successive_args(RuboCop::Isucon::GdaHelper, RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.walk_all(&b) }.to yield_control.at_least(2).times }
+  end
 end

@@ -51,6 +51,12 @@ module RuboCop
         end
       end
 
+      # @yieldparam gda [RuboCop::Isucon::GdaHelper]
+      def walk_all(&block)
+        block.call(self)
+        walk_within_subquery(&block)
+      end
+
       # @param sql [String]
       # @return [String]
       def self.normalize_sql(sql)
