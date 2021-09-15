@@ -48,7 +48,7 @@ module RuboCop
 
           private
 
-          # @param node [RuboCop::AST::StrNode]
+          # @param node [RuboCop::AST::SendNode]
           # @param sql [String]
           def sql_select_location_for_str(node, sql)
             asterisk_pos = sql.index("*")
@@ -61,7 +61,7 @@ module RuboCop
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
-          # @param node [RuboCop::AST::DstrNode]
+          # @param node [RuboCop::AST::SendNode]
           def sql_select_location_for_dstr(node)
             dstr_node = node.child_nodes[1]
 
