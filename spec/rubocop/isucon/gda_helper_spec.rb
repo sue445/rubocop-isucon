@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Isucon::GdaHelper do
-  let(:helper) { RuboCop::Isucon::GdaHelper.new(sql) }
+  let(:gda) { RuboCop::Isucon::GdaHelper.new(sql) }
 
   describe "#table_names" do
-    subject { helper.table_names }
+    subject { gda.table_names }
 
     context "single table" do
       let(:sql) do
@@ -50,7 +50,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       end
 
       it "returns response" do
-        result = helper.where_clause
+        result = gda.where_clause
 
         expect(result.count).to eq 1
 
@@ -67,7 +67,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       end
 
       it "returns response" do
-        result = helper.where_clause
+        result = gda.where_clause
 
         expect(result.count).to eq 3
 
@@ -100,7 +100,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
   end
 
   describe "#serialize_statement" do
-    subject { helper.serialize_statement }
+    subject { gda.serialize_statement }
 
     let(:sql) do
       # https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L118
