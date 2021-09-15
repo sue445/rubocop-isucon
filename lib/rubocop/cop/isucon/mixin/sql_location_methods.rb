@@ -6,7 +6,26 @@ module RuboCop
       module Mixin
         # Helper methods for `db.xquery` in AST
         module SqlLocationMethods
+          extend NodePattern::Macros
+
+          def_node_search :find_xquery, <<~PATTERN
+            (send (send nil? _) {:xquery | :query} (${str dstr} $...) ...)
+          PATTERN
+
           private
+
+          # @param type [Symbol]
+          # @param params [Array<RuboCop::AST::Node>]
+          # @return [String,nil]
+          def xquery_param(type, params)
+            case type
+            when :str
+              params[0]
+            when :dstr
+              # heredoc
+              params.map(&:value).join
+            end
+          end
 
           # @param node [RuboCop::AST::Node]
           # @return [Integer]

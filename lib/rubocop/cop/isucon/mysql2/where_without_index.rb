@@ -25,22 +25,12 @@ module RuboCop
           MSG = "This where clause doesn't seem to have an index. " \
                 "(e.g. 'ALTER TABLE `%<table_name>s` ADD INDEX `index_%<column_name>s` (%<column_name>s)')"
 
-          def_node_search :find_xquery, <<-PATTERN
-            (send (send nil? _) {:xquery | :query} (${str dstr} $...) ...)
-          PATTERN
-
           # @param node [RuboCop::AST::Node]
-          def on_send(node) # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
+          def on_send(node) # rubocop:disable Metrics/MethodLength
             return unless enabled_database?
 
             find_xquery(node) do |type, params|
-              sql =
-                case type
-                when :str
-                  params[0]
-                when :dstr
-                  params.map(&:value).join
-                end
+              sql = xquery_param(type, params)
 
               gda = RuboCop::Isucon::GdaHelper.new(sql)
 
