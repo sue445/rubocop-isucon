@@ -13,14 +13,31 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
   context "exists N+1 SELECT query in map" do
     context "with xquery" do
-      it "registers an offense" do
-        expect_offense(<<~RUBY)
-          reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
-            reservation[:user] = db.xquery('SELECT * FROM `users` WHERE `id` = ? LIMIT 1', id).first
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
-            reservation
-          end
-        RUBY
+      context "with single line SQL" do
+        it "registers an offense" do
+          expect_offense(<<~RUBY)
+            reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
+              reservation[:user] = db.xquery('SELECT * FROM `users` WHERE `id` = ? LIMIT 1', id).first
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+              reservation
+            end
+          RUBY
+        end
+      end
+
+      context "with multiple line SQL" do
+        it "registers an offense" do
+          expect_offense(<<~RUBY)
+            reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
+              reservation[:user] = db.xquery(<<~SQL, id).first
+                                   ^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+                SELECT * FROM `users`
+                WHERE `id` = ? LIMIT 1
+              SQL
+              reservation
+            end
+          RUBY
+        end
       end
     end
 

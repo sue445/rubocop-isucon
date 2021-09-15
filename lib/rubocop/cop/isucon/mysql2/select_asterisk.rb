@@ -17,22 +17,27 @@ module RuboCop
         #
         class SelectAsterisk < Base
           include Mixin::DatabaseMethods
-          include Mixin::SqlLocationMethods
+          include Mixin::Mysql2Methods
 
           extend AutoCorrector
 
           MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
-          def_node_search :find_xquery, <<-PATTERN
-            (send (send nil? _) {:xquery | :query} (str $_) ...)
-          PATTERN
-
           # @param node [RuboCop::AST::Node]
-          def on_send(node)
-            find_xquery(node) do |sql|
+          def on_send(node) # rubocop:disable Metrics/MethodLength
+            find_xquery(node) do |type, params|
+              sql = xquery_param(type, params)
+
               next unless sql.match?(/^\s*SELECT\s+\*/i)
 
-              loc = sql_select_location(node, sql)
+              loc =
+                case type
+                when :str
+                  sql_select_location_for_str(node, sql)
+                when :dstr
+                  sql_select_location_for_dstr(node)
+                end
+
               next unless loc
 
               add_offense(loc) do |corrector|
@@ -43,7 +48,9 @@ module RuboCop
 
           private
 
-          def sql_select_location(node, sql)
+          # @param node [RuboCop::AST::StrNode]
+          # @param sql [String]
+          def sql_select_location_for_str(node, sql)
             asterisk_pos = sql.index("*")
 
             begin_pos = sql_select_location_begin_position(node)
@@ -52,6 +59,18 @@ module RuboCop
             end_pos = begin_pos + asterisk_pos + 1
 
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+          end
+
+          # @param node [RuboCop::AST::DstrNode]
+          def sql_select_location_for_dstr(node)
+            dstr_node = node.child_nodes[1]
+
+            begin_pos = text_begin_position_within_heredoc(dstr_node, /SELECT/i)
+            end_pos   = text_begin_position_within_heredoc(dstr_node, /\*/)
+
+            return if !begin_pos || !end_pos
+
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos + 1)
           end
 
           def perform_autocorrect(corrector, loc, sql) # rubocop:disable Metrics/AbcSize
