@@ -9,9 +9,13 @@ module RuboCop
     class GdaHelper
       PRACEHOLDER = "'__PRACEHOLDER__'"
 
+      attr_reader :ast
+
       # @param sql [String]
-      def initialize(sql)
+      # @param ast [GDA::Nodes::Select]
+      def initialize(sql, ast = nil)
         @sql = sql
+        @ast = ast || statement.ast
       end
 
       # @return [Array<String>]
@@ -31,9 +35,28 @@ module RuboCop
           end
       end
 
-      # @return [Hash]
+      # @return [Hash,nil]
       def serialize_statement
+        return nil unless @sql
+
         JSON.parse(statement.serialize)
+      end
+
+      # @yieldparam gda [RuboCop::Isucon::GdaHelper]
+      def walk_within_subquery(&block)
+        ast.from.targets.each do |target|
+          next unless target.expr.select
+
+          gda = GdaHelper.new(nil, target.expr.select)
+          block.call(gda)
+          gda.walk_within_subquery(&block)
+        end
+      end
+
+      # @yieldparam gda [RuboCop::Isucon::GdaHelper]
+      def walk_all(&block)
+        block.call(self)
+        walk_within_subquery(&block)
       end
 
       # @param sql [String]
@@ -47,11 +70,6 @@ module RuboCop
       # @return [GDA::SQL::Statement]
       def statement
         @statement ||= GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
-      end
-
-      # @return [GDA::Nodes::Select]
-      def ast
-        @ast ||= statement.ast
       end
     end
   end

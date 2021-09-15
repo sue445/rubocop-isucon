@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Isucon::GdaHelper do
-  let(:helper) { RuboCop::Isucon::GdaHelper.new(sql) }
+  let(:gda) { RuboCop::Isucon::GdaHelper.new(sql) }
 
   describe "#table_names" do
-    subject { helper.table_names }
+    subject { gda.table_names }
 
     context "single table" do
       let(:sql) do
@@ -50,7 +50,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       end
 
       it "returns response" do
-        result = helper.where_clause
+        result = gda.where_clause
 
         expect(result.count).to eq 1
 
@@ -67,7 +67,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       end
 
       it "returns response" do
-        result = helper.where_clause
+        result = gda.where_clause
 
         expect(result.count).to eq 3
 
@@ -100,7 +100,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
   end
 
   describe "#serialize_statement" do
-    subject { helper.serialize_statement }
+    subject { gda.serialize_statement }
 
     let(:sql) do
       # https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L118
@@ -110,5 +110,55 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
     end
 
     it { should be_an_instance_of Hash }
+  end
+
+  describe "#walk_within_subquery" do
+    let(:sql) do
+      <<~SQL
+        SELECT m.t AS time, a.price AS open, b.price AS close, m.h AS high, m.l AS low
+        FROM (
+          SELECT
+            STR_TO_DATE(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS t,
+            MIN(id) AS min_id,
+            MAX(id) AS max_id,
+            MAX(price) AS h,
+            MIN(price) AS l
+          FROM trade
+          WHERE created_at >= ?
+          GROUP BY t
+        ) m
+        JOIN trade a ON a.id = m.min_id
+        JOIN trade b ON b.id = m.max_id
+        ORDER BY m.t
+      SQL
+    end
+
+    it { expect { |b| gda.walk_within_subquery(&b) }.to yield_with_args(RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.walk_within_subquery(&b) }.to yield_control.at_least(1).times }
+  end
+
+  describe "#walk_all" do
+    let(:sql) do
+      <<~SQL
+        SELECT m.t AS time, a.price AS open, b.price AS close, m.h AS high, m.l AS low
+        FROM (
+          SELECT
+            STR_TO_DATE(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS t,
+            MIN(id) AS min_id,
+            MAX(id) AS max_id,
+            MAX(price) AS h,
+            MIN(price) AS l
+          FROM trade
+          WHERE created_at >= ?
+          GROUP BY t
+        ) m
+        JOIN trade a ON a.id = m.min_id
+        JOIN trade b ON b.id = m.max_id
+        ORDER BY m.t
+      SQL
+    end
+
+    it { expect { |b| gda.walk_all(&b) }.to yield_successive_args(RuboCop::Isucon::GdaHelper, RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.walk_all(&b) }.to yield_control.at_least(2).times }
   end
 end
