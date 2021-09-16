@@ -112,7 +112,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
     it { should be_an_instance_of Hash }
   end
 
-  describe "#walk_within_subquery" do
+  describe "#visit_subquery_recursive" do
     let(:sql) do
       <<~SQL
         SELECT m.t AS time, a.price AS open, b.price AS close, m.h AS high, m.l AS low
@@ -133,11 +133,11 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       SQL
     end
 
-    it { expect { |b| gda.walk_within_subquery(&b) }.to yield_with_args(RuboCop::Isucon::GdaHelper) }
-    it { expect { |b| gda.walk_within_subquery(&b) }.to yield_control.at_least(1).times }
+    it { expect { |b| gda.visit_subquery_recursive(&b) }.to yield_with_args(RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.visit_subquery_recursive(&b) }.to yield_control.at_least(1).times }
   end
 
-  describe "#walk_all" do
+  describe "#visit_all" do
     let(:sql) do
       <<~SQL
         SELECT m.t AS time, a.price AS open, b.price AS close, m.h AS high, m.l AS low
@@ -158,7 +158,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       SQL
     end
 
-    it { expect { |b| gda.walk_all(&b) }.to yield_successive_args(RuboCop::Isucon::GdaHelper, RuboCop::Isucon::GdaHelper) }
-    it { expect { |b| gda.walk_all(&b) }.to yield_control.at_least(2).times }
+    it { expect { |b| gda.visit_all(&b) }.to yield_successive_args(RuboCop::Isucon::GdaHelper, RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.visit_all(&b) }.to yield_control.at_least(2).times }
   end
 end
