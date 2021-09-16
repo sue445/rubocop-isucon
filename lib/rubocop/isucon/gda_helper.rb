@@ -9,10 +9,13 @@ module RuboCop
     class GdaHelper
       PRACEHOLDER = "'__PRACEHOLDER__'"
 
+      # @!attribute [r] ast
+      #   @return [GDA::Nodes::Select]
       attr_reader :ast
 
-      # @param sql [String]
+      # @param sql [String,nil]
       # @param ast [GDA::Nodes::Select]
+      # @note if `sql` is `nil`, `ast` is required
       def initialize(sql, ast: nil)
         @sql = sql
         @ast = ast || statement.ast
