@@ -13,7 +13,7 @@ module RuboCop
 
       # @param sql [String]
       # @param ast [GDA::Nodes::Select]
-      def initialize(sql, ast = nil)
+      def initialize(sql, ast: nil)
         @sql = sql
         @ast = ast || statement.ast
       end
@@ -47,7 +47,7 @@ module RuboCop
         ast.from.targets.each do |target|
           next unless target.expr.select
 
-          gda = GdaHelper.new(nil, target.expr.select)
+          gda = GdaHelper.new(nil, ast: target.expr.select)
           block.call(gda)
           gda.walk_within_subquery(&block)
         end
@@ -69,7 +69,11 @@ module RuboCop
 
       # @return [GDA::SQL::Statement]
       def statement
-        @statement ||= GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
+        return @statement if @statement
+
+        raise "@sql is required" unless @sql
+
+        @statement = GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
       end
     end
   end
