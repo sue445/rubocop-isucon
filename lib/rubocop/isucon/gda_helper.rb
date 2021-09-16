@@ -7,7 +7,7 @@ module RuboCop
     # @see https://github.com/tenderlove/gda
     # @see https://gitlab.gnome.org/GNOME/libgda
     class GdaHelper
-      PRACEHOLDER = "'__PRACEHOLDER__'"
+      PRACEHOLDER = "0"
 
       # @!attribute [r] ast
       #   @return [GDA::Nodes::Select]
@@ -65,7 +65,7 @@ module RuboCop
       # @param sql [String]
       # @return [String]
       def self.normalize_sql(sql)
-        sql.gsub("`", "").gsub("?", PRACEHOLDER)
+        sql.gsub("`", " ").gsub("?", PRACEHOLDER)
       end
 
       private

@@ -3,6 +3,8 @@
 RSpec.describe RuboCop::Isucon::GdaHelper do
   let(:gda) { RuboCop::Isucon::GdaHelper.new(sql) }
 
+  let(:placeholder) { RuboCop::Isucon::GdaHelper::PRACEHOLDER }
+
   describe "#table_names" do
     subject { gda.table_names }
 
@@ -72,7 +74,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
         expect(result.count).to eq 3
 
         expect(result[0].operator).to eq "="
-        expect(result[0].operands).to contain_exactly("id", "'__PRACEHOLDER__'")
+        expect(result[0].operands).to contain_exactly("id", placeholder)
 
         expect(result[1].operator).to eq ">"
         expect(result[1].operands).to contain_exactly("stock", "0")
@@ -89,13 +91,13 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
     context "contains `" do
       let(:sql) { "SELECT * FROM `chair` WHERE `stock` > 0 ORDER BY `price` ASC, `id` ASC LIMIT 10" }
 
-      it { should eq "SELECT * FROM chair WHERE stock > 0 ORDER BY price ASC, id ASC LIMIT 10" }
+      it { should eq "SELECT * FROM  chair  WHERE  stock  > 0 ORDER BY  price  ASC,  id  ASC LIMIT 10" }
     end
 
     context "contains ?" do
       let(:sql) { "SELECT id FROM categories WHERE parent_id = ?" }
 
-      it { should eq "SELECT id FROM categories WHERE parent_id = '__PRACEHOLDER__'" }
+      it { should eq "SELECT id FROM categories WHERE parent_id = #{placeholder}" }
     end
   end
 
