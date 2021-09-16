@@ -46,20 +46,20 @@ module RuboCop
       end
 
       # @yieldparam gda [RuboCop::Isucon::GdaHelper]
-      def walk_within_subquery(&block)
+      def visit_subquery_recursive(&block)
         ast.from.targets.each do |target|
           next unless target.expr.select
 
           gda = GdaHelper.new(nil, ast: target.expr.select)
           block.call(gda)
-          gda.walk_within_subquery(&block)
+          gda.visit_subquery_recursive(&block)
         end
       end
 
       # @yieldparam gda [RuboCop::Isucon::GdaHelper]
-      def walk_all(&block)
+      def visit_all(&block)
         block.call(self)
-        walk_within_subquery(&block)
+        visit_subquery_recursive(&block)
       end
 
       # @param sql [String]
