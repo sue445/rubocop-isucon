@@ -33,7 +33,6 @@ module RuboCop
               sql = xquery_param(type, params)
 
               root_gda = RuboCop::Isucon::GDA::Client.new(sql)
-              RuboCop::Isucon::GDA::NodePatcher.new.accept(root_gda.ast, RuboCop::Isucon::GDA.normalize_sql(sql))
 
               next if exists_index_in_where_clause_columns?(root_gda)
 

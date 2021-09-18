@@ -17,6 +17,15 @@ module RuboCop
         def initialize(sql, ast: nil)
           @sql = sql
           @ast = ast || statement.ast
+
+          if ast
+            # called from subquery AST
+            @ast = ast
+          else
+            # called from root AST
+            @ast = statement.ast
+            RuboCop::Isucon::GDA::NodePatcher.new.accept(@ast, RuboCop::Isucon::GDA.normalize_sql(sql))
+          end
         end
 
         # @return [Array<String>]
