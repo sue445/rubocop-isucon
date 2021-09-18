@@ -25,7 +25,7 @@ module RuboCop
         end
 
         # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]
-        def where_clause
+        def where_conditions
           ast.where_cond.to_a.
             select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }.
             map do |node|

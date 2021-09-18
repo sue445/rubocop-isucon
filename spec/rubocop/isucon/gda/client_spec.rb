@@ -42,7 +42,7 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
     end
   end
 
-  describe "#where_clause" do
+  describe "#where_conditions" do
     context "single condition" do
       let(:sql) do
         # https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L118
@@ -52,7 +52,7 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
       end
 
       it "returns response" do
-        result = gda.where_clause
+        result = gda.where_conditions
 
         expect(result.count).to eq 1
 
@@ -69,7 +69,7 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
       end
 
       it "returns response" do
-        result = gda.where_clause
+        result = gda.where_conditions
 
         expect(result.count).to eq 3
 

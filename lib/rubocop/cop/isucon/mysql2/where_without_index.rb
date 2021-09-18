@@ -48,7 +48,7 @@ module RuboCop
 
               next unless loc
 
-              column_name = gda.where_clause[0].column_operand
+              column_name = gda.where_conditions[0].column_operand
               table_name = find_table_name_from_column_name(table_names, column_name)
               message = format(MSG, table_name: table_name, column_name: column_name)
               add_offense(loc, message: message)
@@ -90,11 +90,11 @@ module RuboCop
               indexes = connection.indexes(table_name)
               index_first_columns = indexes.map { |index| index.columns[0] }
 
-              return true if gda.where_clause.any? { |condition| index_first_columns.include?(condition.column_operand) }
+              return true if gda.where_conditions.any? { |condition| index_first_columns.include?(condition.column_operand) }
 
               primary_keys = connection.primary_keys(table_name)
               unless primary_keys.empty?
-                where_columns = gda.where_clause.map(&:column_operand)
+                where_columns = gda.where_conditions.map(&:column_operand)
                 return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
               end
             end
