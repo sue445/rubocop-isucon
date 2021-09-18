@@ -11,6 +11,9 @@ require_relative "rubocop/isucon/database_connection"
 require_relative "rubocop/isucon/sql_parser"
 require_relative "rubocop/isucon/gda_helper"
 require_relative "rubocop/isucon/gda_helper/where_condition"
+require_relative "rubocop/isucon/gda_ext"
+require_relative "rubocop/isucon/gda_node_patcher"
+require_relative "rubocop/isucon/gda_node_location"
 
 RuboCop::Isucon::Inject.defaults!
 
