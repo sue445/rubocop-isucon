@@ -9,6 +9,7 @@ require_relative "rubocop/isucon/version"
 require_relative "rubocop/isucon/inject"
 require_relative "rubocop/isucon/database_connection"
 require_relative "rubocop/isucon/sql_parser"
+require_relative "rubocop/isucon/memorize_methods"
 require_relative "rubocop/isucon/gda"
 
 RuboCop::Isucon::Inject.defaults!

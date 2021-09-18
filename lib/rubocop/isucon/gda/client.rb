@@ -21,7 +21,7 @@ module RuboCop
 
         # @return [Array<String>]
         def table_names
-          ast.from.targets.map(&:table_name)
+          ast.from.targets.map(&:table_name).compact.uniq
         end
 
         # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]

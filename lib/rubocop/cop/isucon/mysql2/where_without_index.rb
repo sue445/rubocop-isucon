@@ -26,76 +26,122 @@ module RuboCop
                 "(e.g. 'ALTER TABLE `%<table_name>s` ADD INDEX `index_%<column_name>s` (%<column_name>s)')"
 
           # @param node [RuboCop::AST::Node]
-          def on_send(node) # rubocop:disable Metrics/MethodLength
+          def on_send(node)
             return unless enabled_database?
 
             find_xquery(node) do |type, params|
               sql = xquery_param(type, params)
 
-              gda = RuboCop::Isucon::GDA::Client.new(sql)
+              root_gda = RuboCop::Isucon::GDA::Client.new(sql)
+              RuboCop::Isucon::GDA::NodePatcher.new.accept(root_gda.ast, RuboCop::Isucon::GDA::Client.normalize_sql(sql))
 
-              table_names = gda.table_names
+              next if exists_index_in_where_clause_columns?(root_gda)
 
-              next if exists_index_in_where_clause_columns?(gda, table_names)
-
-              loc =
-                case type
-                when :str
-                  sql_where_location_for_str(node, sql)
-                when :dstr
-                  sql_where_location_for_dstr(node)
-                end
-
-              next unless loc
-
-              column_name = gda.where_conditions[0].column_operand
-              table_name = find_table_name_from_column_name(table_names, column_name)
-              message = format(MSG, table_name: table_name, column_name: column_name)
-              add_offense(loc, message: message)
+              register_offense(type, node, root_gda)
             end
           end
 
           private
 
-          # @param node [RuboCop::AST::SendNode]
-          # @param sql [String]
-          def sql_where_location_for_str(node, sql)
-            select_pos = sql_select_location_begin_position(node)
-            return nil unless select_pos
+          def register_offense(type, node, root_gda)
+            root_gda.visit_all do |gda|
+              next if gda.where_conditions.empty?
 
-            where_pos = sql.index(/WHERE/i)
+              loc = offense_location(type, node, gda)
+              next unless loc
 
-            begin_pos = select_pos + where_pos
-            end_pos = begin_pos + 5
+              message = offense_message(gda)
+              add_offense(loc, message: message)
+            end
+          end
+
+          def offense_message(gda)
+            column_name = gda.where_conditions[0].column_operand
+            table_names = gda.table_names
+            table_name = find_table_name_from_column_name(table_names, column_name)
+            format(MSG, table_name: table_name, column_name: column_name)
+          end
+
+          def offense_location(type, node, gda) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+            where_first_ast =
+              gda.ast.where_cond.to_a.
+              select { |n| n.instance_of?(::GDA::Nodes::Operation) && n.operator }.first
+
+            where_first_location = where_first_ast.location
+            return nil unless where_first_location
+
+            select_begin_pos = sql_select_begin_position(type, node)
+            return nil unless select_begin_pos
+
+            offset = heredoc_offset(type, node, where_first_location.body)
+            begin_pos = select_begin_pos + where_first_location.begin_pos + offset
+            end_pos = begin_pos + where_first_ast.location.length
 
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
-          # @param node [RuboCop::AST::SendNode]
-          def sql_where_location_for_dstr(node)
+          # @param type [Symbol]
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer,nil]
+          def sql_select_begin_position(type, node)
+            case type
+            when :str
+              return sql_select_location_begin_position(node)
+            when :dstr
+              dstr_node = node.child_nodes[1]
+              return dstr_node.loc.heredoc_body.begin_pos if dstr_node&.dstr_type?
+            end
+            nil
+          end
+
+          def heredoc_offset(type, node, offense_body)
+            return 0 unless type == :dstr
+
+            heredoc_indent_type = heredoc_indent_type(node)
+            return 0 unless heredoc_indent_type == "~"
+
             dstr_node = node.child_nodes[1]
-            begin_pos = text_begin_position_within_heredoc(dstr_node, /WHERE/i)
-            return nil unless begin_pos
+            return 0 if !dstr_node || !dstr_node.dstr_type?
 
-            end_pos = begin_pos + 5
+            heredoc_body = dstr_node.loc.heredoc_body.source
+            heredoc_indent_level = indent_level(heredoc_body)
+            line_num = find_line_num(RuboCop::Isucon::GDA::Client.normalize_sql(heredoc_body), offense_body)
 
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+            heredoc_indent_level * line_num
           end
 
-          # @param gda [RuboCop::Isucon::GDA::Client]
-          # @param table_names [Array<String>]
+          # Returns '~', '-' or nil
+          def heredoc_indent_type(node)
+            # c.f. https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
+            node.source[/<<([~-])/, 1]
+          end
+
+          # @param source [String]
+          # @param str [String]
+          def find_line_num(source, str)
+            source.each_line.with_index do |line, i|
+              return i + 1 if line.include?(str)
+            end
+            0
+          end
+
+          # @param root_gda [RuboCop::Isucon::GDA::Client]
           # @return [Boolean]
-          def exists_index_in_where_clause_columns?(gda, table_names) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
-            table_names.each do |table_name|
-              indexes = connection.indexes(table_name)
-              index_first_columns = indexes.map { |index| index.columns[0] }
+          def exists_index_in_where_clause_columns?(root_gda) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+            root_gda.visit_all do |gda|
+              gda.table_names.each do |table_name|
+                indexes = connection.indexes(table_name)
+                index_first_columns = indexes.map { |index| index.columns[0] }
 
-              return true if gda.where_conditions.any? { |condition| index_first_columns.include?(condition.column_operand) }
+                return true if gda.where_conditions.any? do |condition|
+                                 index_first_columns.include?(condition.column_operand)
+                               end
 
-              primary_keys = connection.primary_keys(table_name)
-              unless primary_keys.empty?
-                where_columns = gda.where_conditions.map(&:column_operand)
-                return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
+                primary_keys = connection.primary_keys(table_name)
+                unless primary_keys.empty?
+                  where_columns = root_gda.where_conditions.map(&:column_operand)
+                  return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
+                end
               end
             end
 
