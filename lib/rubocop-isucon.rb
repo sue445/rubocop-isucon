@@ -14,6 +14,7 @@ require_relative "rubocop/isucon/gda_helper/where_condition"
 require_relative "rubocop/isucon/gda_ext"
 require_relative "rubocop/isucon/gda_node_patcher"
 require_relative "rubocop/isucon/gda_node_location"
+require_relative "rubocop/isucon/gda"
 
 RuboCop::Isucon::Inject.defaults!
 

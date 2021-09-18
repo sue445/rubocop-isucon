@@ -29,7 +29,7 @@ module RuboCop
       # @return [Array<RuboCop::Isucon::GdaHelper::WhereCondition>]
       def where_clause
         ast.where_cond.to_a.
-          select { |node| node.instance_of?(GDA::Nodes::Operation) && node.operator }.
+          select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }.
           map do |node|
             WhereCondition.new(
               operator: node.operator,
@@ -76,7 +76,7 @@ module RuboCop
 
         raise "@sql is required" unless @sql
 
-        @statement = GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
+        @statement = ::GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
       end
     end
   end
