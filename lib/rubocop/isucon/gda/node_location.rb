@@ -31,6 +31,11 @@ module RuboCop
             end_pos == other.end_pos &&
             body == other.body
         end
+
+        # @return [Integer]
+        def length
+          end_pos - begin_pos
+        end
       end
     end
   end
