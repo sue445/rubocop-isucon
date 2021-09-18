@@ -43,7 +43,7 @@ module RuboCop
           JSON.parse(statement.serialize)
         end
 
-        # @yieldparam gda [RuboCop::Isucon::GdaHelper]
+        # @yieldparam gda [RuboCop::Isucon::GDA::Client]
         def visit_subquery_recursive(&block)
           ast.from.targets.each do |target|
             next unless target.expr.select
@@ -54,7 +54,7 @@ module RuboCop
           end
         end
 
-        # @yieldparam gda [RuboCop::Isucon::GdaHelper]
+        # @yieldparam gda [RuboCop::Isucon::GDA::Client]
         def visit_all(&block)
           block.call(self)
           visit_subquery_recursive(&block)
