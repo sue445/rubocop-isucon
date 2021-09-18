@@ -60,12 +60,6 @@ module RuboCop
           visit_subquery_recursive(&block)
         end
 
-        # @param sql [String]
-        # @return [String]
-        def self.normalize_sql(sql)
-          sql.gsub("`", " ").gsub("?", PRACEHOLDER)
-        end
-
         private
 
         # @return [GDA::SQL::Statement]
@@ -74,7 +68,7 @@ module RuboCop
 
           raise "@sql is required" unless @sql
 
-          @statement = ::GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
+          @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
         end
       end
     end

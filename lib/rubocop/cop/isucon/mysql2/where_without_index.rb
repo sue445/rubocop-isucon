@@ -33,7 +33,7 @@ module RuboCop
               sql = xquery_param(type, params)
 
               root_gda = RuboCop::Isucon::GDA::Client.new(sql)
-              RuboCop::Isucon::GDA::NodePatcher.new.accept(root_gda.ast, RuboCop::Isucon::GDA::Client.normalize_sql(sql))
+              RuboCop::Isucon::GDA::NodePatcher.new.accept(root_gda.ast, RuboCop::Isucon::GDA.normalize_sql(sql))
 
               next if exists_index_in_where_clause_columns?(root_gda)
 
@@ -105,7 +105,7 @@ module RuboCop
 
             heredoc_body = dstr_node.loc.heredoc_body.source
             heredoc_indent_level = indent_level(heredoc_body)
-            line_num = find_line_num(RuboCop::Isucon::GDA::Client.normalize_sql(heredoc_body), offense_body)
+            line_num = find_line_num(RuboCop::Isucon::GDA.normalize_sql(heredoc_body), offense_body)
 
             heredoc_indent_level * line_num
           end
