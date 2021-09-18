@@ -3,7 +3,7 @@
 module RuboCop
   module Isucon
     module GDA
-      # response of {RuboCop::Isucon::GdaHelper#where_clause}
+      # response of {RuboCop::Isucon::GDA::Client#where_clause}
       class WhereCondition
         # @!attribute [rw] operator
         #   @return [String]

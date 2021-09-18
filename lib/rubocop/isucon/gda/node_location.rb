@@ -5,16 +5,13 @@ module RuboCop
     module GDA
       # Location in SQL
       class NodeLocation
-        # @!attribute [r] begin_pos
-        #   @return [Integer]
+        # @return [Integer]
         attr_reader :begin_pos
 
-        # @!attribute [r] end_pos
-        #   @return [Integer]
+        # @return [Integer]
         attr_reader :end_pos
 
-        # @!attribute [r] body
-        #   @return [String]
+        # @return [String]
         attr_reader :body
 
         # @param begin_pos [Integer]
@@ -26,7 +23,7 @@ module RuboCop
           @body = body
         end
 
-        # @param [RuboCop::Isucon::GDA::NodeLocation]
+        # @param other [RuboCop::Isucon::GDA::NodeLocation]
         # @return [Boolean]
         def ==(other)
           other.is_a?(NodeLocation) &&

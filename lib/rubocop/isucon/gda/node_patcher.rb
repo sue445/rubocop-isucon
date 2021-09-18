@@ -3,7 +3,7 @@
 module RuboCop
   module Isucon
     module GDA
-      # Monkey patching to #{GDA::Nodes::Node}
+      # Monkey patching to #{::GDA::Nodes::Node}
       class NodePatcher < ::GDA::Visitors::Visitor
         # @param node [GDA::Nodes::Node]
         # @param sql [String]
@@ -34,7 +34,7 @@ module RuboCop
         end
 
         # @param [Regexp] pattern
-        # @return [RuboCop::Isucon::GdaNodeLocation]
+        # @return [RuboCop::Isucon::GDA::NodeLocation]
         def search_location(pattern)
           begin_pos = @sql.index(pattern, @current_pos)
           length = Regexp.last_match[0].length
