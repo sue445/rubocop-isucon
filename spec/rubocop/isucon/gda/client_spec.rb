@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Isucon::GdaHelper do
-  let(:gda) { RuboCop::Isucon::GdaHelper.new(sql) }
+RSpec.describe RuboCop::Isucon::GDA::Client do
+  let(:gda) { RuboCop::Isucon::GDA::Client.new(sql) }
 
-  let(:placeholder) { RuboCop::Isucon::GdaHelper::PRACEHOLDER }
+  let(:placeholder) { RuboCop::Isucon::GDA::Client::PRACEHOLDER }
 
   describe "#table_names" do
     subject { gda.table_names }
@@ -86,7 +86,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
   end
 
   describe ".normalize_sql" do
-    subject { RuboCop::Isucon::GdaHelper.normalize_sql(sql) }
+    subject { RuboCop::Isucon::GDA::Client.normalize_sql(sql) }
 
     context "contains `" do
       let(:sql) { "SELECT * FROM `chair` WHERE `stock` > 0 ORDER BY `price` ASC, `id` ASC LIMIT 10" }
@@ -135,7 +135,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       SQL
     end
 
-    it { expect { |b| gda.visit_subquery_recursive(&b) }.to yield_with_args(RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.visit_subquery_recursive(&b) }.to yield_with_args(RuboCop::Isucon::GDA::Client) }
     it { expect { |b| gda.visit_subquery_recursive(&b) }.to yield_control.at_least(1).times }
   end
 
@@ -160,7 +160,7 @@ RSpec.describe RuboCop::Isucon::GdaHelper do
       SQL
     end
 
-    it { expect { |b| gda.visit_all(&b) }.to yield_successive_args(RuboCop::Isucon::GdaHelper, RuboCop::Isucon::GdaHelper) }
+    it { expect { |b| gda.visit_all(&b) }.to yield_successive_args(RuboCop::Isucon::GDA::Client, RuboCop::Isucon::GDA::Client) }
     it { expect { |b| gda.visit_all(&b) }.to yield_control.at_least(2).times }
   end
 end
