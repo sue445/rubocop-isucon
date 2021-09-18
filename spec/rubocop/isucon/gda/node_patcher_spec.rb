@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Isucon::GdaNodePatcher do
-  let(:patcher) { RuboCop::Isucon::GdaNodePatcher.new }
+RSpec.describe RuboCop::Isucon::GDA::NodePatcher do
+  let(:patcher) { RuboCop::Isucon::GDA::NodePatcher.new }
 
   def location(begin_pos:, end_pos:, body:)
-    RuboCop::Isucon::GdaNodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: body)
+    RuboCop::Isucon::GDA::NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: body)
   end
 
   describe "#accept" do

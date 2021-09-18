@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Isucon::GdaHelper::WhereCondition do
+RSpec.describe RuboCop::Isucon::GDA::WhereCondition do
   let(:condition) do
-    RuboCop::Isucon::GdaHelper::WhereCondition.new(operator: operator, operands: operands)
+    RuboCop::Isucon::GDA::WhereCondition.new(operator: operator, operands: operands)
   end
 
   describe "#column_operand" do

@@ -32,7 +32,7 @@ module RuboCop
             find_xquery(node) do |type, params|
               sql = xquery_param(type, params)
 
-              gda = RuboCop::Isucon::GdaHelper.new(sql)
+              gda = RuboCop::Isucon::GDA::Client.new(sql)
 
               table_names = gda.table_names
 
@@ -82,7 +82,7 @@ module RuboCop
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
-          # @param gda [RuboCop::Isucon::GdaHelper]
+          # @param gda [RuboCop::Isucon::GDA::Client]
           # @param table_names [Array<String>]
           # @return [Boolean]
           def exists_index_in_where_clause_columns?(gda, table_names) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
