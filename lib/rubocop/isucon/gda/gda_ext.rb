@@ -85,7 +85,6 @@ GDA::Nodes::Operation.class_eval do
   extend RuboCop::Isucon::MemorizeMethods
 
   memorize :operands
-  # memorize :operator
 end
 
 GDA::Nodes::Function.class_eval do

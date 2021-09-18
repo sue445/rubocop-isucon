@@ -17,6 +17,15 @@ module RuboCop
         def initialize(sql, ast: nil)
           @sql = sql
           @ast = ast || statement.ast
+
+          if ast
+            # called from subquery AST
+            @ast = ast
+          else
+            # called from root AST
+            @ast = statement.ast
+            RuboCop::Isucon::GDA::NodePatcher.new.accept(@ast, RuboCop::Isucon::GDA.normalize_sql(sql))
+          end
         end
 
         # @return [Array<String>]
@@ -60,12 +69,6 @@ module RuboCop
           visit_subquery_recursive(&block)
         end
 
-        # @param sql [String]
-        # @return [String]
-        def self.normalize_sql(sql)
-          sql.gsub("`", " ").gsub("?", PRACEHOLDER)
-        end
-
         private
 
         # @return [GDA::SQL::Statement]
@@ -74,7 +77,7 @@ module RuboCop
 
           raise "@sql is required" unless @sql
 
-          @statement = ::GDA::SQL::Parser.new.parse(self.class.normalize_sql(@sql))
+          @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
         end
       end
     end

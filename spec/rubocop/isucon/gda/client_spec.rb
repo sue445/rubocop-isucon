@@ -85,22 +85,6 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
     end
   end
 
-  describe ".normalize_sql" do
-    subject { RuboCop::Isucon::GDA::Client.normalize_sql(sql) }
-
-    context "contains `" do
-      let(:sql) { "SELECT * FROM `chair` WHERE `stock` > 0 ORDER BY `price` ASC, `id` ASC LIMIT 10" }
-
-      it { should eq "SELECT * FROM  chair  WHERE  stock  > 0 ORDER BY  price  ASC,  id  ASC LIMIT 10" }
-    end
-
-    context "contains ?" do
-      let(:sql) { "SELECT id FROM categories WHERE parent_id = ?" }
-
-      it { should eq "SELECT id FROM categories WHERE parent_id = #{placeholder}" }
-    end
-  end
-
   describe "#serialize_statement" do
     subject { gda.serialize_statement }
 
