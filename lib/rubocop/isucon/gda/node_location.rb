@@ -29,7 +29,7 @@ module RuboCop
         # @param [RuboCop::Isucon::GDA::NodeLocation]
         # @return [Boolean]
         def ==(other)
-          other.is_a?(RuboCop::Isucon::GDA::NodeLocation) &&
+          other.is_a?(NodeLocation) &&
             begin_pos == other.begin_pos &&
             end_pos == other.end_pos &&
             body == other.body
