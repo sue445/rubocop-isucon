@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 GDA::Nodes::Node.class_eval do
+  # @!attribute [rw] location
+  #   @return [RuboCop::Isucon::GDA::NodeLocation]
   attr_accessor :location
 end
 
