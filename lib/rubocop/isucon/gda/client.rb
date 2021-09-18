@@ -29,11 +29,11 @@ module RuboCop
           ast.where_cond.to_a.
             select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }.
             map do |node|
-            WhereCondition.new(
-              operator: node.operator,
-              operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
-            )
-          end
+              WhereCondition.new(
+                operator: node.operator,
+                operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
+              )
+            end
         end
 
         # @return [Hash,nil]
