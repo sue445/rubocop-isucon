@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rubocop/isucon/gda/where_condition"
+
 module RuboCop
   module Isucon
     module GDA # rubocop:disable Style/Documentation

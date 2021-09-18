@@ -26,12 +26,12 @@ module RuboCop
         ast.from.targets.map(&:table_name)
       end
 
-      # @return [Array<RuboCop::Isucon::GdaHelper::WhereCondition>]
+      # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]
       def where_clause
         ast.where_cond.to_a.
           select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }.
           map do |node|
-            WhereCondition.new(
+            RuboCop::Isucon::GDA::WhereCondition.new(
               operator: node.operator,
               operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
             )
