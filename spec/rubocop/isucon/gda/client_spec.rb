@@ -3,7 +3,7 @@
 RSpec.describe RuboCop::Isucon::GDA::Client do
   let(:gda) { RuboCop::Isucon::GDA::Client.new(sql) }
 
-  let(:placeholder) { RuboCop::Isucon::GDA::Client::PRACEHOLDER }
+  let(:placeholder) { RuboCop::Isucon::GDA::PRACEHOLDER }
 
   describe "#table_names" do
     subject { gda.table_names }

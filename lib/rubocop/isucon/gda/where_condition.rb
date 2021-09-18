@@ -52,7 +52,7 @@ module RuboCop
         # @return [Symbol]
         def operand_type(operand)
           case operand
-          when RuboCop::Isucon::GDA::Client::PRACEHOLDER, /^'.+'$/, /^[0-9.]+$/
+          when PRACEHOLDER, /^'.+'$/, /^[0-9.]+$/
             :value
           when /^[A-Za-z0-9_$]*$/
             :column

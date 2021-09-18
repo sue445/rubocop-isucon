@@ -8,8 +8,6 @@ module RuboCop
       # @see https://github.com/tenderlove/gda
       # @see https://gitlab.gnome.org/GNOME/libgda
       class Client
-        PRACEHOLDER = "0"
-
         # @!attribute [r] ast
         #   @return [GDA::Nodes::Select]
         attr_reader :ast
