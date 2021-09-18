@@ -40,7 +40,7 @@ module RuboCop
         end_pos = begin_pos + length
         @current_pos = end_pos
 
-        GdaNodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: Regexp.last_match[0])
+        RuboCop::Isucon::GDA::NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: Regexp.last_match[0])
       end
     end
   end
