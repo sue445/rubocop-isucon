@@ -50,8 +50,8 @@ jobs:
           bundle update --jobs $(nproc) --retry 3
 
       - run: bundle exec rspec
-
       - run: bundle exec rubocop
+      - run: bundle exec yard
 
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
