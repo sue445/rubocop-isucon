@@ -55,7 +55,7 @@ module RuboCop
               return query_node.loc.begin.end_pos
             end
 
-            raise ArgumentError, "loc.child_nodes is empty"
+            raise ArgumentError, "node.child_nodes is empty"
           end
 
           # @param dstr_node [RuboCop::AST::DstrNode]
