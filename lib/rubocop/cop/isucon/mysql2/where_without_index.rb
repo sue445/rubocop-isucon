@@ -135,7 +135,7 @@ module RuboCop
 
                 primary_keys = connection.primary_keys(table_name)
                 unless primary_keys.empty?
-                  where_columns = root_gda.where_conditions.map(&:column_operand)
+                  where_columns = gda.where_conditions.map(&:column_operand)
                   return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
                 end
               end
