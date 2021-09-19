@@ -16,7 +16,6 @@ module RuboCop
         # @note if `sql` is `nil`, `ast` is required
         def initialize(sql, ast: nil)
           @sql = sql
-          @ast = ast || statement.ast
 
           if ast
             # called from subquery AST
