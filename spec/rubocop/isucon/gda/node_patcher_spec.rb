@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Isucon::GDA::NodePatcher do
-  let(:patcher) { RuboCop::Isucon::GDA::NodePatcher.new }
+  let(:patcher) { RuboCop::Isucon::GDA::NodePatcher.new(sql) }
 
   def location(begin_pos:, end_pos:, body:)
     RuboCop::Isucon::GDA::NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: body)
   end
 
   describe "#accept" do
-    subject { patcher.accept(node, sql) }
+    subject { patcher.accept(node) }
 
     let(:node) { GDA::SQL::Parser.new.parse(sql).ast }
 

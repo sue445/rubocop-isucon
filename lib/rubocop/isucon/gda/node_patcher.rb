@@ -5,12 +5,11 @@ module RuboCop
     module GDA
       # Monkey patching to `GDA::Nodes::Node`
       class NodePatcher < ::GDA::Visitors::Visitor
-        # @param node [GDA::Nodes::Node]
         # @param sql [String]
-        def accept(node, sql)
+        def initialize(sql)
           @sql = sql
           @current_pos = 0
-          super(node)
+          super()
         end
 
         private
