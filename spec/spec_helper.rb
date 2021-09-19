@@ -4,6 +4,7 @@ require "rubocop-isucon"
 require "rubocop/rspec/support"
 require "pry"
 require "active_record/tasks/database_tasks"
+require "rspec/its"
 
 Dir["#{__dir__}/support/**/*.rb"].sort.each { |f| require f }
 
