@@ -3,10 +3,7 @@
 module RuboCop
   module Isucon
     module GDA
-      # Wrapper for `GDA`
-      #
-      # @see https://github.com/tenderlove/gda
-      # @see https://gitlab.gnome.org/GNOME/libgda
+      # Client for `GDA`
       class Client
         # @return [GDA::Nodes::Select]
         attr_reader :ast
