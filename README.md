@@ -4,7 +4,31 @@ RuboCop plugin for [ISUCON](https://github.com/isucon)'s ruby reference implemen
 [![Build Status](https://github.com/sue445/rubocop-isucon/workflows/test/badge.svg?branch=main)](https://github.com/sue445/rubocop-isucon/actions?query=workflow%3Atest)
 
 ## Installation
+At first, install [`libgda`](https://gitlab.gnome.org/GNOME/libgda)
 
+### for Mac
+```bash
+brew install libgda
+```
+
+### for Ubuntu, Debian
+```bash
+apt-get install -y libgda-5.0
+```
+
+### for CentOS 7
+```bash
+yum install -y epel-release
+yum --enablerepo=epel install -y libgda-devel
+```
+
+### for CentOS 8+
+```bash
+dnf install -y https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm
+dnf --enablerepo=raven install -y libgda-devel
+```
+
+### Installing gem
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -20,30 +44,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install rubocop-isucon
-
-## Requires
-### libgda
-#### for Mac
-```bash
-brew install libgda
-```
-
-#### for Ubuntu, Debian
-```bash
-apt-get install -y libgda-5.0
-```
-
-#### for CentOS 7
-```bash
-yum install -y epel-release
-yum --enablerepo=epel install -y libgda-devel
-```
-
-#### for CentOS 8+
-```bash
-dnf install -y https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm
-dnf --enablerepo=raven install -y libgda-devel
-```
 
 ## Usage
 
