@@ -14,7 +14,7 @@ module RuboCop
 
         private
 
-        # @param [GDA::Nodes::Operation]
+        # @param node [GDA::Nodes::Operation]
         def visit_GDA_Nodes_Operation(node) # rubocop:disable Naming/MethodName -- This method is called from `GDA::Visitors::Visitor#visit` c.f. https://github.com/tenderlove/gda/blob/v1.1.0/lib/gda/visitors/visitor.rb#L13-L17
           return super unless node.operator
 
@@ -26,7 +26,7 @@ module RuboCop
           super
         end
 
-        # @param [GDA::Nodes::Operation]
+        # @param node [GDA::Nodes::Operation]
         # @return [Regexp,nil]
         def operand_pattern(node)
           case node.operands.count
@@ -37,7 +37,7 @@ module RuboCop
           end
         end
 
-        # @param [Regexp] pattern
+        # @param pattern [Regexp]
         # @return [RuboCop::Isucon::GDA::NodeLocation]
         def search_location(pattern)
           begin_pos = @sql.index(pattern, @current_pos)
