@@ -16,7 +16,7 @@ module RuboCop
         private
 
         # @param [GDA::Nodes::Operation]
-        def visit_GDA_Nodes_Operation(node) # rubocop:disable Naming/MethodName
+        def visit_GDA_Nodes_Operation(node) # rubocop:disable Naming/MethodName -- This method is called from `GDA::Visitors::Visitor#visit` c.f. https://github.com/tenderlove/gda/blob/v1.1.0/lib/gda/visitors/visitor.rb#L13-L17
           return super unless node.operator
 
           pattern = operand_pattern(node)
