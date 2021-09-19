@@ -42,6 +42,9 @@ module RuboCop
 
           private
 
+          # @param type [Symbol]
+          # @param node [RuboCop::AST::Node]
+          # @param root_gda [RuboCop::Isucon::GDA::Client]
           def register_offense(type, node, root_gda)
             root_gda.visit_all do |gda|
               next if gda.where_conditions.empty?
@@ -54,12 +57,16 @@ module RuboCop
             end
           end
 
+          # @param gda [RuboCop::Isucon::GDA::Client]
           def offense_message(gda)
             column_name = gda.where_conditions[0].column_operand
             table_name = find_table_name_from_column_name(gda.table_names, column_name)
             format(MSG, table_name: table_name, column_name: column_name)
           end
 
+          # @param type [Symbol]
+          # @param node [RuboCop::AST::Node]
+          # @param gda [RuboCop::Isucon::GDA::Client]
           def offense_location(type, node, gda)
             where_first_ast = gda.where_nodes.first
 
@@ -90,6 +97,9 @@ module RuboCop
             nil
           end
 
+          # @param type [Symbol]
+          # @param node [RuboCop::AST::Node]
+          # @param offense_body [String]
           def heredoc_offset(type, node, offense_body)
             return 0 unless type == :dstr
 
