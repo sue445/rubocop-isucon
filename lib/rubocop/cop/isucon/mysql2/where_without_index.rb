@@ -56,8 +56,7 @@ module RuboCop
 
           def offense_message(gda)
             column_name = gda.where_conditions[0].column_operand
-            table_names = gda.table_names
-            table_name = find_table_name_from_column_name(table_names, column_name)
+            table_name = find_table_name_from_column_name(gda.table_names, column_name)
             format(MSG, table_name: table_name, column_name: column_name)
           end
 
