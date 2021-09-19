@@ -123,25 +123,38 @@ module RuboCop
 
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           # @return [Boolean]
-          def exists_index_in_where_clause_columns?(root_gda) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+          def exists_index_in_where_clause_columns?(root_gda)
             root_gda.visit_all do |gda|
               gda.table_names.each do |table_name|
-                indexes = connection.indexes(table_name)
-                index_first_columns = indexes.map { |index| index.columns[0] }
-
-                return true if gda.where_conditions.any? do |condition|
-                                 index_first_columns.include?(condition.column_operand)
-                               end
-
-                primary_keys = connection.primary_keys(table_name)
-                unless primary_keys.empty?
-                  where_columns = gda.where_conditions.map(&:column_operand)
-                  return true if primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
-                end
+                return true if covered_where_column_in_index?(gda, table_name)
+                return true if covered_where_column_in_primary_key?(gda, table_name)
               end
             end
 
             false
+          end
+
+          # @param gda [RuboCop::Isucon::GDA::Client]
+          # @param table_name [String]
+          # @return [Boolean]
+          def covered_where_column_in_index?(gda, table_name)
+            indexes = connection.indexes(table_name)
+            index_first_columns = indexes.map { |index| index.columns[0] }
+
+            gda.where_conditions.any? do |condition|
+              index_first_columns.include?(condition.column_operand)
+            end
+          end
+
+          # @param gda [RuboCop::Isucon::GDA::Client]
+          # @param table_name [String]
+          # @return [Boolean]
+          def covered_where_column_in_primary_key?(gda, table_name)
+            primary_keys = connection.primary_keys(table_name)
+            return false if primary_keys.empty?
+
+            where_columns = gda.where_conditions.map(&:column_operand)
+            primary_keys.all? { |primary_key| where_columns.include?(primary_key) }
           end
 
           # @param table_names [Array<String>]
