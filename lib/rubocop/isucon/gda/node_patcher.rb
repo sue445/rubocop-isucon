@@ -15,6 +15,7 @@ module RuboCop
 
         private
 
+        # @param [GDA::Nodes::Operation]
         def visit_GDA_Nodes_Operation(node) # rubocop:disable Naming/MethodName
           return super unless node.operator
 
