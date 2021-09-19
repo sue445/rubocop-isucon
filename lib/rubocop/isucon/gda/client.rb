@@ -73,10 +73,11 @@ module RuboCop
         private
 
         # @return [GDA::SQL::Statement]
+        # @raise [ArgumentError] called from subquery
         def statement
           return @statement if @statement
 
-          raise "@sql is required" unless @sql
+          raise ArgumentError, "@sql is required" unless @sql
 
           @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
         end
