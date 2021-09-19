@@ -34,14 +34,19 @@ module RuboCop
 
         # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]
         def where_conditions
-          ast.where_cond.to_a.
-            select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }.
+          where_nodes.
             map do |node|
               WhereCondition.new(
                 operator: node.operator,
                 operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
               )
             end
+        end
+
+        # @return [Array<GDA::Nodes::Operation>]
+        def where_nodes
+          ast.where_cond.to_a.
+            select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }
         end
 
         # @return [Hash,nil]

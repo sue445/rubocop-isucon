@@ -60,10 +60,8 @@ module RuboCop
             format(MSG, table_name: table_name, column_name: column_name)
           end
 
-          def offense_location(type, node, gda) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
-            where_first_ast =
-              gda.ast.where_cond.to_a.
-              select { |n| n.instance_of?(::GDA::Nodes::Operation) && n.operator }.first
+          def offense_location(type, node, gda)
+            where_first_ast = gda.where_nodes.first
 
             where_first_location = where_first_ast.location
             return nil unless where_first_location
