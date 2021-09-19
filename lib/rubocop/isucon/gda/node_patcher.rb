@@ -41,6 +41,9 @@ module RuboCop
         # @return [RuboCop::Isucon::GDA::NodeLocation]
         def search_location(pattern)
           begin_pos = @sql.index(pattern, @current_pos)
+
+          return nil unless Regexp.last_match
+
           length = Regexp.last_match[0].length
           end_pos = begin_pos + length
           @current_pos = end_pos
