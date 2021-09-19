@@ -8,7 +8,10 @@ require_relative "gda/where_condition"
 
 module RuboCop
   module Isucon
-    # `GDA` classes
+    # `GDA` helper classes
+    #
+    # @see https://github.com/tenderlove/gda
+    # @see https://gitlab.gnome.org/GNOME/libgda
     module GDA
       PRACEHOLDER = "0"
 

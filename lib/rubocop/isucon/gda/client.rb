@@ -3,10 +3,7 @@
 module RuboCop
   module Isucon
     module GDA
-      # Wrapper for `GDA`
-      #
-      # @see https://github.com/tenderlove/gda
-      # @see https://gitlab.gnome.org/GNOME/libgda
+      # Client for `GDA`
       class Client
         # @return [GDA::Nodes::Select]
         attr_reader :ast
@@ -34,14 +31,19 @@ module RuboCop
 
         # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]
         def where_conditions
-          ast.where_cond.to_a.
-            select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }.
+          where_nodes.
             map do |node|
               WhereCondition.new(
                 operator: node.operator,
                 operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
               )
             end
+        end
+
+        # @return [Array<GDA::Nodes::Operation>]
+        def where_nodes
+          ast.where_cond.to_a.
+            select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }
         end
 
         # @return [Hash,nil]
@@ -71,10 +73,11 @@ module RuboCop
         private
 
         # @return [GDA::SQL::Statement]
+        # @raise [ArgumentError] called from subquery
         def statement
           return @statement if @statement
 
-          raise "@sql is required" unless @sql
+          raise ArgumentError, "@sql is required" unless @sql
 
           @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
         end

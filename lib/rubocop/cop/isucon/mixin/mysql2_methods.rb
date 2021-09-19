@@ -29,6 +29,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           # @return [Integer]
+          # @raise [ArgumentError] `node` is invalid
           def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
             if node.child_nodes.count >= 2
               # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
@@ -54,7 +55,7 @@ module RuboCop
               return query_node.loc.begin.end_pos
             end
 
-            raise "loc.child_nodes is empty"
+            raise ArgumentError, "loc.child_nodes is empty"
           end
 
           # @param dstr_node [RuboCop::AST::DstrNode]

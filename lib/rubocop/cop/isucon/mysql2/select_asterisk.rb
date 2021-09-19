@@ -24,20 +24,13 @@ module RuboCop
           MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
           # @param node [RuboCop::AST::Node]
-          def on_send(node) # rubocop:disable Metrics/MethodLength
+          def on_send(node)
             find_xquery(node) do |type, params|
               sql = xquery_param(type, params)
 
               next unless sql.match?(/^\s*SELECT\s+\*/i)
 
-              loc =
-                case type
-                when :str
-                  sql_select_location_for_str(node, sql)
-                when :dstr
-                  sql_select_location_for_dstr(node)
-                end
-
+              loc = sql_select_location(type, node, sql)
               next unless loc
 
               add_offense(loc) do |corrector|
@@ -48,8 +41,22 @@ module RuboCop
 
           private
 
+          # @param type [Symbol]
           # @param node [RuboCop::AST::SendNode]
           # @param sql [String]
+          # @return [Parser::Source::Range,nil]
+          def sql_select_location(type, node, sql)
+            case type
+            when :str
+              sql_select_location_for_str(node, sql)
+            when :dstr
+              sql_select_location_for_dstr(node)
+            end
+          end
+
+          # @param node [RuboCop::AST::SendNode]
+          # @param sql [String]
+          # @return [Parser::Source::Range,nil]
           def sql_select_location_for_str(node, sql)
             asterisk_pos = sql.index("*")
 
@@ -62,13 +69,14 @@ module RuboCop
           end
 
           # @param node [RuboCop::AST::SendNode]
+          # @return [Parser::Source::Range,nil]
           def sql_select_location_for_dstr(node)
             dstr_node = node.child_nodes[1]
 
             begin_pos = text_begin_position_within_heredoc(dstr_node, /SELECT/i)
             end_pos   = text_begin_position_within_heredoc(dstr_node, /\*/)
 
-            return if !begin_pos || !end_pos
+            return nil if !begin_pos || !end_pos
 
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos + 1)
           end
