@@ -15,22 +15,27 @@ module RuboCop
 
         private
 
-        def visit_GDA_Nodes_Operation(node) # rubocop:disable Naming/MethodName,Metrics/MethodLength
+        # @param [GDA::Nodes::Operation]
+        def visit_GDA_Nodes_Operation(node) # rubocop:disable Naming/MethodName
           return super unless node.operator
 
-          pattern =
-            case node.operands.count
-            when 1
-              /#{node.operands[0].value}\s*#{node.operator}/
-            when 2
-              /#{node.operands[0].value}\s*#{node.operator}\s*#{node.operands[1].value}/
-            else
-              return super
-            end
+          pattern = operand_pattern(node)
+          return super unless pattern
 
           node.location = search_location(pattern)
 
           super
+        end
+
+        # @param [GDA::Nodes::Operation]
+        # @return [Regexp,nil]
+        def operand_pattern(node)
+          case node.operands.count
+          when 1
+            /#{node.operands[0].value}\s*#{node.operator}/
+          when 2
+            /#{node.operands[0].value}\s*#{node.operator}\s*#{node.operands[1].value}/
+          end
         end
 
         # @param [Regexp] pattern
