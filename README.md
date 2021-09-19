@@ -4,7 +4,7 @@ RuboCop plugin for [ISUCON](https://github.com/isucon)'s ruby reference implemen
 [![Build Status](https://github.com/sue445/rubocop-isucon/workflows/test/badge.svg?branch=main)](https://github.com/sue445/rubocop-isucon/actions?query=workflow%3Atest)
 
 ## Installation
-At first, install [`libgda`](https://gitlab.gnome.org/GNOME/libgda)
+At first, install [libgda](https://gitlab.gnome.org/GNOME/libgda)
 
 ### for Mac
 ```bash
