@@ -4,6 +4,13 @@ GDA::Nodes::Node.class_eval do
   # @!attribute [rw] location
   #   @return [RuboCop::Isucon::GDA::NodeLocation]
   attr_accessor :location
+
+  # @return [String]
+  def inspect
+    # NOTE: Suppress the inclusion of instance variables in `#inspect`
+    encoded_object_id = super[/#<#{self.class.name}:0x([0-9a-z]{16})/, 1]
+    "#<#{self.class.name}:0x#{encoded_object_id}>"
+  end
 end
 
 GDA::Nodes::Select.class_eval do
