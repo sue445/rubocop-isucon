@@ -78,7 +78,7 @@ module RuboCop
 
           # @param dstr_node [RuboCop::AST::DstrNode]
           # @param pattern [Regexp]
-          # @return [Integer]
+          # @return [Integer,nil]
           def text_begin_position_within_heredoc(dstr_node, pattern)
             pattern_str_node = dstr_node.child_nodes.find { |str_node| str_node.value.match?(pattern) }
             return nil unless pattern_str_node
