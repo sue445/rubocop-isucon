@@ -26,6 +26,9 @@ Metrics/BlockLength:
     - "spec/**/*"
     - "*.gemspec"
 
+Metrics/MethodLength:
+  Max: 11
+
 Naming/FileName:
  Exclude:
    - lib/rubocop-isucon.rb

@@ -17,7 +17,7 @@ module RuboCop
     #   alias_method :foo, :foo_with_cache
     module MemorizeMethods
       # @param method_name [String,Symbol]
-      def memorize(method_name) # rubocop:disable Metrics/MethodLength
+      def memorize(method_name)
         define_method "#{method_name}_with_cache" do
           if instance_variable_get("@#{method_name}_with_cache")
             instance_variable_get("@#{method_name}_with_cache")
