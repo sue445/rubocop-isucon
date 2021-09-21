@@ -4,12 +4,12 @@ module RuboCop
   module Isucon
     # Memorize helper
     #
-    # @example usage
+    # @example Usage
     #   extends RuboCop::Isucon::MemorizeMethods
     #
     #   memorize :foo
     #
-    # @example generated followings
+    # @example Generated followings
     #   def foo_with_cache
     #     @foo_with_cache ||= foo_without_cache
     #   end
