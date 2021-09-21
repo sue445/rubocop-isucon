@@ -67,6 +67,7 @@ module RuboCop
           # @param type [Symbol]
           # @param node [RuboCop::AST::Node]
           # @param gda [RuboCop::Isucon::GDA::Client]
+          # @return [Parser::Source::Range,nil]
           def offense_location(type, node, gda)
             where_first_ast = gda.where_nodes.first
 
