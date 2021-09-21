@@ -101,6 +101,7 @@ module RuboCop
           # @param type [Symbol]
           # @param node [RuboCop::AST::Node]
           # @param offense_body [String]
+          # @return [Integer]
           def heredoc_offset(type, node, offense_body)
             return 0 unless type == :dstr
 
@@ -118,6 +119,9 @@ module RuboCop
           end
 
           # Returns '~', '-' or nil
+          #
+          # @param node [RuboCop::AST::Node]
+          # @return [String,nil] '~', '-' or nil
           def heredoc_indent_type(node)
             # c.f. https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
             node.source[/<<([~-])/, 1]
@@ -125,6 +129,7 @@ module RuboCop
 
           # @param source [String]
           # @param str [String]
+          # @return [Integer]
           def find_line_num(source, str)
             source.each_line.with_index do |line, i|
               return i + 1 if line.include?(str)
