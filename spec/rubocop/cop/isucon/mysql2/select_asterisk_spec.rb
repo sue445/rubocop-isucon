@@ -37,7 +37,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
           end
         end
 
-        context "multiple line SQL" do
+        context "multiple line SQL (heredoc)" do
           it "registers an offense and correct" do
             expect_offense(<<~RUBY)
               db.xquery(<<~SQL, jia_user_id)
@@ -54,6 +54,36 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
                 WHERE `jia_user_id` = ?
                 ORDER BY `id` DESC
               SQL
+            RUBY
+          end
+        end
+
+        context "multiple line SQL (escape is added at the end of the line)" do
+          include_context :database_cop do
+            let(:schema) { "schemas/create_classes.rb" }
+          end
+
+          it "registers an offense and correct" do
+            # https://github.com/isucon/isucon11-final/blob/dd22bc5cea4d8acda14c2596bcfe10e07f19018c/webapp/ruby/app.rb#L288-L294
+            expect_offense(<<~RUBY)
+              classes = db.xquery(
+                "SELECT *" \\
+                 ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+                " FROM `classes`" \\
+                " WHERE `course_id` = ?" \\
+                " ORDER BY `part` DESC",
+                course[:id]
+              )
+            RUBY
+
+            expect_correction(<<~RUBY)
+              classes = db.xquery(
+                "SELECT `id`, `course_id`, `part`, `title`, `description`, `submission_closed`" \\
+                " FROM `classes`" \\
+                " WHERE `course_id` = ?" \\
+                " ORDER BY `part` DESC",
+                course[:id]
+              )
             RUBY
           end
         end
