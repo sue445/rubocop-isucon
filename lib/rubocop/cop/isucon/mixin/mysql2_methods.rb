@@ -28,34 +28,52 @@ module RuboCop
           end
 
           # @param node [RuboCop::AST::Node]
-          # @return [Integer]
+          # @return [Integer,nil]
           # @raise [ArgumentError] `node` is invalid
-          def sql_select_location_begin_position(node) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+          def sql_select_location_begin_position(node)
             if node.child_nodes.count >= 2
               # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
-              query_node = node.child_nodes.find(&:str_type?)
-              return nil unless query_node
-
-              return query_node.loc.begin.end_pos
+              return sql_select_location_begin_position_for_without_substitution(node)
             end
 
             if node.child_nodes.count == 1
               if node.child_nodes[0].child_nodes.count > 1
                 # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
-                query_node = node.child_nodes[0].child_nodes.find(&:str_type?)
-                return nil unless query_node
-
-                return query_node.loc.begin.end_pos
+                return sql_select_location_begin_position_for_with_substitution(node)
               end
 
               # end of method
-              query_node = node.child_nodes[0].child_nodes[0].child_nodes.find(&:str_type?)
-              return nil unless query_node
-
-              return query_node.loc.begin.end_pos
+              return sql_select_location_begin_position_for_end_of_method(node)
             end
 
             raise ArgumentError, "node.child_nodes is empty"
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer,nil]
+          def sql_select_location_begin_position_for_without_substitution(node)
+            query_node = node.child_nodes.find(&:str_type?)
+            return nil unless query_node
+
+            query_node.loc.begin.end_pos
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer,nil]
+          def sql_select_location_begin_position_for_with_substitution(node)
+            query_node = node.child_nodes[0].child_nodes.find(&:str_type?)
+            return nil unless query_node
+
+            query_node.loc.begin.end_pos
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer,nil]
+          def sql_select_location_begin_position_for_end_of_method(node)
+            query_node = node.child_nodes[0].child_nodes[0].child_nodes.find(&:str_type?)
+            return nil unless query_node
+
+            query_node.loc.begin.end_pos
           end
 
           # @param dstr_node [RuboCop::AST::DstrNode]

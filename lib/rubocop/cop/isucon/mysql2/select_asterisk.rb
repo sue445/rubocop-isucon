@@ -81,21 +81,34 @@ module RuboCop
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos + 1)
           end
 
-          def perform_autocorrect(corrector, loc, sql) # rubocop:disable Metrics/AbcSize
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param loc [Parser::Source::Range]
+          # @param sql [String]
+          def perform_autocorrect(corrector, loc, sql)
             return unless enabled_database?
 
             table_names = RuboCop::Isucon::SqlParser.parse_tables(sql)
             return unless table_names.length == 1
 
-            asterisk_pos = loc.source.index("*")
-            begin_pos = loc.begin_pos + asterisk_pos
-            asterisk_range = Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
-
-            table_name = table_names[0]
-            column_names = connection.column_names(table_name)
-            select_columns = column_names.map { |column| "`#{column}`" }.join(", ")
+            asterisk_range = asterisk_range(loc)
+            select_columns = columns_in_select_clause(table_names[0])
 
             corrector.replace(asterisk_range, select_columns)
+          end
+
+          # @param loc [Parser::Source::Range]
+          # @return [Parser::Source::Range]
+          def asterisk_range(loc)
+            asterisk_pos = loc.source.index("*")
+            begin_pos = loc.begin_pos + asterisk_pos
+            Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
+          end
+
+          # @param [String]
+          # @return [String]
+          def columns_in_select_clause(table_name)
+            column_names = connection.column_names(table_name)
+            column_names.map { |column| "`#{column}`" }.join(", ")
           end
         end
       end
