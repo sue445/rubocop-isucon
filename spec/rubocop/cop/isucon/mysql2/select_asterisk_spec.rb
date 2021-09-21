@@ -37,7 +37,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
           end
         end
 
-        context "multiple line SQL" do
+        context "multiple line SQL (heredoc)" do
           it "registers an offense and correct" do
             expect_offense(<<~RUBY)
               db.xquery(<<~SQL, jia_user_id)
