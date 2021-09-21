@@ -3,7 +3,8 @@
 require_relative "isucon/version"
 
 module RuboCop
-  module Isucon # rubocop:disable Style/Documentation
+  # RuboCop Isucon project namespace
+  module Isucon
     class Error < StandardError; end
 
     # `Database` isn't configured in `.rubocop.yml`
