@@ -78,6 +78,10 @@ module RuboCop
 
             return nil if !begin_pos || !end_pos
 
+            if node.loc.expression.source_buffer.source[begin_pos] == '"'
+              begin_pos += 1
+              end_pos += 1
+            end
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos + 1)
           end
 

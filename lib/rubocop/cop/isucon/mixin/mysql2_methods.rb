@@ -86,9 +86,19 @@ module RuboCop
             str_node_begin_pos = pattern_str_node.loc.expression.begin_pos
             pattern_pos = pattern_str_node.value.index(pattern)
 
-            heredoc_body = dstr_node.loc.heredoc_body.source
-            heredoc_indent_level = indent_level(heredoc_body)
-            str_node_begin_pos + heredoc_indent_level + pattern_pos
+            if dstr_node.heredoc?
+              heredoc_body = dstr_node.loc.heredoc_body.source
+              heredoc_indent_level = indent_level(heredoc_body)
+              return str_node_begin_pos + heredoc_indent_level + pattern_pos
+            end
+
+            # e.g.
+            #   db.xquery(
+            #     "SELECT * " \
+            #     "FROM users " \
+            #     "LIMIT 10"
+            #   )
+            str_node_begin_pos + pattern_pos
           end
 
           # @param str [String]
