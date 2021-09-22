@@ -18,15 +18,14 @@ module RuboCop
     module MemorizeMethods
       # @param method_name [String,Symbol]
       def memorize(method_name)
-        define_method "#{method_name}_with_cache" do
-          if instance_variable_get("@#{method_name}_with_cache")
-            instance_variable_get("@#{method_name}_with_cache")
-          else
-            ret = send("#{method_name}_without_cache")
-            instance_variable_set("@#{method_name}_with_cache", ret)
-            ret
+        class_eval <<~RUBY, __FILE__, __LINE__ + 1
+          # def foo_with_cache
+          #   @foo_with_cache ||= foo_without_cache
+          # end
+          def #{method_name}_with_cache
+            @#{method_name}_with_cache ||= #{method_name}_without_cache
           end
-        end
+        RUBY
 
         alias_method "#{method_name}_without_cache", method_name
         alias_method method_name, "#{method_name}_with_cache"
