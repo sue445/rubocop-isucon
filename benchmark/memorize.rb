@@ -24,7 +24,7 @@ class DefineMethodMemorizer
   memorize :value
 end
 
-class InstanceEvalMemorizer
+class ClassEvalMemorizer
   # @param method_name [String,Symbol]
   def self.memorize(method_name)
     class_eval <<~RUBY
@@ -50,8 +50,8 @@ Benchmark.ips do |x|
     m.value
   end
 
-  x.report("InstanceEvalMemorizer") do
-    m = InstanceEvalMemorizer.new
+  x.report("ClassEvalMemorizer") do
+    m = ClassEvalMemorizer.new
     m.value
     m.value
   end
