@@ -108,7 +108,7 @@ module RuboCop
             Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
           end
 
-          # @param [String]
+          # @param table_name [String]
           # @return [String]
           def columns_in_select_clause(table_name)
             column_names = connection.column_names(table_name)
