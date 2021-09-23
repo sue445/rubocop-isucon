@@ -8,6 +8,11 @@
 #     encoding: utf8
 #     port: 3306
 
+Isucon/JoinWithoutIndex:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
+
 Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
   Enabled: true
