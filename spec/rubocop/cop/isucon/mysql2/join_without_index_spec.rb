@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Isucon::JoinWithoutIndex, :config do
+RSpec.describe RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex, :config do
   let(:config) { RuboCop::Config.new }
 
   # TODO: Write test code

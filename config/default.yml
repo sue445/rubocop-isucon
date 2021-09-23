@@ -8,7 +8,7 @@
 #     encoding: utf8
 #     port: 3306
 
-Isucon/JoinWithoutIndex:
+Isucon/Mysql2/JoinWithoutIndex:
   Description: 'TODO: Write a description of the cop.'
   Enabled: pending
   VersionAdded: '<<next>>'
