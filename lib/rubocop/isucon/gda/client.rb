@@ -40,6 +40,20 @@ module RuboCop
             end
         end
 
+        # @return [Array<RuboCop::Isucon::GDA::JoinCondition>]
+        def join_conditions
+          ast.from.joins.map do |node|
+            join_operands = node.expr.cond.operands.map do |operand|
+              create_join_operand(operand.value)
+            end
+
+            JoinCondition.new(
+              operator: node.expr.cond.operator,
+              operands: join_operands,
+            )
+          end
+        end
+
         # @return [Array<GDA::Nodes::Operation>]
         def where_nodes
           ast.where_cond.to_a.
@@ -80,6 +94,27 @@ module RuboCop
           raise ArgumentError, "@sql is required" unless @sql
 
           @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
+        end
+
+        # @param operand [String]
+        # @return [RuboCop::Isucon::GDA::JoinOperand]
+        def create_join_operand(operand)
+          table_name_or_as, column_name = operand.split(".", 2)
+
+          if (target = from_targets.find { |t| table_name_or_as == t[:table_name] })
+            return JoinOperand.new(table_name: target[:table_name], column_name: column_name, as: nil)
+          end
+
+          if (target = from_targets.find { |t| table_name_or_as == t[:as] })
+            return JoinOperand.new(table_name: target[:table_name], column_name: column_name, as: target[:as])
+          end
+
+          JoinOperand.new(table_name: nil, column_name: column_name, as: nil)
+        end
+
+        # @return [Hash]
+        def from_targets
+          @from_targets ||= ast.from.targets.map { |target| { table_name: target.table_name, as: target.as } }
         end
       end
     end
