@@ -5,6 +5,10 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
 
   let(:placeholder) { RuboCop::Isucon::GDA::PRACEHOLDER }
 
+  def join_operand(table_name: nil, column_name: nil, as: nil) # rubocop:disable Naming/MethodParameterName
+    RuboCop::Isucon::GDA::JoinOperand.new(table_name: table_name, column_name: column_name, as: as)
+  end
+
   describe "#table_names" do
     subject { gda.table_names }
 
@@ -81,6 +85,70 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
 
         expect(result[2].operator).to eq "IS NOT NULL"
         expect(result[2].operands).to contain_exactly("name")
+      end
+    end
+  end
+
+  describe "#join_conditions" do
+    context "with single join" do
+      let(:sql) do
+        # https://github.com/isucon/isucon11-final/blob/dd22bc5cea4d8acda14c2596bcfe10e07f19018c/webapp/ruby/app.rb#L172-L175
+        <<~SQL
+          SELECT `courses`.*
+          FROM `courses`
+          JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`
+          WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?
+        SQL
+      end
+
+      it "returns response" do
+        result = gda.join_conditions
+
+        expect(result.count).to eq 1
+
+        expect(result[0].operator).to eq "="
+        expect(result[0].operands.count).to eq 2
+        expect(result[0].operands[0]).to eq join_operand(table_name: "courses", column_name: "id")
+        expect(result[0].operands[1]).to eq join_operand(table_name: "registrations", column_name: "course_id")
+      end
+    end
+
+    context "multiple joins" do
+      # c.f. https://github.com/isucon/isucon8-final/blob/38c4f6e20388d1c4f1ed393fb75b38d472e44abf/webapp/ruby/models/trade.rb#L13-L29
+      let(:sql) do
+        <<~SQL
+          SELECT m.t AS time, a.price AS open, b.price AS close, m.h AS high, m.l AS low
+          FROM (
+            SELECT
+              STR_TO_DATE(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS t,
+              MIN(id) AS min_id,
+              MAX(id) AS max_id,
+              MAX(price) AS h,
+              MIN(price) AS l
+            FROM trade
+            WHERE created_at >= ?
+            GROUP BY t
+          ) m
+          JOIN trade a ON a.id = m.min_id
+          JOIN trade b ON b.id = m.max_id
+          ORDER BY m.t
+        SQL
+      end
+
+      it "returns response" do
+        result = gda.join_conditions
+
+        expect(result.count).to eq 2
+
+        expect(result[0].operator).to eq "="
+        expect(result[0].operands.count).to eq 2
+        expect(result[0].operands[0]).to eq join_operand(table_name: "trade", column_name: "id", as: "a")
+        expect(result[0].operands[1]).to eq join_operand(as: "m", column_name: "min_id")
+
+        expect(result[1].operator).to eq "="
+        expect(result[1].operands.count).to eq 2
+        expect(result[1].operands[0]).to eq join_operand(table_name: "trade", column_name: "id", as: "b")
+        expect(result[1].operands[1]).to eq join_operand(as: "m", column_name: "max_id")
       end
     end
   end

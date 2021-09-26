@@ -2,6 +2,8 @@
 
 require_relative "gda/client"
 require_relative "gda/gda_ext"
+require_relative "gda/join_condition"
+require_relative "gda/join_operand"
 require_relative "gda/node_location"
 require_relative "gda/node_patcher"
 require_relative "gda/where_condition"
