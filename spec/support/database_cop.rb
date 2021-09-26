@@ -8,8 +8,8 @@ RSpec.shared_context :database_cop, shared_context: :metadata do
       "Database" => {
         "adapter" => "sqlite3",
         "database" => ":memory:",
-        "timeout" => 500
-      }
+        "timeout" => 500,
+      },
     }
   end
 
