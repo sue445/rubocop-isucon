@@ -42,7 +42,7 @@ module RuboCop
 
           private
 
-          # @param type [Symbol]
+          # @param type [Symbol] one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           def register_offense(type, node, root_gda)
@@ -64,7 +64,7 @@ module RuboCop
             format(MSG, table_name: table_name, column_name: column_name)
           end
 
-          # @param type [Symbol]
+          # @param type [Symbol] one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @return [Parser::Source::Range,nil]
@@ -84,7 +84,7 @@ module RuboCop
             Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
-          # @param type [Symbol]
+          # @param type [Symbol] one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @return [Integer,nil]
           def sql_select_begin_position(type, node)
@@ -98,7 +98,7 @@ module RuboCop
             nil
           end
 
-          # @param type [Symbol]
+          # @param type [Symbol] one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param offense_body [String]
           # @return [Integer]
