@@ -90,6 +90,21 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
   end
 
   describe "#join_conditions" do
+    context "no join" do
+      let(:sql) do
+        # https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L118
+        <<~SQL
+          SELECT * FROM chair WHERE stock > 0 ORDER BY price ASC, id ASC LIMIT 10
+        SQL
+      end
+
+      it "returns response" do
+        result = gda.join_conditions
+
+        expect(result.count).to eq 0
+      end
+    end
+
     context "with single join" do
       let(:sql) do
         # https://github.com/isucon/isucon11-final/blob/dd22bc5cea4d8acda14c2596bcfe10e07f19018c/webapp/ruby/app.rb#L172-L175
