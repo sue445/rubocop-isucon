@@ -30,13 +30,13 @@ module RuboCop
             return unless enabled_database?
 
             find_xquery(node) do |type, params|
-              sql = xquery_param(type, params)
+              sql = xquery_param(type: type, params: params)
 
               root_gda = RuboCop::Isucon::GDA::Client.new(sql)
 
               next if exists_index_in_where_clause_columns?(root_gda)
 
-              register_offense(type, node, root_gda)
+              register_offense(type: type, node: node, root_gda: root_gda)
             end
           end
 
@@ -45,11 +45,11 @@ module RuboCop
           # @param type [Symbol] one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param root_gda [RuboCop::Isucon::GDA::Client]
-          def register_offense(type, node, root_gda)
+          def register_offense(type:, node:, root_gda:)
             root_gda.visit_all do |gda|
               next if gda.where_conditions.empty?
 
-              loc = offense_location(type, node, gda)
+              loc = offense_location(type: type, node: node, gda: gda)
               next unless loc
 
               message = offense_message(gda)
@@ -60,7 +60,7 @@ module RuboCop
           # @param gda [RuboCop::Isucon::GDA::Client]
           def offense_message(gda)
             column_name = gda.where_conditions[0].column_operand
-            table_name = find_table_name_from_column_name(gda.table_names, column_name)
+            table_name = find_table_name_from_column_name(table_names: gda.table_names, column_name: column_name)
             format(MSG, table_name: table_name, column_name: column_name)
           end
 
@@ -68,16 +68,16 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @return [Parser::Source::Range,nil]
-          def offense_location(type, node, gda)
+          def offense_location(type:, node:, gda:)
             where_first_ast = gda.where_nodes.first
 
             where_first_location = where_first_ast.location
             return nil unless where_first_location
 
-            select_begin_pos = sql_select_begin_position(type, node)
+            select_begin_pos = sql_select_begin_position(type: type, node: node)
             return nil unless select_begin_pos
 
-            offset = heredoc_offset(type, node, where_first_location.body)
+            offset = heredoc_offset(type: type, node: node, offense_body: where_first_location.body)
             begin_pos = select_begin_pos + where_first_location.begin_pos + offset
             end_pos = begin_pos + where_first_ast.location.length
 
@@ -87,7 +87,7 @@ module RuboCop
           # @param type [Symbol] one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @return [Integer,nil]
-          def sql_select_begin_position(type, node)
+          def sql_select_begin_position(type:, node:)
             case type
             when :str
               return sql_select_location_begin_position(node)
@@ -102,7 +102,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           # @param offense_body [String]
           # @return [Integer]
-          def heredoc_offset(type, node, offense_body)
+          def heredoc_offset(type:, node:, offense_body:)
             return 0 unless type == :dstr
 
             heredoc_indent_type = heredoc_indent_type(node)
@@ -113,7 +113,7 @@ module RuboCop
 
             heredoc_body = dstr_node.loc.heredoc_body.source
             heredoc_indent_level = indent_level(heredoc_body)
-            line_num = find_line_num(RuboCop::Isucon::GDA.normalize_sql(heredoc_body), offense_body)
+            line_num = find_line_num(source: RuboCop::Isucon::GDA.normalize_sql(heredoc_body), str: offense_body)
 
             heredoc_indent_level * line_num
           end
@@ -130,7 +130,7 @@ module RuboCop
           # @param source [String]
           # @param str [String]
           # @return [Integer]
-          def find_line_num(source, str)
+          def find_line_num(source:, str:)
             source.each_line.with_index do |line, i|
               return i + 1 if line.include?(str)
             end
@@ -142,8 +142,8 @@ module RuboCop
           def exists_index_in_where_clause_columns?(root_gda)
             root_gda.visit_all do |gda|
               gda.table_names.each do |table_name|
-                return true if covered_where_column_in_index?(gda, table_name)
-                return true if covered_where_column_in_primary_key?(gda, table_name)
+                return true if covered_where_column_in_index?(gda: gda, table_name: table_name)
+                return true if covered_where_column_in_primary_key?(gda: gda, table_name: table_name)
               end
             end
 
@@ -153,7 +153,7 @@ module RuboCop
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param table_name [String]
           # @return [Boolean]
-          def covered_where_column_in_index?(gda, table_name)
+          def covered_where_column_in_index?(gda:, table_name:)
             indexes = connection.indexes(table_name)
             index_first_columns = indexes.map { |index| index.columns[0] }
 
@@ -165,7 +165,7 @@ module RuboCop
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param table_name [String]
           # @return [Boolean]
-          def covered_where_column_in_primary_key?(gda, table_name)
+          def covered_where_column_in_primary_key?(gda:, table_name:)
             primary_keys = connection.primary_keys(table_name)
             return false if primary_keys.empty?
 
@@ -176,7 +176,7 @@ module RuboCop
           # @param table_names [Array<String>]
           # @param column_name [String]
           # @return [String,nil]
-          def find_table_name_from_column_name(table_names, column_name)
+          def find_table_name_from_column_name(table_names:, column_name:)
             table_names.each do |table_name|
               column_names = connection.column_names(table_name)
               return table_name if column_names.include?(column_name)

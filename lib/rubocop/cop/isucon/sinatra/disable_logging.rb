@@ -35,13 +35,13 @@ module RuboCop
             return unless logging_enabled?(node)
 
             add_offense(node) do |corrector|
-              perform_autocorrect(corrector, node)
+              perform_autocorrect(corrector: corrector, node: node)
             end
           end
 
           private
 
-          def perform_autocorrect(corrector, node)
+          def perform_autocorrect(corrector:, node:)
             corrector.replace(node, "disable :logging")
           end
         end

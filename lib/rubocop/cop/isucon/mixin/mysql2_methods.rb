@@ -17,7 +17,7 @@ module RuboCop
           # @param type [Symbol]
           # @param params [Array<RuboCop::AST::Node>]
           # @return [String,nil]
-          def xquery_param(type, params)
+          def xquery_param(type:, params:)
             case type
             when :str
               params[0]
@@ -79,12 +79,12 @@ module RuboCop
           # @param dstr_node [RuboCop::AST::DstrNode]
           # @param pattern [Regexp]
           # @return [Integer,nil]
-          def text_begin_position_within_heredoc(dstr_node, pattern)
+          def text_begin_position_within_heredoc(dstr_node:, pattern:)
             pattern_str_node = dstr_node.child_nodes.find { |str_node| str_node.value.match?(pattern) }
             return nil unless pattern_str_node
 
             str_node_begin_pos = node_expression_begin_pos(pattern_str_node)
-            pattern_pos = search_in_node(pattern_str_node, pattern)
+            pattern_pos = search_in_node(node: pattern_str_node, pattern: pattern)
 
             if dstr_node.heredoc?
               heredoc_body = dstr_node.loc.heredoc_body.source
@@ -104,7 +104,7 @@ module RuboCop
           # @param node [RuboCop::AST::DstrNode]
           # @param pattern [Regexp]
           # @return [Integer]
-          def search_in_node(node, pattern)
+          def search_in_node(node:, pattern:)
             node.value.index(pattern)
           end
 
