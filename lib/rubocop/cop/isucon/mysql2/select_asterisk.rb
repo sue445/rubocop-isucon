@@ -26,15 +26,15 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             find_xquery(node) do |type, params|
-              sql = xquery_param(type, params)
+              sql = xquery_param(type: type, params: params)
 
               next unless sql.match?(/^\s*SELECT\s+\*/i)
 
-              loc = sql_select_location(type, node, sql)
+              loc = sql_select_location(type: type, node: node, sql: sql)
               next unless loc
 
               add_offense(loc) do |corrector|
-                perform_autocorrect(corrector, loc, sql)
+                perform_autocorrect(corrector: corrector, loc: loc, sql: sql)
               end
             end
           end
@@ -45,10 +45,10 @@ module RuboCop
           # @param node [RuboCop::AST::SendNode]
           # @param sql [String]
           # @return [Parser::Source::Range,nil]
-          def sql_select_location(type, node, sql)
+          def sql_select_location(type:, node:, sql:)
             case type
             when :str
-              sql_select_location_for_str(node, sql)
+              sql_select_location_for_str(node: node, sql: sql)
             when :dstr
               sql_select_location_for_dstr(node)
             end
@@ -57,7 +57,7 @@ module RuboCop
           # @param node [RuboCop::AST::SendNode]
           # @param sql [String]
           # @return [Parser::Source::Range,nil]
-          def sql_select_location_for_str(node, sql)
+          def sql_select_location_for_str(node:, sql:)
             asterisk_pos = sql.index("*")
 
             begin_pos = sql_select_location_begin_position(node)
@@ -73,8 +73,8 @@ module RuboCop
           def sql_select_location_for_dstr(node)
             dstr_node = node.child_nodes[1]
 
-            begin_pos = text_begin_position_within_heredoc(dstr_node, /SELECT/i)
-            end_pos   = text_begin_position_within_heredoc(dstr_node, /\*/)
+            begin_pos = text_begin_position_within_heredoc(dstr_node: dstr_node, pattern: /SELECT/i)
+            end_pos   = text_begin_position_within_heredoc(dstr_node: dstr_node, pattern: /\*/)
 
             return nil if !begin_pos || !end_pos
 
@@ -88,7 +88,7 @@ module RuboCop
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
           # @param sql [String]
-          def perform_autocorrect(corrector, loc, sql)
+          def perform_autocorrect(corrector:, loc:, sql:)
             return unless enabled_database?
 
             table_names = RuboCop::Isucon::SqlParser.parse_tables(sql)
