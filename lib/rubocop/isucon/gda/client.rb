@@ -44,7 +44,7 @@ module RuboCop
         def join_conditions
           ast.from.joins.map do |node|
             join_operands = node.expr.cond.operands.map do |operand|
-              create_join_operand(operand.value)
+              create_join_operand(operand)
             end
 
             JoinCondition.new(
@@ -96,20 +96,20 @@ module RuboCop
           @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
         end
 
-        # @param operand [String]
+        # @param operand [GDA::Nodes::Expr]
         # @return [RuboCop::Isucon::GDA::JoinOperand]
         def create_join_operand(operand)
-          table_name_or_as, column_name = operand.split(".", 2)
+          table_name_or_as, column_name = operand.value.split(".", 2)
 
           if (target = from_targets.find { |t| table_name_or_as == t[:table_name] })
-            return JoinOperand.new(table_name: target[:table_name], column_name: column_name, as: nil)
+            return JoinOperand.new(table_name: target[:table_name], column_name: column_name, as: nil, node: operand)
           end
 
           if (target = from_targets.find { |t| table_name_or_as == t[:as] })
-            return JoinOperand.new(table_name: target[:table_name], column_name: column_name, as: target[:as])
+            return JoinOperand.new(table_name: target[:table_name], column_name: column_name, as: target[:as], node: operand)
           end
 
-          JoinOperand.new(table_name: nil, column_name: column_name, as: nil)
+          JoinOperand.new(table_name: nil, column_name: column_name, as: nil, node: operand)
         end
 
         # @return [Hash]

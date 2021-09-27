@@ -17,13 +17,19 @@ module RuboCop
         #   @return [String]
         attr_accessor :as
 
+        # @!attribute [rw] node
+        #   @return [GDA::Nodes::Expr]
+        attr_accessor :node
+
         # @param table_name [String]
         # @param column_name [String]
         # @param as [String]
-        def initialize(table_name: nil, column_name: nil, as: nil) # rubocop:disable Naming/MethodParameterName
+        # @param node [GDA::Nodes::Expr]
+        def initialize(table_name: nil, column_name: nil, as: nil, node: nil) # rubocop:disable Naming/MethodParameterName
           @table_name = table_name
           @column_name = column_name
           @as = as
+          @node = node
         end
 
         # @param other [RuboCop::Isucon::GDA::JoinOperand]
