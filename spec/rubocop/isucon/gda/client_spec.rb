@@ -109,7 +109,9 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
         expect(result[0].operator).to eq "="
         expect(result[0].operands.count).to eq 2
         expect(result[0].operands[0]).to eq join_operand(table_name: "courses", column_name: "id")
+        expect(result[0].operands[0].node).not_to be_nil
         expect(result[0].operands[1]).to eq join_operand(table_name: "registrations", column_name: "course_id")
+        expect(result[0].operands[1].node).not_to be_nil
       end
     end
 
@@ -143,12 +145,16 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
         expect(result[0].operator).to eq "="
         expect(result[0].operands.count).to eq 2
         expect(result[0].operands[0]).to eq join_operand(table_name: "trade", column_name: "id", as: "a")
+        expect(result[0].operands[0].node).not_to be_nil
         expect(result[0].operands[1]).to eq join_operand(as: "m", column_name: "min_id")
+        expect(result[0].operands[1].node).not_to be_nil
 
         expect(result[1].operator).to eq "="
         expect(result[1].operands.count).to eq 2
         expect(result[1].operands[0]).to eq join_operand(table_name: "trade", column_name: "id", as: "b")
+        expect(result[0].operands[0].node).not_to be_nil
         expect(result[1].operands[1]).to eq join_operand(as: "m", column_name: "max_id")
+        expect(result[0].operands[1].node).not_to be_nil
       end
     end
   end
