@@ -100,7 +100,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
     end
 
     context "with select" do
-      context "without Database config" do
+      context "with Database config" do
         include_context :database_cop do
           let(:schema) { "schemas/create_events.rb" }
         end
@@ -117,7 +117,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
         end
       end
 
-      context "with Database config" do
+      context "without Database config" do
         it "registers an offense and correct" do
           expect_offense(<<~RUBY)
             event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
