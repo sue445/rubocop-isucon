@@ -13,9 +13,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
                        ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
           RUBY
 
-          expect_correction(<<~RUBY)
-            db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-          RUBY
+          expect_no_corrections
         end
       end
 
@@ -100,7 +98,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
     end
 
     context "with select" do
-      context "without Database config" do
+      context "with Database config" do
         include_context :database_cop do
           let(:schema) { "schemas/create_events.rb" }
         end
@@ -117,16 +115,14 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
         end
       end
 
-      context "with Database config" do
+      context "without Database config" do
         it "registers an offense and correct" do
           expect_offense(<<~RUBY)
             event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
                                   ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
           RUBY
 
-          expect_correction(<<~RUBY)
-            event_ids = db.query('SELECT * FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
-          RUBY
+          expect_no_corrections
         end
       end
     end
@@ -139,9 +135,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
                              ^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
           RUBY
 
-          expect_correction(<<~RUBY)
-            isu = db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
-          RUBY
+          expect_no_corrections
         end
       end
 
@@ -175,13 +169,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
             end
           RUBY
 
-          expect_correction(<<~RUBY)
-            def last_login
-              return nil unless current_user
-
-              db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
-            end
-          RUBY
+          expect_no_corrections
         end
       end
 
