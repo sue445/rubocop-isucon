@@ -35,11 +35,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "activerecord", ">= 6.1.0"
   spec.add_runtime_dependency "gda"
-
-  # FIXME: If use 1.22.0+, test is failed
-  # I think https://github.com/rubocop/rubocop/pull/10086 is affecting, but I don't know why...
-  spec.add_runtime_dependency "rubocop", "< 1.22.0"
-
+  spec.add_runtime_dependency "rubocop", ">= 1.22.0"
   spec.add_runtime_dependency "rubocop-performance"
 
   spec.add_development_dependency "benchmark-ips"
