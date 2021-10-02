@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["sue445"]
   spec.email         = ["sue445@sue445.net"]
 
-  spec.summary       = "RuboCop plugin for ISUCON's ruby reference implementation"
-  spec.description   = "RuboCop plugin for ISUCON's ruby reference implementation"
+  spec.summary       = "RuboCop plugin for ruby reference implementation of ISUCON"
+  spec.description   = "RuboCop plugin for ruby reference implementation of ISUCON"
   spec.homepage      = "https://github.com/sue445/rubocop-isucon"
   spec.license       = "MIT"
   spec.required_ruby_version = ">= 2.5.0"
