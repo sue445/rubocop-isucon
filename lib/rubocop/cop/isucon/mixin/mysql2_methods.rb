@@ -133,7 +133,15 @@ module RuboCop
               return sql_select_location_begin_position(node)
             when :dstr
               dstr_node = node.child_nodes[1]
-              return dstr_node.loc.heredoc_body.begin_pos if dstr_node&.dstr_type?
+
+              if dstr_node&.dstr_type?
+                if dstr_node.loc.respond_to?(:heredoc_body)
+                  return dstr_node.loc.heredoc_body.begin_pos
+                else
+                  # Parser::Source::Map::Collection
+                  return dstr_node.loc.expression.begin_pos
+                end
+              end
             end
             nil
           end
