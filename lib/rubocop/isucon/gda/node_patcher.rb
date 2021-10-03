@@ -8,6 +8,7 @@ module RuboCop
         # @param sql [String]
         def initialize(sql)
           @sql = sql
+          @normalized_sql = RuboCop::Isucon::GDA.normalize_sql(sql)
           @current_operation_pos = 0
           @current_expr_pos = 0
           super()
@@ -52,7 +53,7 @@ module RuboCop
         # @param current_pos [Integer]
         # @return [Hash]
         def search_location(pattern, current_pos)
-          begin_pos = @sql.index(pattern, current_pos)
+          begin_pos = @normalized_sql.index(pattern, current_pos)
 
           return nil unless Regexp.last_match
 
