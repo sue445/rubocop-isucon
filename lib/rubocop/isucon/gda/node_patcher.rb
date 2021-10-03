@@ -39,17 +39,30 @@ module RuboCop
         end
 
         # @param pattern [Regexp]
-        # @return [RuboCop::Isucon::GDA::NodeLocation]
+        # @return [RuboCop::Isucon::GDA::NodeLocation,nil]
         def search_operation_location(pattern)
-          begin_pos = @sql.index(pattern, @current_operation_pos)
+          result = search_location(pattern, @current_operation_pos)
+          return nil unless result
+
+          @current_operation_pos = result[:current_pos] if result[:current_pos]
+          result[:location]
+        end
+
+        # @param pattern [Regexp]
+        # @param current_pos [Integer]
+        # @return [Hash]
+        def search_location(pattern, current_pos)
+          begin_pos = @sql.index(pattern, current_pos)
 
           return nil unless Regexp.last_match
 
           length = Regexp.last_match[0].length
           end_pos = begin_pos + length
-          @current_operation_pos = end_pos
 
-          NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: Regexp.last_match[0])
+          {
+            location: NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: Regexp.last_match[0]),
+            current_pos: end_pos,
+          }
         end
 
         # @param node [GDA::Nodes::Expr]
@@ -62,17 +75,13 @@ module RuboCop
         end
 
         # @param pattern [Regexp]
-        # @return [RuboCop::Isucon::GDA::NodeLocation]
+        # @return [RuboCop::Isucon::GDA::NodeLocation,nil]
         def search_expr_location(pattern)
-          begin_pos = @sql.index(pattern, @current_expr_pos)
+          result = search_location(pattern, @current_expr_pos)
+          return nil unless result
 
-          return nil unless Regexp.last_match
-
-          length = Regexp.last_match[0].length
-          end_pos = begin_pos + length
-          @current_expr_pos = end_pos
-
-          NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: Regexp.last_match[0])
+          @current_expr_pos = result[:current_pos] if result[:current_pos]
+          result[:location]
         end
       end
     end
