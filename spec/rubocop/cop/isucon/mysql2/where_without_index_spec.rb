@@ -14,7 +14,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
         it "registers an offense" do
           expect_offense(<<~RUBY)
             db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
-                                                  ^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. 'ALTER TABLE `isu` ADD INDEX `index_jia_user_id` (jia_user_id)')
+                                                 ^^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. 'ALTER TABLE `isu` ADD INDEX `index_jia_user_id` (jia_user_id)')
           RUBY
         end
       end
@@ -25,7 +25,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
             db.xquery(<<~SQL, jia_user_id)
               SELECT * FROM `isu`
               WHERE `jia_user_id` = ? ORDER BY `id` DESC
-                     ^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. 'ALTER TABLE `isu` ADD INDEX `index_jia_user_id` (jia_user_id)')
+                    ^^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. 'ALTER TABLE `isu` ADD INDEX `index_jia_user_id` (jia_user_id)')
             SQL
           RUBY
         end

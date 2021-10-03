@@ -49,9 +49,9 @@ RSpec.describe RuboCop::Isucon::GDA::NodePatcher do
             select { |node| node.instance_of?(GDA::Nodes::Operation) && node.operator }
 
           expect(where_clause.count).to eq 3
-          expect(where_clause[0].location).to eq location(begin_pos: 27, end_pos: 34, body: "id` = 1")
-          expect(where_clause[1].location).to eq location(begin_pos: 40, end_pos: 50, body: "stock` > ?")
-          expect(where_clause[2].location).to eq location(begin_pos: 56, end_pos: 73, body: "name` IS NOT NULL")
+          expect(where_clause[0].location).to eq location(begin_pos: 26, end_pos: 34, body: "`id` = 1")
+          expect(where_clause[1].location).to eq location(begin_pos: 39, end_pos: 50, body: "`stock` > ?")
+          expect(where_clause[2].location).to eq location(begin_pos: 55, end_pos: 73, body: "`name` IS NOT NULL")
         end
       end
     end
