@@ -59,9 +59,10 @@ module RuboCop
 
           length = Regexp.last_match[0].length
           end_pos = begin_pos + length
+          body = @sql[begin_pos...end_pos]
 
           {
-            location: NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: Regexp.last_match[0]),
+            location: NodeLocation.new(begin_pos: begin_pos, end_pos: end_pos, body: body),
             current_pos: end_pos,
           }
         end

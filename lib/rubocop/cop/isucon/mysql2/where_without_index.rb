@@ -113,7 +113,7 @@ module RuboCop
 
             heredoc_body = dstr_node.loc.heredoc_body.source
             heredoc_indent_level = indent_level(heredoc_body)
-            line_num = find_line_num(source: RuboCop::Isucon::GDA.normalize_sql(heredoc_body), str: offense_body)
+            line_num = find_line_num(source: heredoc_body, str: offense_body)
 
             heredoc_indent_level * line_num
           end
