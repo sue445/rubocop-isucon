@@ -20,7 +20,7 @@ module RuboCop
           else
             # called from root AST
             @ast = statement.ast
-            RuboCop::Isucon::GDA::NodePatcher.new(RuboCop::Isucon::GDA.normalize_sql(sql)).accept(@ast)
+            RuboCop::Isucon::GDA::NodePatcher.new(sql).accept(@ast)
           end
         end
 
