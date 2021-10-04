@@ -5,7 +5,7 @@ module RuboCop
     module Isucon
       module Mixin
         # Helper methods for `db.xquery` in AST
-        module Mysql2Methods
+        module Mysql2Methods # rubocop:disable Metrics/ModuleLength
           extend NodePattern::Macros
 
           def_node_search :find_xquery, <<~PATTERN
@@ -122,6 +122,70 @@ module RuboCop
                            map { |line| line[/^\s*/] }.
                            reject { |line| line.end_with?("\n") }
             indentations.empty? ? 0 : indentations.min_by(&:size).size
+          end
+
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer,nil]
+          def sql_select_begin_position(type:, node:)
+            case type
+            when :str
+              return sql_select_location_begin_position(node)
+            when :dstr
+              dstr_node = node.child_nodes[1]
+              return dstr_node.loc.heredoc_body.begin_pos if dstr_node&.dstr_type?
+            end
+            nil
+          end
+
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param offense_body [String]
+          # @return [Integer]
+          def heredoc_offset(type:, node:, offense_body:)
+            return 0 unless type == :dstr
+
+            heredoc_indent_type = heredoc_indent_type(node)
+            return 0 unless heredoc_indent_type == "~"
+
+            dstr_node = node.child_nodes[1]
+            return 0 if !dstr_node || !dstr_node.dstr_type?
+
+            heredoc_body = dstr_node.loc.heredoc_body.source
+            heredoc_indent_level = indent_level(heredoc_body)
+            line_num = find_line_num(source: heredoc_body, str: offense_body)
+
+            heredoc_indent_level * line_num
+          end
+
+          # Returns '~', '-' or nil
+          #
+          # @param node [RuboCop::AST::Node]
+          # @return [String,nil] '~', '-' or nil
+          def heredoc_indent_type(node)
+            # c.f. https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
+            node.source[/<<([~-])/, 1]
+          end
+
+          # @param source [String]
+          # @param str [String]
+          # @return [Integer]
+          def find_line_num(source:, str:)
+            source.each_line.with_index do |line, i|
+              return i + 1 if line.include?(str)
+            end
+            0
+          end
+
+          # @param table_names [Array<String>]
+          # @param column_name [String]
+          # @return [String,nil]
+          def find_table_name_from_column_name(table_names:, column_name:)
+            table_names.each do |table_name|
+              column_names = connection.column_names(table_name)
+              return table_name if column_names.include?(column_name)
+            end
+            nil
           end
         end
       end
