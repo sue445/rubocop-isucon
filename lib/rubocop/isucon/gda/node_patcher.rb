@@ -73,7 +73,7 @@ module RuboCop
         def visit_GDA_Nodes_Expr(node) # rubocop:disable Naming/MethodName -- This method is called from `GDA::Visitors::Visitor#visit` c.f. https://github.com/tenderlove/gda/blob/v1.1.0/lib/gda/visitors/visitor.rb#L13-L17
           return super unless node.value
 
-          escaped_value = Regexp.escape(node.value)
+          escaped_value = Regexp.escape(node.value).gsub("\\.", "\\s*\\.\\s*")
           node.location = search_expr_location(/(?<=[\s,])#{escaped_value}(?=[\s,])/)
           super
         end
