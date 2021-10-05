@@ -47,9 +47,9 @@ module RuboCop
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           def register_offense(type:, node:, root_gda:)
             root_gda.visit_all do |gda|
-              next if gda.where_conditions.empty?
+              next if gda.where_nodes.empty?
 
-              loc = offense_location(type: type, node: node, gda: gda)
+              loc = offense_location(type: type, node: node, gda_location: gda.where_nodes.first.location)
               next unless loc
 
               message = offense_message(gda)
@@ -62,26 +62,6 @@ module RuboCop
             column_name = gda.where_conditions[0].column_operand
             table_name = find_table_name_from_column_name(table_names: gda.table_names, column_name: column_name)
             format(MSG, table_name: table_name, column_name: column_name)
-          end
-
-          # @param type [Symbol] one of `:str`, `:dstr`
-          # @param node [RuboCop::AST::Node]
-          # @param gda [RuboCop::Isucon::GDA::Client]
-          # @return [Parser::Source::Range,nil]
-          def offense_location(type:, node:, gda:)
-            where_first_ast = gda.where_nodes.first
-
-            where_first_location = where_first_ast.location
-            return nil unless where_first_location
-
-            select_begin_pos = sql_select_begin_position(type: type, node: node)
-            return nil unless select_begin_pos
-
-            offset = heredoc_offset(type: type, node: node, offense_body: where_first_location.body)
-            begin_pos = select_begin_pos + where_first_location.begin_pos + offset
-            end_pos = begin_pos + where_first_ast.location.length
-
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
           # @param root_gda [RuboCop::Isucon::GDA::Client]

@@ -27,6 +27,91 @@ module RuboCop
             end
           end
 
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Parser::Source::Range,nil]
+          def offense_location(type:, node:, gda_location:)
+            return nil unless gda_location
+
+            begin_pos = begin_position_from_gda_location(type: type, node: node, gda_location: gda_location)
+            return nil unless begin_pos
+
+            end_pos = begin_pos + gda_location.length
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+          end
+
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Integer,nil]
+          def begin_position_from_gda_location(type:, node:, gda_location:)
+            case type
+            when :str
+              return begin_position_from_gda_location_for_str(node: node, gda_location: gda_location)
+            when :dstr
+              return begin_position_from_gda_location_for_dstr(node: node, gda_location: gda_location)
+            end
+
+            nil
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Integer,nil]
+          def begin_position_from_gda_location_for_str(node:, gda_location:)
+            str_node = node.child_nodes[1]
+            return nil if !str_node || !str_node.str_type?
+
+            str_node.loc.begin.end_pos + gda_location.begin_pos
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Integer,nil]
+          def begin_position_from_gda_location_for_dstr(node:, gda_location:) # rubocop:disable Metrics/AbcSize
+            dstr_node = node.child_nodes[1]
+            return nil if !dstr_node || !dstr_node.dstr_type?
+
+            str_node = find_str_node_from_gda_location(dstr_node: dstr_node, gda_location: gda_location)
+            index = str_node.value.index(gda_location.body)
+            return nil unless index
+
+            begin_pos = str_node.loc.expression.begin_pos
+            result = begin_pos + index
+            result += 1 if str_node.loc.expression.source_buffer.source[begin_pos] == '"'
+
+            result + heredoc_indent_level(node)
+          end
+
+          # @param dstr_node [RuboCop::AST::DstrNode]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [RuboCop::AST::StrNode,nil]
+          def find_str_node_from_gda_location(dstr_node:, gda_location:)
+            return nil unless dstr_node
+
+            begin_pos = 0
+            dstr_node.child_nodes.each do |str_node|
+              return str_node if begin_pos <= gda_location.begin_pos && gda_location.begin_pos < begin_pos + str_node.value.length
+
+              begin_pos += str_node.value.length
+            end
+            nil
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer]
+          def heredoc_indent_level(node)
+            dstr_node = node.child_nodes[1]
+            return 0 if !dstr_node || !dstr_node.dstr_type?
+
+            heredoc_indent_type = heredoc_indent_type(node)
+            return 0 unless heredoc_indent_type == "~"
+
+            heredoc_body = dstr_node.loc.heredoc_body.source
+            indent_level(heredoc_body)
+          end
+
           # @param node [RuboCop::AST::Node]
           # @return [Integer,nil]
           # @raise [ArgumentError] `node` is invalid
@@ -124,40 +209,6 @@ module RuboCop
             indentations.empty? ? 0 : indentations.min_by(&:size).size
           end
 
-          # @param type [Symbol] one of `:str`, `:dstr`
-          # @param node [RuboCop::AST::Node]
-          # @return [Integer,nil]
-          def sql_select_begin_position(type:, node:)
-            case type
-            when :str
-              return sql_select_location_begin_position(node)
-            when :dstr
-              dstr_node = node.child_nodes[1]
-              return dstr_node.loc.heredoc_body.begin_pos if dstr_node&.dstr_type?
-            end
-            nil
-          end
-
-          # @param type [Symbol] one of `:str`, `:dstr`
-          # @param node [RuboCop::AST::Node]
-          # @param offense_body [String]
-          # @return [Integer]
-          def heredoc_offset(type:, node:, offense_body:)
-            return 0 unless type == :dstr
-
-            heredoc_indent_type = heredoc_indent_type(node)
-            return 0 unless heredoc_indent_type == "~"
-
-            dstr_node = node.child_nodes[1]
-            return 0 if !dstr_node || !dstr_node.dstr_type?
-
-            heredoc_body = dstr_node.loc.heredoc_body.source
-            heredoc_indent_level = indent_level(heredoc_body)
-            line_num = find_line_num(source: heredoc_body, str: offense_body)
-
-            heredoc_indent_level * line_num
-          end
-
           # Returns '~', '-' or nil
           #
           # @param node [RuboCop::AST::Node]
@@ -165,16 +216,6 @@ module RuboCop
           def heredoc_indent_type(node)
             # c.f. https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
             node.source[/<<([~-])/, 1]
-          end
-
-          # @param source [String]
-          # @param str [String]
-          # @return [Integer]
-          def find_line_num(source:, str:)
-            source.each_line.with_index do |line, i|
-              return i + 1 if line.include?(str)
-            end
-            0
           end
 
           # @param table_names [Array<String>]
