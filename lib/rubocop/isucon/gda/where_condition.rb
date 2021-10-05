@@ -10,38 +10,38 @@ module RuboCop
         attr_accessor :operator
 
         # @!attribute [rw] operands
-        #   @return [Array<String>]
+        #   @return [Array<RuboCop::Isucon::GDA::WhereOperand>]
         attr_accessor :operands
 
         # @param operator [String]
-        # @param operands [Array<String>]
+        # @param operands [Array<RuboCop::Isucon::GDA::WhereOperand>]
         def initialize(operator: nil, operands: [])
           @operator = operator
           @operands = operands
         end
 
         # @return [String,nil]
-        def column_operand
-          return operands[0] if operands.count == 1
+        def column_operand # rubocop:disable Metrics/AbcSize
+          return operands[0].value if operands.count == 1
 
-          operand0_type = operand_type(operands[0])
-          operand1_type = operand_type(operands[1])
+          operand0_type = operand_type(operands[0].value)
+          operand1_type = operand_type(operands[1].value)
 
-          return operands[0] if operand0_type == :column || operand1_type == :value
-          return operands[1] if operand1_type == :column || operand0_type == :value
+          return operands[0].value if operand0_type == :column || operand1_type == :value
+          return operands[1].value if operand1_type == :column || operand0_type == :value
 
           nil
         end
 
         # @return [String,nil]
-        def value_operand
+        def value_operand # rubocop:disable Metrics/AbcSize
           return nil if operands.count == 1
 
-          operand0_type = operand_type(operands[0])
-          operand1_type = operand_type(operands[1])
+          operand0_type = operand_type(operands[0].value)
+          operand1_type = operand_type(operands[1].value)
 
-          return operands[0] if operand0_type == :value || operand1_type == :column
-          return operands[1] if operand1_type == :value || operand0_type == :column
+          return operands[0].value if operand0_type == :value || operand1_type == :column
+          return operands[1].value if operand1_type == :value || operand0_type == :column
 
           nil
         end

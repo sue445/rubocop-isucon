@@ -9,6 +9,10 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
     RuboCop::Isucon::GDA::JoinOperand.new(table_name: table_name, column_name: column_name, as: as)
   end
 
+  def where_operand(value)
+    RuboCop::Isucon::GDA::WhereOperand.new(value: value)
+  end
+
   describe "#table_names" do
     subject { gda.table_names }
 
@@ -61,7 +65,9 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
         expect(result.count).to eq 1
 
         expect(result[0].operator).to eq ">"
-        expect(result[0].operands).to contain_exactly("stock", "0")
+        expect(result[0].operands.count).to eq 2
+        expect(result[0].operands[0]).to eq where_operand("stock")
+        expect(result[0].operands[1]).to eq where_operand("0")
       end
     end
 
@@ -78,13 +84,18 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
         expect(result.count).to eq 3
 
         expect(result[0].operator).to eq "="
-        expect(result[0].operands).to contain_exactly("id", placeholder)
+        expect(result[0].operands.count).to eq 2
+        expect(result[0].operands[0]).to eq where_operand("id")
+        expect(result[0].operands[1]).to eq where_operand(placeholder)
 
         expect(result[1].operator).to eq ">"
-        expect(result[1].operands).to contain_exactly("stock", "0")
+        expect(result[1].operands.count).to eq 2
+        expect(result[1].operands[0]).to eq where_operand("stock")
+        expect(result[1].operands[1]).to eq where_operand("0")
 
         expect(result[2].operator).to eq "IS NOT NULL"
-        expect(result[2].operands).to contain_exactly("name")
+        expect(result[2].operands.count).to eq 1
+        expect(result[2].operands[0]).to eq where_operand("name")
       end
     end
   end

@@ -10,21 +10,35 @@ RSpec.describe RuboCop::Isucon::GDA::WhereCondition do
 
     context "WHERE stock > 0" do
       let(:operator) { ">" }
-      let(:operands) { %w[stock 0] }
+      let(:operands) do
+        [
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "stock"),
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "0"),
+        ]
+      end
 
       it { should eq "stock" }
     end
 
     context "WHERE 0 < stock" do
       let(:operator) { "<" }
-      let(:operands) { %w[0 stock] }
+      let(:operands) do
+        [
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "0"),
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "stock"),
+        ]
+      end
 
       it { should eq "stock" }
     end
 
     context "WHERE name IS NOT NULL" do
       let(:operator) { "IS NOT NUL" }
-      let(:operands) { %w[name] }
+      let(:operands) do
+        [
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "name"),
+        ]
+      end
 
       it { should eq "name" }
     end
@@ -35,21 +49,35 @@ RSpec.describe RuboCop::Isucon::GDA::WhereCondition do
 
     context "WHERE stock > 0" do
       let(:operator) { ">" }
-      let(:operands) { %w[stock 0] }
+      let(:operands) do
+        [
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "stock"),
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "0"),
+        ]
+      end
 
       it { should eq "0" }
     end
 
     context "WHERE 0 < stock" do
       let(:operator) { "<" }
-      let(:operands) { %w[0 stock] }
+      let(:operands) do
+        [
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "0"),
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "stock"),
+        ]
+      end
 
       it { should eq "0" }
     end
 
     context "WHERE name IS NOT NULL" do
       let(:operator) { "IS NOT NUL" }
-      let(:operands) { %w[name] }
+      let(:operands) do
+        [
+          RuboCop::Isucon::GDA::WhereOperand.new(value: "name"),
+        ]
+      end
 
       it { should eq nil }
     end
