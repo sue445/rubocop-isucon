@@ -48,38 +48,68 @@ module RuboCop
           def begin_position_from_gda_location(type:, node:, gda_location:)
             case type
             when :str
-              str_node = node.child_nodes[1]
-              return nil if !str_node || !str_node.str_type?
-
-              return str_node.loc.begin.end_pos + gda_location.begin_pos
+              return begin_position_from_gda_location_for_str(node: node, gda_location: gda_location)
             when :dstr
-              dstr_node = node.child_nodes[1]
-              return nil if !dstr_node || !dstr_node.dstr_type?
-
-              heredoc_indent_type = heredoc_indent_type(node)
-              heredoc_indent_level =
-                if heredoc_indent_type == "~"
-                  heredoc_body = dstr_node.loc.heredoc_body.source
-                  indent_level(heredoc_body)
-                else
-                  0
-                end
-
-              begin_pos = 0
-              node.child_nodes[1].child_nodes.each do |str_node|
-                if begin_pos <= gda_location.begin_pos && gda_location.begin_pos < begin_pos + str_node.value.length
-                  index = str_node.value.index(gda_location.body)
-                  return nil unless index
-
-                  result = str_node.loc.expression.begin_pos + index
-                  result += 1 if str_node.loc.expression.source_buffer.source[str_node.loc.expression.begin_pos] == '"'
-                  return result + heredoc_indent_level
-                end
-                begin_pos += str_node.value.length
-              end
+              return begin_position_from_gda_location_for_dstr(node: node, gda_location: gda_location)
             end
 
             nil
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Integer,nil]
+          def begin_position_from_gda_location_for_str(node:, gda_location:)
+            str_node = node.child_nodes[1]
+            return nil if !str_node || !str_node.str_type?
+
+            str_node.loc.begin.end_pos + gda_location.begin_pos
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Integer,nil]
+          def begin_position_from_gda_location_for_dstr(node:, gda_location:) # rubocop:disable Metrics/AbcSize
+            dstr_node = node.child_nodes[1]
+            return nil if !dstr_node || !dstr_node.dstr_type?
+
+            str_node = find_str_node_from_gda_location(dstr_node: dstr_node, gda_location: gda_location)
+            index = str_node.value.index(gda_location.body)
+            return nil unless index
+
+            begin_pos = str_node.loc.expression.begin_pos
+            result = begin_pos + index
+            result += 1 if str_node.loc.expression.source_buffer.source[begin_pos] == '"'
+
+            result + heredoc_indent_level(node)
+          end
+
+          # @param dstr_node [RuboCop::AST::DstrNode]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [RuboCop::AST::StrNode,nil]
+          def find_str_node_from_gda_location(dstr_node:, gda_location:)
+            return nil unless dstr_node
+
+            begin_pos = 0
+            dstr_node.child_nodes.each do |str_node|
+              return str_node if begin_pos <= gda_location.begin_pos && gda_location.begin_pos < begin_pos + str_node.value.length
+
+              begin_pos += str_node.value.length
+            end
+            nil
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer]
+          def heredoc_indent_level(node)
+            dstr_node = node.child_nodes[1]
+            return 0 if !dstr_node || !dstr_node.dstr_type?
+
+            heredoc_indent_type = heredoc_indent_type(node)
+            return 0 unless heredoc_indent_type == "~"
+
+            heredoc_body = dstr_node.loc.heredoc_body.source
+            indent_level(heredoc_body)
           end
 
           # @param node [RuboCop::AST::Node]
