@@ -33,9 +33,13 @@ module RuboCop
         def where_conditions
           where_nodes.
             map do |node|
+              where_operands = node.operands.map do |operand|
+                create_where_operand(operand)
+              end
+
               WhereCondition.new(
                 operator: node.operator,
-                operands: node.operands.map { |operand| operand.value.gsub(/^.+\./, "") },
+                operands: where_operands,
               )
             end
         end
@@ -94,6 +98,12 @@ module RuboCop
           raise ArgumentError, "@sql is required" unless @sql
 
           @statement = ::GDA::SQL::Parser.new.parse(RuboCop::Isucon::GDA.normalize_sql(@sql))
+        end
+
+        # @param operand [GDA::Nodes::Expr]
+        # @return [RuboCop::Isucon::GDA::WhereOperand]
+        def create_where_operand(operand)
+          WhereOperand.new(value: operand.value.gsub(/^.+\./, ""), node: operand)
         end
 
         # @param operand [GDA::Nodes::Expr]

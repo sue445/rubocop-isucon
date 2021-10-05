@@ -7,6 +7,7 @@ require_relative "gda/join_operand"
 require_relative "gda/node_location"
 require_relative "gda/node_patcher"
 require_relative "gda/where_condition"
+require_relative "gda/where_operand"
 
 module RuboCop
   module Isucon
