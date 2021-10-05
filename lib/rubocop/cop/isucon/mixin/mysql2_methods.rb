@@ -217,17 +217,6 @@ module RuboCop
             # c.f. https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
             node.source[/<<([~-])/, 1]
           end
-
-          # @param table_names [Array<String>]
-          # @param column_name [String]
-          # @return [String,nil]
-          def find_table_name_from_column_name(table_names:, column_name:)
-            table_names.each do |table_name|
-              column_names = connection.column_names(table_name)
-              return table_name if column_names.include?(column_name)
-            end
-            nil
-          end
         end
       end
     end

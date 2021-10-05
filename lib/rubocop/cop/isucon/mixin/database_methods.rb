@@ -22,6 +22,17 @@ module RuboCop
           def enabled_database?
             !!cop_config["Database"]
           end
+
+          # @param table_names [Array<String>]
+          # @param column_name [String]
+          # @return [String,nil]
+          def find_table_name_from_column_name(table_names:, column_name:)
+            table_names.each do |table_name|
+              column_names = connection.column_names(table_name)
+              return table_name if column_names.include?(column_name)
+            end
+            nil
+          end
         end
       end
     end
