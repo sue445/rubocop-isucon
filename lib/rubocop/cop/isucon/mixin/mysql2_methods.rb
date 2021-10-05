@@ -27,6 +27,61 @@ module RuboCop
             end
           end
 
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Parser::Source::Range,nil]
+          def offense_location(type:, node:, gda_location:)
+            return nil unless gda_location
+
+            begin_pos = begin_position_from_gda_location(type: type, node: node, gda_location: gda_location)
+            return nil unless begin_pos
+
+            end_pos = begin_pos + gda_location.length
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+          end
+
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Integer,nil]
+          def begin_position_from_gda_location(type:, node:, gda_location:)
+            case type
+            when :str
+              str_node = node.child_nodes[1]
+              return nil if !str_node || !str_node.str_type?
+
+              return str_node.loc.begin.end_pos + gda_location.begin_pos
+            when :dstr
+              dstr_node = node.child_nodes[1]
+              return nil if !dstr_node || !dstr_node.dstr_type?
+
+              heredoc_indent_type = heredoc_indent_type(node)
+              heredoc_indent_level =
+                if heredoc_indent_type == "~"
+                  heredoc_body = dstr_node.loc.heredoc_body.source
+                  indent_level(heredoc_body)
+                else
+                  0
+                end
+
+              begin_pos = 0
+              node.child_nodes[1].child_nodes.each do |str_node|
+                if begin_pos <= gda_location.begin_pos && gda_location.begin_pos < begin_pos + str_node.value.length
+                  index = str_node.value.index(gda_location.body)
+                  return nil unless index
+
+                  result = str_node.loc.expression.begin_pos + index
+                  result += 1 if str_node.loc.expression.source_buffer.source[str_node.loc.expression.begin_pos] == '"'
+                  return result + heredoc_indent_level
+                end
+                begin_pos += str_node.value.length
+              end
+            end
+
+            nil
+          end
+
           # @param node [RuboCop::AST::Node]
           # @return [Integer,nil]
           # @raise [ArgumentError] `node` is invalid
