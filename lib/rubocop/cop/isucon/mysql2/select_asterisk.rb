@@ -50,50 +50,6 @@ module RuboCop
             end
           end
 
-          # @param type [Symbol]
-          # @param node [RuboCop::AST::SendNode]
-          # @param sql [String]
-          # @return [Parser::Source::Range,nil]
-          def sql_select_location(type:, node:, sql:)
-            case type
-            when :str
-              sql_select_location_for_str(node: node, sql: sql)
-            when :dstr
-              sql_select_location_for_dstr(node)
-            end
-          end
-
-          # @param node [RuboCop::AST::SendNode]
-          # @param sql [String]
-          # @return [Parser::Source::Range,nil]
-          def sql_select_location_for_str(node:, sql:)
-            asterisk_pos = sql.index("*")
-
-            begin_pos = sql_select_location_begin_position(node)
-            return nil unless begin_pos
-
-            end_pos = begin_pos + asterisk_pos + 1
-
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
-          end
-
-          # @param node [RuboCop::AST::SendNode]
-          # @return [Parser::Source::Range,nil]
-          def sql_select_location_for_dstr(node)
-            dstr_node = node.child_nodes[1]
-
-            begin_pos = text_begin_position_within_heredoc(dstr_node: dstr_node, pattern: /SELECT/i)
-            end_pos   = text_begin_position_within_heredoc(dstr_node: dstr_node, pattern: /\*/)
-
-            return nil if !begin_pos || !end_pos
-
-            if node.loc.expression.source_buffer.source[begin_pos] == '"'
-              begin_pos += 1
-              end_pos += 1
-            end
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos + 1)
-          end
-
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
           # @param gda [RuboCop::Isucon::GDA::Client]
@@ -105,14 +61,6 @@ module RuboCop
             select_columns = columns_in_select_clause(gda.table_names[0])
 
             corrector.replace(loc, select_columns)
-          end
-
-          # @param loc [Parser::Source::Range]
-          # @return [Parser::Source::Range]
-          def asterisk_range(loc)
-            asterisk_pos = loc.source.index("*")
-            begin_pos = loc.begin_pos + asterisk_pos
-            Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
           end
 
           # @param table_name [String]
