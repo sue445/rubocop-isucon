@@ -14,7 +14,7 @@ module RuboCop
         #   end
         #
         #   # good
-        #   sql = <<~SQL
+        #   rows = db.xquery(<<~SQL, schedule_id)
         #     SELECT
         #       r.id AS reservation_id,
         #       r.schedule_id AS reservation_schedule_id,
@@ -29,7 +29,6 @@ module RuboCop
         #     INNER JOIN users u ON u.id = r.user_id
         #     WHERE r.schedule_id = ?
         #   SQL
-        #   rows = db.xquery(sql, schedule_id)
         #
         class NPlusOneQuery < Base
           MSG = "This looks like N+1 query."
