@@ -21,27 +21,34 @@ module RuboCop
         end
 
         # @return [String,nil]
-        def column_operand # rubocop:disable Metrics/AbcSize
-          return operands[0].value if operands.count == 1
+        def column_operand
+          operand0_value = operands[0].value
 
-          operand0_type = operand_type(operands[0].value)
-          operand1_type = operand_type(operands[1].value)
+          return operand0_value if operands.count == 1
 
-          return operands[0].value if operand0_type == :column || operand1_type == :value
-          return operands[1].value if operand1_type == :column || operand0_type == :value
+          operand1_value = operands[1].value
+
+          operand0_type = operand_type(operand0_value)
+          operand1_type = operand_type(operand1_value)
+
+          return operand0_value if operand0_type == :column || operand1_type == :value
+          return operand1_value if operand1_type == :column || operand0_type == :value
 
           nil
         end
 
         # @return [String,nil]
-        def value_operand # rubocop:disable Metrics/AbcSize
+        def value_operand
           return nil if operands.count == 1
 
-          operand0_type = operand_type(operands[0].value)
-          operand1_type = operand_type(operands[1].value)
+          operand0_value = operands[0].value
+          operand1_value = operands[1].value
 
-          return operands[0].value if operand0_type == :value || operand1_type == :column
-          return operands[1].value if operand1_type == :value || operand0_type == :column
+          operand0_type = operand_type(operand0_value)
+          operand1_type = operand_type(operand1_value)
+
+          return operand0_value if operand0_type == :value || operand1_type == :column
+          return operand1_value if operand1_type == :value || operand0_type == :column
 
           nil
         end
