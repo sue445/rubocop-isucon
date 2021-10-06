@@ -73,5 +73,24 @@ RSpec.describe RuboCop::Isucon::GDA::NodePatcher do
         expect(join_operands[1].location).to eq location(begin_pos: 103, end_pos: 113, body: "r.sheet_id")
       end
     end
+
+    context "WHERE location" do
+      let(:sql) do
+        <<~SQL
+          SELECT r.*, s.rank AS sheet_rank, s.num AS sheet_num FROM reservations r INNER JOIN sheets s ON s.id = r.sheet_id WHERE r.user_id = 0 ORDER BY IFNULL(r.canceled_at, r.reserved_at) DESC LIMIT 5
+        SQL
+      end
+
+      it "location is appended" do
+        subject
+
+        select_clause = node.expr_list
+
+        expect(select_clause.count).to eq 3
+        expect(select_clause[0].location).to eq location(begin_pos: 7, end_pos: 10, body: "r.*")
+        expect(select_clause[1].location).to eq location(begin_pos: 12, end_pos: 32, body: "s.rank AS sheet_rank")
+        expect(select_clause[2].location).to eq location(begin_pos: 34, end_pos: 52, body: "s.num AS sheet_num")
+      end
+    end
   end
 end
