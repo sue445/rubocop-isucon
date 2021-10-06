@@ -92,6 +92,13 @@ module RuboCop
 
             begin_pos = str_node.loc.expression.begin_pos
             result = begin_pos + index
+
+            # e.g.
+            #   db.xquery(
+            #     "SELECT * " \
+            #     "FROM users " \
+            #     "LIMIT 10"
+            #   )
             result += 1 if str_node.loc.expression.source_buffer.source[begin_pos] == '"'
 
             result + heredoc_indent_level(node)
