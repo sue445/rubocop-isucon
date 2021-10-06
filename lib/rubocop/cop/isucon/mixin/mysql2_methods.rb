@@ -139,7 +139,7 @@ module RuboCop
 
           # @param str [String]
           # @return [Integer]
-          # @note https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/mixin/heredoc.rb#L23-L28
+          # @see https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/mixin/heredoc.rb#L23-L28
           def indent_level(str)
             indentations = str.lines.
                            map { |line| line[/^\s*/] }.
@@ -150,9 +150,9 @@ module RuboCop
           # Returns '~', '-' or nil
           #
           # @param node [RuboCop::AST::Node]
-          # @return [String,nil] '~', '-' or nil
+          # @return [String,nil] '~', '-' or `nil`
+          # @see https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
           def heredoc_indent_type(node)
-            # c.f. https://github.com/rubocop/rubocop/blob/v1.21.0/lib/rubocop/cop/layout/heredoc_indentation.rb#L146-L149
             node.source[/<<([~-])/, 1]
           end
         end
