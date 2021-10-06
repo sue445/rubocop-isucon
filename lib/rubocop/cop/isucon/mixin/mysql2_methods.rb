@@ -25,6 +25,20 @@ module RuboCop
             end
           end
 
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Parser::Source::Range,nil]
+          def offense_location(type:, node:, gda_location:)
+            return nil unless gda_location
+
+            begin_pos = begin_position_from_gda_location(type: type, node: node, gda_location: gda_location)
+            return nil unless begin_pos
+
+            end_pos = begin_pos + gda_location.length
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+          end
+
           private
 
           # @param type [Symbol]
@@ -38,20 +52,6 @@ module RuboCop
               # heredoc
               params.map(&:value).join
             end
-          end
-
-          # @param type [Symbol] one of `:str`, `:dstr`
-          # @param node [RuboCop::AST::Node]
-          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
-          # @return [Parser::Source::Range,nil]
-          def offense_location(type:, node:, gda_location:)
-            return nil unless gda_location
-
-            begin_pos = begin_position_from_gda_location(type: type, node: node, gda_location: gda_location)
-            return nil unless begin_pos
-
-            end_pos = begin_pos + gda_location.length
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
           # @param type [Symbol] one of `:str`, `:dstr`
