@@ -85,6 +85,7 @@ RSpec.describe RuboCop::Isucon::GDA::NodePatcher do
         subject
 
         select_clause = node.expr_list
+        # select_clause[0].expr.location
 
         expect(select_clause.count).to eq 3
         expect(select_clause[0].location).to eq location(begin_pos: 7, end_pos: 10, body: "r.*")

@@ -87,6 +87,11 @@ module RuboCop
           @current_expr_pos = result[:current_pos] if result[:current_pos]
           result[:location]
         end
+
+        # @param node [GDA::Nodes::SelectField]
+        def visit_GDA_Nodes_SelectField(node) # rubocop:disable Naming/MethodName -- This method is called from `GDA::Visitors::Visitor#visit` c.f. https://github.com/tenderlove/gda/blob/v1.1.0/lib/gda/visitors/visitor.rb#L13-L17
+          super
+        end
       end
     end
   end
