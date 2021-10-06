@@ -5,7 +5,7 @@ module RuboCop
     module Isucon
       module Mixin
         # Helper methods for `db.xquery` in AST
-        module Mysql2Methods # rubocop:disable Metrics/ModuleLength
+        module Mysql2Methods
           extend NodePattern::Macros
 
           def_node_search :find_xquery, <<~PATTERN
@@ -25,6 +25,20 @@ module RuboCop
             end
           end
 
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
+          # @return [Parser::Source::Range,nil]
+          def offense_location(type:, node:, gda_location:)
+            return nil unless gda_location
+
+            begin_pos = begin_position_from_gda_location(type: type, node: node, gda_location: gda_location)
+            return nil unless begin_pos
+
+            end_pos = begin_pos + gda_location.length
+            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
+          end
+
           private
 
           # @param type [Symbol]
@@ -38,20 +52,6 @@ module RuboCop
               # heredoc
               params.map(&:value).join
             end
-          end
-
-          # @param type [Symbol] one of `:str`, `:dstr`
-          # @param node [RuboCop::AST::Node]
-          # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
-          # @return [Parser::Source::Range,nil]
-          def offense_location(type:, node:, gda_location:)
-            return nil unless gda_location
-
-            begin_pos = begin_position_from_gda_location(type: type, node: node, gda_location: gda_location)
-            return nil unless begin_pos
-
-            end_pos = begin_pos + gda_location.length
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
           end
 
           # @param type [Symbol] one of `:str`, `:dstr`
@@ -123,93 +123,6 @@ module RuboCop
 
             heredoc_body = dstr_node.loc.heredoc_body.source
             indent_level(heredoc_body)
-          end
-
-          # @param node [RuboCop::AST::Node]
-          # @return [Integer,nil]
-          # @raise [ArgumentError] `node` is invalid
-          def sql_select_location_begin_position(node)
-            if node.child_nodes.count >= 2
-              # without substitution (e.g. `db.xquery("SELECT * FROM users")`)
-              return sql_select_location_begin_position_for_without_substitution(node)
-            end
-
-            if node.child_nodes.count == 1
-              if node.child_nodes[0].child_nodes.count > 1
-                # with substitution (e.g. `rows = db.xquery("SELECT * FROM users")`)
-                return sql_select_location_begin_position_for_with_substitution(node)
-              end
-
-              # end of method
-              return sql_select_location_begin_position_for_end_of_method(node)
-            end
-
-            raise ArgumentError, "node.child_nodes is empty"
-          end
-
-          # @param node [RuboCop::AST::Node]
-          # @return [Integer,nil]
-          def sql_select_location_begin_position_for_without_substitution(node)
-            query_node = node.child_nodes.find(&:str_type?)
-            return nil unless query_node
-
-            query_node.loc.begin.end_pos
-          end
-
-          # @param node [RuboCop::AST::Node]
-          # @return [Integer,nil]
-          def sql_select_location_begin_position_for_with_substitution(node)
-            query_node = node.child_nodes[0].child_nodes.find(&:str_type?)
-            return nil unless query_node
-
-            query_node.loc.begin.end_pos
-          end
-
-          # @param node [RuboCop::AST::Node]
-          # @return [Integer,nil]
-          def sql_select_location_begin_position_for_end_of_method(node)
-            query_node = node.child_nodes[0].child_nodes[0].child_nodes.find(&:str_type?)
-            return nil unless query_node
-
-            query_node.loc.begin.end_pos
-          end
-
-          # @param dstr_node [RuboCop::AST::DstrNode]
-          # @param pattern [Regexp]
-          # @return [Integer,nil]
-          def text_begin_position_within_heredoc(dstr_node:, pattern:)
-            pattern_str_node = dstr_node.child_nodes.find { |str_node| str_node.value.match?(pattern) }
-            return nil unless pattern_str_node
-
-            str_node_begin_pos = node_expression_begin_pos(pattern_str_node)
-            pattern_pos = search_in_node(node: pattern_str_node, pattern: pattern)
-
-            if dstr_node.heredoc?
-              heredoc_body = dstr_node.loc.heredoc_body.source
-              heredoc_indent_level = indent_level(heredoc_body)
-              return str_node_begin_pos + heredoc_indent_level + pattern_pos
-            end
-
-            # e.g.
-            #   db.xquery(
-            #     "SELECT * " \
-            #     "FROM users " \
-            #     "LIMIT 10"
-            #   )
-            str_node_begin_pos + pattern_pos
-          end
-
-          # @param node [RuboCop::AST::DstrNode]
-          # @param pattern [Regexp]
-          # @return [Integer]
-          def search_in_node(node:, pattern:)
-            node.value.index(pattern)
-          end
-
-          # @param node [RuboCop::AST::DstrNode]
-          # @return [Integer]
-          def node_expression_begin_pos(node)
-            node.loc.expression.begin_pos
           end
 
           # @param str [String]

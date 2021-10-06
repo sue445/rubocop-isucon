@@ -26,84 +26,41 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_xquery(node) do |type, root_gda|
-              next unless root_gda.sql.match?(/^\s*SELECT\s+\*/i)
-
-              loc = sql_select_location(type: type, node: node, sql: root_gda.sql)
-              next unless loc
-
-              add_offense(loc) do |corrector|
-                perform_autocorrect(corrector: corrector, loc: loc, sql: root_gda.sql)
-              end
+              check_and_register_offence(type: type, root_gda: root_gda, node: node)
             end
           end
 
           private
 
-          # @param type [Symbol]
-          # @param node [RuboCop::AST::SendNode]
-          # @param sql [String]
-          # @return [Parser::Source::Range,nil]
-          def sql_select_location(type:, node:, sql:)
-            case type
-            when :str
-              sql_select_location_for_str(node: node, sql: sql)
-            when :dstr
-              sql_select_location_for_dstr(node)
+          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param root_gda [RuboCop::Isucon::GDA::Client]
+          # @param node [RuboCop::AST::Node]
+          def check_and_register_offence(type:, root_gda:, node:)
+            root_gda.visit_all do |gda|
+              gda.ast.expr_list.each do |select_field_node|
+                next unless select_field_node.expr.value == "*"
+
+                loc = offense_location(type: type, node: node, gda_location: select_field_node.expr.location)
+                next unless loc
+
+                add_offense(loc) do |corrector|
+                  perform_autocorrect(corrector: corrector, loc: loc, gda: gda)
+                end
+              end
             end
-          end
-
-          # @param node [RuboCop::AST::SendNode]
-          # @param sql [String]
-          # @return [Parser::Source::Range,nil]
-          def sql_select_location_for_str(node:, sql:)
-            asterisk_pos = sql.index("*")
-
-            begin_pos = sql_select_location_begin_position(node)
-            return nil unless begin_pos
-
-            end_pos = begin_pos + asterisk_pos + 1
-
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos)
-          end
-
-          # @param node [RuboCop::AST::SendNode]
-          # @return [Parser::Source::Range,nil]
-          def sql_select_location_for_dstr(node)
-            dstr_node = node.child_nodes[1]
-
-            begin_pos = text_begin_position_within_heredoc(dstr_node: dstr_node, pattern: /SELECT/i)
-            end_pos   = text_begin_position_within_heredoc(dstr_node: dstr_node, pattern: /\*/)
-
-            return nil if !begin_pos || !end_pos
-
-            if node.loc.expression.source_buffer.source[begin_pos] == '"'
-              begin_pos += 1
-              end_pos += 1
-            end
-            Parser::Source::Range.new(node.loc.expression.source_buffer, begin_pos, end_pos + 1)
           end
 
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
-          # @param sql [String]
-          def perform_autocorrect(corrector:, loc:, sql:)
+          # @param gda [RuboCop::Isucon::GDA::Client]
+          def perform_autocorrect(corrector:, loc:, gda:)
             return unless enabled_database?
 
-            table_names = RuboCop::Isucon::SqlParser.parse_tables(sql)
-            return unless table_names.length == 1
+            return unless gda.table_names.length == 1
 
-            asterisk_range = asterisk_range(loc)
-            select_columns = columns_in_select_clause(table_names[0])
+            select_columns = columns_in_select_clause(gda.table_names[0])
 
-            corrector.replace(asterisk_range, select_columns)
-          end
-
-          # @param loc [Parser::Source::Range]
-          # @return [Parser::Source::Range]
-          def asterisk_range(loc)
-            asterisk_pos = loc.source.index("*")
-            begin_pos = loc.begin_pos + asterisk_pos
-            Parser::Source::Range.new(loc.source_buffer, begin_pos, begin_pos + 1)
+            corrector.replace(loc, select_columns)
           end
 
           # @param table_name [String]
