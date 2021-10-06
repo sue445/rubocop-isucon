@@ -29,11 +29,7 @@ module RuboCop
           def on_send(node)
             return unless enabled_database?
 
-            find_xquery(node) do |type, params|
-              sql = xquery_param(type: type, params: params)
-
-              root_gda = RuboCop::Isucon::GDA::Client.new(sql)
-
+            with_xquery(node) do |type, root_gda|
               next if exists_index_in_where_clause_columns?(root_gda)
 
               register_offense(type: type, node: node, root_gda: root_gda)

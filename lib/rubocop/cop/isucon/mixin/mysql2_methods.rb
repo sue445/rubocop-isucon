@@ -12,6 +12,19 @@ module RuboCop
             (send (send nil? _) {:xquery | :query} (${str dstr} $...) ...)
           PATTERN
 
+          # @param node [RuboCop::AST::Node]
+          # @yieldparam type [Symbol] one of `:str`, `:dstr`
+          # @yieldparam root_gda [RuboCop::Isucon::GDA::Client]
+          def with_xquery(node)
+            find_xquery(node) do |type, params|
+              sql = xquery_param(type: type, params: params)
+
+              root_gda = RuboCop::Isucon::GDA::Client.new(sql)
+
+              yield type, root_gda
+            end
+          end
+
           private
 
           # @param type [Symbol]
