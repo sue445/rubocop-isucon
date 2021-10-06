@@ -82,7 +82,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
           # @return [Integer,nil]
-          def begin_position_from_gda_location_for_dstr(node:, gda_location:) # rubocop:disable Metrics/AbcSize
+          def begin_position_from_gda_location_for_dstr(node:, gda_location:)
             dstr_node = node.child_nodes[1]
             return nil if !dstr_node || !dstr_node.dstr_type?
 
@@ -90,8 +90,13 @@ module RuboCop
             index = str_node.value.index(gda_location.body)
             return nil unless index
 
+            str_node_begin_pos(str_node) + index + heredoc_indent_level(node)
+          end
+
+          # @param str_node [RuboCop::AST::StrNode]
+          # @return [Integer]
+          def str_node_begin_pos(str_node)
             begin_pos = str_node.loc.expression.begin_pos
-            result = begin_pos + index
 
             # e.g.
             #   db.xquery(
@@ -99,9 +104,9 @@ module RuboCop
             #     "FROM users " \
             #     "LIMIT 10"
             #   )
-            result += 1 if str_node.loc.expression.source_buffer.source[begin_pos] == '"'
+            return begin_pos + 1 if str_node.loc.expression.source_buffer.source[begin_pos] == '"'
 
-            result + heredoc_indent_level(node)
+            begin_pos
           end
 
           # @param dstr_node [RuboCop::AST::DstrNode]
