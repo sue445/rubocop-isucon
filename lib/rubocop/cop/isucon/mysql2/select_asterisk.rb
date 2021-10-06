@@ -25,16 +25,14 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            find_xquery(node) do |type, params|
-              sql = xquery_param(type: type, params: params)
+            with_xquery(node) do |type, root_gda|
+              next unless root_gda.sql.match?(/^\s*SELECT\s+\*/i)
 
-              next unless sql.match?(/^\s*SELECT\s+\*/i)
-
-              loc = sql_select_location(type: type, node: node, sql: sql)
+              loc = sql_select_location(type: type, node: node, sql: root_gda.sql)
               next unless loc
 
               add_offense(loc) do |corrector|
-                perform_autocorrect(corrector: corrector, loc: loc, sql: sql)
+                perform_autocorrect(corrector: corrector, loc: loc, sql: root_gda.sql)
               end
             end
           end
