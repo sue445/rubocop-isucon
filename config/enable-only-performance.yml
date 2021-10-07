@@ -20,6 +20,9 @@ Metrics:
 Naming:
   Enabled: false
 
+Performance:
+  Enabled: true
+
 Security:
   Enabled: false
 
