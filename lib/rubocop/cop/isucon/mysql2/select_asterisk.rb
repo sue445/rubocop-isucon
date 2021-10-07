@@ -32,7 +32,7 @@ module RuboCop
 
           private
 
-          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           # @param node [RuboCop::AST::Node]
           def check_and_register_offence(type:, root_gda:, node:)

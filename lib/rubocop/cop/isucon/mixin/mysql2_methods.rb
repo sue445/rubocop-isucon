@@ -13,7 +13,7 @@ module RuboCop
           PATTERN
 
           # @param node [RuboCop::AST::Node]
-          # @yieldparam type [Symbol] one of `:str`, `:dstr`
+          # @yieldparam type [Symbol] Node type. one of `:str`, `:dstr`
           # @yieldparam root_gda [RuboCop::Isucon::GDA::Client]
           def with_xquery(node)
             find_xquery(node) do |type, params|
@@ -25,7 +25,7 @@ module RuboCop
             end
           end
 
-          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
           # @return [Parser::Source::Range,nil]
@@ -41,7 +41,7 @@ module RuboCop
 
           private
 
-          # @param type [Symbol]
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param params [Array<RuboCop::AST::Node>]
           # @return [String,nil]
           def xquery_param(type:, params:)
@@ -54,7 +54,7 @@ module RuboCop
             end
           end
 
-          # @param type [Symbol] one of `:str`, `:dstr`
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param gda_location [RuboCop::Isucon::GDA::NodeLocation]
           # @return [Integer,nil]
