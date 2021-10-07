@@ -56,7 +56,7 @@ require:
 inherit_gem:
   rubocop-isucon:
     # Disable default cops (except Performance cops)
-    - "config/rubocop.yml"
+    - "config/enable-only-performance.yml"
 
 Isucon/Mysql2:
   Database:
