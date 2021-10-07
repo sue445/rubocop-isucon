@@ -21,7 +21,7 @@ module RuboCop
       # @param sql [String]
       # @return [String]
       def self.normalize_sql(sql)
-        sql.gsub("`", " ").gsub("?", PRACEHOLDER)
+        sql.tr("`", " ").gsub("?", PRACEHOLDER)
       end
     end
   end
