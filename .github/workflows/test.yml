@@ -21,7 +21,7 @@ jobs:
 
       matrix:
         ruby:
-          - 3.0
+          - "3.0"
         gemfile:
           - activerecord_6_1
 
