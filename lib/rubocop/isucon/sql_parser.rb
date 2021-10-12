@@ -3,10 +3,14 @@
 module RuboCop
   module Isucon
     # SQL Parser
+    #
+    # @deprecated Use {RuboCop::Isucon::GDA::Client}
     module SqlParser
       # Parse table names in SQL (SELECT, UPDATE, INSERT, DELETE)
       # @param sql [String]
       # @return [Array<String>]
+      #
+      # @deprecated Use {RuboCop::Isucon::GDA::Client#table_names}
       def self.parse_tables(sql)
         # Remove `FOR UPDATE` in `SELECT`
         sql = sql.gsub(/FOR\s+UPDATE/i, "")
