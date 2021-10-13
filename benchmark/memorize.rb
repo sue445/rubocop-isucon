@@ -4,8 +4,8 @@ class DefineMethodMemorizer
   # @param method_name [String,Symbol]
   def self.memorize(method_name)
     define_method "#{method_name}_with_cache" do
-      if instance_variable_get("@#{method_name}_with_cache")
-        instance_variable_get("@#{method_name}_with_cache")
+      if (ret = instance_variable_get("@#{method_name}_with_cache"))
+        ret
       else
         ret = send("#{method_name}_without_cache")
         instance_variable_set("@#{method_name}_with_cache", ret)
