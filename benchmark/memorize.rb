@@ -23,6 +23,24 @@ class DefineMethodWithInstanceVariableMemorizer
   memorize :value
 end
 
+class DefineMethodWithHashMemorizer
+  def self.memorize(method_name)
+    define_method "#{method_name}_with_cache" do
+      @__cache ||= {}
+      @__cache[method_name] ||= send("#{method_name}_without_cache")
+    end
+
+    alias_method "#{method_name}_without_cache", method_name
+    alias_method method_name, "#{method_name}_with_cache"
+  end
+
+  def value
+    1
+  end
+
+  memorize :value
+end
+
 class ClassEvalMemorizer
   def self.memorize(method_name)
     class_eval <<~RUBY, __FILE__, __LINE__ + 1
@@ -47,6 +65,12 @@ end
 Benchmark.ips do |x|
   x.report("DefineMethodWithInstanceVariableMemorizer") do
     m = DefineMethodWithInstanceVariableMemorizer.new
+    m.value
+    m.value
+  end
+
+  x.report("DefineMethodWithHashMemorizer") do
+    m = DefineMethodWithHashMemorizer.new
     m.value
     m.value
   end
