@@ -1,6 +1,6 @@
 require "benchmark/ips"
 
-class DefineMethodMemorizer
+class DefineMethodWithInstanceVariableMemorizer
   def self.memorize(method_name)
     define_method "#{method_name}_with_cache" do
       if (ret = instance_variable_get("@#{method_name}_with_cache"))
@@ -45,8 +45,8 @@ class ClassEvalMemorizer
 end
 
 Benchmark.ips do |x|
-  x.report("DefineMethodMemorizer") do
-    m = DefineMethodMemorizer.new
+  x.report("DefineMethodWithInstanceVariableMemorizer") do
+    m = DefineMethodWithInstanceVariableMemorizer.new
     m.value
     m.value
   end
