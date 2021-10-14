@@ -24,11 +24,15 @@ ruby 3.0.2p107 (2021-07-07 revision 0db68f0233) [x86_64-darwin20]
 
 $ bundle exec ruby benchmark/memorize.rb
 Warming up --------------------------------------
-DefineMethodMemorizer
-                        44.949k i/100ms
-  ClassEvalMemorizer   494.989k i/100ms
+DefineMethodWithInstanceVariableMemorizer
+                        69.588k i/100ms
+DefineMethodWithHashMemorizer
+                       151.251k i/100ms
+  ClassEvalMemorizer   543.081k i/100ms
 Calculating -------------------------------------
-DefineMethodMemorizer
-                        532.864k (±10.3%) i/s -      2.652M in   5.042410s
-  ClassEvalMemorizer      4.267M (± 5.2%) i/s -     21.285M in   5.002845s
+DefineMethodWithInstanceVariableMemorizer
+                        693.195k (± 1.5%) i/s -      3.479M in   5.020618s
+DefineMethodWithHashMemorizer
+                          1.502M (± 3.0%) i/s -      7.563M in   5.039638s
+  ClassEvalMemorizer      5.534M (± 1.0%) i/s -     27.697M in   5.005370s
 ```
