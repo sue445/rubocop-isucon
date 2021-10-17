@@ -75,6 +75,6 @@ sql = <<~SQL
 SQL
 
 Benchmark.ips do |x|
-  x.report("RuboCop::Isucon::SqlParser#parse_tables") { RuboCop::Isucon::SqlParser.parse_tables(sql) }
+  x.report("RuboCop::Isucon::SqlParser.parse_tables") { RuboCop::Isucon::SqlParser.parse_tables(sql) }
   x.report("RuboCop::Isucon::GDA::Client#table_names") { RuboCop::Isucon::GDA::Client.new(sql).table_names }
 end
