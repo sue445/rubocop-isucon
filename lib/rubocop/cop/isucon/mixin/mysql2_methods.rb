@@ -9,17 +9,19 @@ module RuboCop
           extend NodePattern::Macros
 
           def_node_search :find_xquery, <<~PATTERN
-            (send (send nil? _) {:xquery | :query} (${str dstr} $...) ...)
+            (send (send nil? _) {:xquery | :query} (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
 
           # @param node [RuboCop::AST::Node]
           # @yieldparam type [Symbol] Node type. one of `:str`, `:dstr`
-          # @yieldparam root_gda [RuboCop::Isucon::GDA::Client]
+          # @yieldparam root_gda [RuboCop::Isucon::GDA::Client,nil]
+          #
+          # @note If arguments of `db.xquery` isn't string, `root_gda` is `nil`
           def with_xquery(node)
             find_xquery(node) do |type, params|
               sql = xquery_param(type: type, params: params)
 
-              root_gda = RuboCop::Isucon::GDA::Client.new(sql)
+              root_gda = sql ? RuboCop::Isucon::GDA::Client.new(sql) : nil
 
               yield type, root_gda
             end
