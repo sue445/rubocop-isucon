@@ -152,7 +152,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
   describe "#perform_autocorrect" do
     context "Hash#[] with symbol key" do
       it "registers an offense and correct" do
-        # FIXME: duplicate offense messages
         # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
         expect_offense(<<~RUBY)
           courses = db.xquery(
@@ -165,7 +164,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -207,7 +205,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
     context "Hash#[] with string key" do
       it "registers an offense and correct" do
-        # FIXME: duplicate offense messages
         # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
         expect_offense(<<~RUBY)
           courses = db.xquery(
@@ -220,7 +217,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course["teacher_id"]).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -262,7 +258,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
     context "Hash#fetch with symbol key" do
       it "registers an offense and correct" do
-        # FIXME: duplicate offense messages
         expect_offense(<<~RUBY)
           courses = db.xquery(
             "SELECT `courses`.*" \\
@@ -274,7 +269,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course.fetch(:teacher_id)).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -316,7 +310,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
     context "Hash#fetch with string key" do
       it "registers an offense and correct" do
-        # FIXME: duplicate offense messages
         # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
         expect_offense(<<~RUBY)
           courses = db.xquery(
@@ -329,7 +322,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course.fetch("teacher_id")).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -382,7 +374,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `name` = ?', course[:teacher_id]).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -405,7 +396,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
         expect_offense(<<~RUBY)
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -439,7 +429,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
     context "has LIMIT" do
       it "registers an offense" do
-        # FIXME: duplicate offense messages
         expect_offense(<<~RUBY)
           courses = db.xquery(
             "SELECT `courses`.*" \\
@@ -451,7 +440,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ? LIMIT 1', course[:teacher_id]).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
@@ -471,7 +459,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
     context "has GROUP BY" do
       it "registers an offense" do
-        # FIXME: duplicate offense messages
         expect_offense(<<~RUBY)
           courses = db.xquery(
             "SELECT `courses`.*" \\
@@ -483,7 +470,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
           courses.map do |course|
             teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ? GROUP BY name', course[:teacher_id]).first
-                      ^^ This looks like N+1 query.
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
             raise unless teacher
 
