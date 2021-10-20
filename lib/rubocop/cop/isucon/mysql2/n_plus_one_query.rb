@@ -31,6 +31,8 @@ module RuboCop
         #   SQL
         #
         class NPlusOneQuery < Base
+          include Mixin::Mysql2Methods
+
           MSG = "This looks like N+1 query."
 
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
@@ -41,10 +43,6 @@ module RuboCop
 
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L41
           ENUMERABLE_METHOD_NAMES = (Enumerable.instance_methods + [:each]).to_set.freeze
-
-          def_node_search :find_xquery, <<-PATTERN
-            (send (send nil? _) {:xquery | :query} ...)
-          PATTERN
 
           def_node_matcher :csv_loop?, <<~PATTERN
             (block
@@ -68,7 +66,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            find_xquery(node) do
+            with_xquery(node) do |_type, _root_gda|
               receiver, = *node.children
 
               next if !receiver.send_type? || !parent_is_loop?(receiver)
