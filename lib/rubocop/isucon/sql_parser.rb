@@ -19,7 +19,7 @@ module RuboCop
         sql = sql.gsub(/ON\s+DUPLICATE\s+KEY\s+UPDATE/i, "")
 
         sql.scan(/(?:FROM|INTO|UPDATE|JOIN)\s+([^(]+?)[\s(]/i).
-          map { |matched| matched[0].strip.delete("`") }.reject(&:empty?).uniq
+          map { |matched| matched[0].strip.delete("`") }.reject(&:empty?).uniq # rubocop:disable Layout/DotPosition
       end
     end
   end
