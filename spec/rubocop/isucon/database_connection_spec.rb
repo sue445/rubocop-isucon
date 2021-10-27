@@ -8,7 +8,7 @@ RSpec.describe RuboCop::Isucon::DatabaseConnection do
       adapter: "sqlite3",
       database: ":memory:",
       timeout: 500,
-    }.transform_keys(&:to_s) # rubocop:disable Layout/DotPosition
+    }.transform_keys(&:to_s)
   end
 
   describe "#column_names" do
