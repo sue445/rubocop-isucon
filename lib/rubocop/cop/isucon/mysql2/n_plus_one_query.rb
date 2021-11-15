@@ -33,6 +33,8 @@ module RuboCop
         class NPlusOneQuery < Base
           include Mixin::Mysql2Methods
 
+          extend AutoCorrector
+
           MSG = "This looks like N+1 query."
 
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
@@ -66,20 +68,24 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_xquery(node) do |_type, _root_gda|
+            with_xquery(node) do |type, root_gda|
               receiver, = *node.children
 
-              next if !receiver.send_type? || !parent_is_loop?(receiver)
+              next unless receiver.send_type?
 
-              add_offense(receiver)
+              parent = parent_loop_node(receiver)
+              next unless parent
+
+              add_offense(receiver) do |corrector|
+                perform_autocorrect(corrector: corrector, current_node: receiver, parent_node: parent, type: type, gda: root_gda)
+              end
             end
           end
 
           private
 
-          # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L102
-          def parent_is_loop?(node)
-            node.each_ancestor.any? { |ancestor| loop?(ancestor, node) }
+          def parent_loop_node(node)
+            node.each_ancestor.find { |ancestor| loop?(ancestor, node) }
           end
 
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L106
@@ -105,6 +111,90 @@ module RuboCop
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L130
           def enumerable_method?(method_name)
             ENUMERABLE_METHOD_NAMES.include?(method_name)
+          end
+
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param current_node [RuboCop::AST::Node]
+          # @param parent_node [RuboCop::AST::Node]
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
+          # @param gda [RuboCop::Isucon::GDA::Client]
+          def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:)
+            return unless gda
+            return unless gda.select_query?
+
+            return unless gda.table_names.count == 1
+
+            parent_receiver = parent_node.child_nodes&.first&.receiver
+            return unless parent_receiver.lvar_type?
+
+            return unless gda.where_nodes.count == 1
+
+            where_condition_gda_loc = gda.where_nodes.first.location
+            matched = where_condition_gda_loc&.body&.match(/([^\s]+)\s*=\s*\?/)
+
+            return unless matched
+
+            where_column = matched[1]
+
+            # Replace where condition in SQL (e.g. `id = ?` -> `id IN (?)`)
+            loc = offense_location(type: type, node: current_node, gda_location: where_condition_gda_loc)
+            return unless loc
+
+            corrector.replace(loc, "#{where_column} IN (?)")
+
+            # Replace 2nd arg in db.xquery (e.g. `course[:teacher_id]` -> `courses.map { |course| course[:teacher_id] }`)
+            return unless current_node.child_nodes.count == 3
+
+            xquery_arg = current_node.child_nodes[2]
+            return if !xquery_arg.send_type? || !xquery_arg.node_parts[0].lvar_type?
+
+            # TODO: check all patterns (course[:teacher_id], course["teacher_id"], course.fetch(:teacher_id), course.fetch("teacher_id"))
+            return unless xquery_arg.node_parts[1] == :[]
+            return unless xquery_arg.node_parts[2].sym_type?
+
+            corrector.replace(xquery_arg.loc.expression, "#{parent_receiver.source}.map { |#{xquery_arg.node_parts[0].source}| #{xquery_arg.node_parts[0].source}[#{xquery_arg.node_parts[2].source}] }")
+
+            # Replace `.first` -> `.each_with_object({}) { |v, hash| hash[v[:id]] = v }`
+            return unless current_node.parent.node_parts.count == 2
+
+            xquery_chained_method = current_node.parent.node_parts[1]
+            return if xquery_chained_method != :first && xquery_chained_method != :last
+
+            xquery_chained_method_begin_pos = current_node.loc.end.end_pos + 1
+            xquery_chained_method_range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, xquery_chained_method_begin_pos, xquery_chained_method_begin_pos + xquery_chained_method.length)
+
+            corrector.replace(xquery_chained_method_range, "each_with_object({}) { |v, hash| hash[v[:id]] = v }")
+
+            # Split line
+            #
+            # e.g.
+            # Before
+            #   teacher = db.xquery("SELECT * FROM `users` WHERE `id` IN (?)", courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+            #
+            # After
+            #   @users_by_id ||= db.xquery("SELECT * FROM `users` WHERE `id` IN (?)", ...).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+            #   teacher = @users_by_id[course[:teacher_id]]
+
+            xquery_lvar = current_node.parent&.parent
+            return unless xquery_lvar.lvasgn_type?
+
+            first_line_lvar_range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, xquery_lvar.loc.expression.begin_pos, current_node.loc.expression.begin_pos)
+            instance_var_name = "@#{gda.table_names[0]}_by_#{where_column.gsub("`", "")}"
+            corrector.replace(first_line_lvar_range, "#{instance_var_name} ||= ")
+
+            indent_level = indent_level(current_node)
+
+            second_line_lvar_range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, xquery_lvar.loc.expression.end_pos + 1, xquery_lvar.loc.expression.end_pos + 1)
+            corrector.replace(second_line_lvar_range, " " * indent_level + "#{xquery_lvar.node_parts[0]} = #{instance_var_name}[#{xquery_arg.node_parts[0].source}[#{xquery_arg.node_parts[2].source}]]\n")
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer]
+          def indent_level(node)
+            node.loc.expression.source_line =~ /^(\s+)/
+            return 0 unless $1
+
+            $1.length
           end
         end
       end

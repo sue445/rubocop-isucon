@@ -91,6 +91,11 @@ module RuboCop
           visit_subquery_recursive(&block)
         end
 
+        # @return [Boolean]
+        def select_query?
+          ast.is_a?(::GDA::Nodes::Select)
+        end
+
         private
 
         # @return [GDA::SQL::Statement]
