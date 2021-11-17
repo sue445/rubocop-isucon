@@ -152,7 +152,8 @@ module RuboCop
             return unless xquery_arg.node_parts[1] == :[]
             return unless xquery_arg.node_parts[2].sym_type?
 
-            corrector.replace(xquery_arg.loc.expression, "#{parent_receiver.source}.map { |#{xquery_arg.node_parts[0].source}| #{xquery_arg.node_parts[0].source}[#{xquery_arg.node_parts[2].source}] }")
+            corrector.replace(xquery_arg.loc.expression,
+                              "#{parent_receiver.source}.map { |#{xquery_arg.node_parts[0].source}| #{xquery_arg.node_parts[0].source}[#{xquery_arg.node_parts[2].source}] }")
 
             # Replace `.first` -> `.each_with_object({}) { |v, hash| hash[v[:id]] = v }`
             return unless current_node.parent.node_parts.count == 2
@@ -161,7 +162,9 @@ module RuboCop
             return if xquery_chained_method != :first && xquery_chained_method != :last
 
             xquery_chained_method_begin_pos = current_node.loc.end.end_pos + 1
-            xquery_chained_method_range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, xquery_chained_method_begin_pos, xquery_chained_method_begin_pos + xquery_chained_method.length)
+            xquery_chained_method_range =
+              Parser::Source::Range.new(current_node.loc.expression.source_buffer,
+                                        xquery_chained_method_begin_pos, xquery_chained_method_begin_pos + xquery_chained_method.length)
 
             corrector.replace(xquery_chained_method_range, "each_with_object({}) { |v, hash| hash[v[:id]] = v }")
 
@@ -178,23 +181,30 @@ module RuboCop
             xquery_lvar = current_node.parent&.parent
             return unless xquery_lvar.lvasgn_type?
 
-            first_line_lvar_range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, xquery_lvar.loc.expression.begin_pos, current_node.loc.expression.begin_pos)
-            instance_var_name = "@#{gda.table_names[0]}_by_#{where_column.gsub("`", "")}"
+            first_line_lvar_range =
+              Parser::Source::Range.new(current_node.loc.expression.source_buffer,
+                                        xquery_lvar.loc.expression.begin_pos, current_node.loc.expression.begin_pos)
+
+            instance_var_name = "@#{gda.table_names[0]}_by_#{where_column.delete('`')}"
             corrector.replace(first_line_lvar_range, "#{instance_var_name} ||= ")
 
             indent_level = indent_level(current_node)
 
-            second_line_lvar_range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, xquery_lvar.loc.expression.end_pos + 1, xquery_lvar.loc.expression.end_pos + 1)
-            corrector.replace(second_line_lvar_range, " " * indent_level + "#{xquery_lvar.node_parts[0]} = #{instance_var_name}[#{xquery_arg.node_parts[0].source}[#{xquery_arg.node_parts[2].source}]]\n")
+            second_line_lvar_range =
+              Parser::Source::Range.new(current_node.loc.expression.source_buffer,
+                                        xquery_lvar.loc.expression.end_pos + 1, xquery_lvar.loc.expression.end_pos + 1)
+
+            corrector.replace(second_line_lvar_range,
+                              (" " * indent_level) + "#{xquery_lvar.node_parts[0]} = #{instance_var_name}[#{xquery_arg.node_parts[0].source}[#{xquery_arg.node_parts[2].source}]]\n")
           end
 
           # @param node [RuboCop::AST::Node]
           # @return [Integer]
           def indent_level(node)
             node.loc.expression.source_line =~ /^(\s+)/
-            return 0 unless $1
+            return 0 unless Regexp.last_match(1)
 
-            $1.length
+            Regexp.last_match(1).length
           end
         end
       end
