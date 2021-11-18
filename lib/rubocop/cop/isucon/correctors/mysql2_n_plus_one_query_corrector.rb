@@ -4,6 +4,8 @@ module RuboCop
   module Cop
     module Isucon
       module Correctors
+        # rubocop:disable Layout/LineLength
+
         # Corrector for {RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery}
         #
         # @example Before
@@ -16,7 +18,9 @@ module RuboCop
         #     @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
         #     teacher = @users_by_id[course[:teacher_id]]
         #   end
-        class Mysql2NPlusOneQueryCorrector
+        class Mysql2NPlusOneQueryCorrector # rubocop:disable Metrics/ClassLength
+          # rubocop:enable Layout/LineLength
+
           include Mixin::Mysql2Methods
 
           # @return [RuboCop::Cop::Corrector]
@@ -60,21 +64,30 @@ module RuboCop
 
           # @return [Boolean]
           def correctable?
-            if !gda || !gda.select_query? || gda.table_names.count != 1 || !parent_receiver.lvar_type? ||
-               gda.where_nodes.count != 1 || current_node.child_nodes.count != 3 ||
-               !xquery_arg.send_type? || !xquery_arg.node_parts[0].lvar_type? || !xquery_lvar.lvasgn_type?
+            if !correctable_gda? || !correctable_xquery_arg? || !parent_receiver.lvar_type? ||
+               current_node.child_nodes.count != 3 || !xquery_lvar.lvasgn_type?
 
               return false
             end
+
+            return false unless %i[first last].include?(xquery_chained_method)
+
+            true
+          end
+
+          # @return [Boolean]
+          def correctable_gda?
+            gda&.select_query? && gda.table_names.count == 1 && gda.where_nodes.count == 1
+          end
+
+          # @return [Boolean]
+          def correctable_xquery_arg? # rubocop:disable Metrics/AbcSize
+            return false if !xquery_arg&.send_type? || xquery_arg.node_parts.count != 3 || !xquery_arg.node_parts[0].lvar_type?
 
             # TODO: check all patterns
             # e.g. course[:teacher_id], course["teacher_id"], course.fetch(:teacher_id), course.fetch("teacher_id")
             return false unless xquery_arg.node_parts[1] == :[]
             return false unless xquery_arg.node_parts[2].sym_type?
-
-            return false if xquery_chained_method != :first && xquery_chained_method != :last
-
-            return false unless xquery_lvar.lvasgn_type?
 
             true
           end
@@ -177,7 +190,7 @@ module RuboCop
             pos = xquery_lvar.loc.expression.end_pos + 1
             range = Parser::Source::Range.new(current_node.loc.expression.source_buffer, pos, pos)
 
-            corrector.replace(range, (" " * indent_level) + generate_second_line)
+            corrector.replace(range, "#{' ' * indent_level}#{generate_second_line}")
           end
 
           def generate_second_line
