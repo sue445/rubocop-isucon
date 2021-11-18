@@ -33,6 +33,8 @@ module RuboCop
         class NPlusOneQuery < Base
           include Mixin::Mysql2Methods
 
+          extend AutoCorrector
+
           MSG = "This looks like N+1 query."
 
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L38
@@ -66,20 +68,24 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_xquery(node) do |_type, _root_gda|
+            with_xquery(node) do |type, root_gda|
               receiver, = *node.children
 
-              next if !receiver.send_type? || !parent_is_loop?(receiver)
+              next unless receiver.send_type?
 
-              add_offense(receiver)
+              parent = parent_loop_node(receiver)
+              next unless parent
+
+              add_offense(receiver) do |corrector|
+                perform_autocorrect(corrector: corrector, current_node: receiver, parent_node: parent, type: type, gda: root_gda)
+              end
             end
           end
 
           private
 
-          # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L102
-          def parent_is_loop?(node)
-            node.each_ancestor.any? { |ancestor| loop?(ancestor, node) }
+          def parent_loop_node(node)
+            node.each_ancestor.find { |ancestor| loop?(ancestor, node) }
           end
 
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L106
@@ -105,6 +111,19 @@ module RuboCop
           # @see https://github.com/rubocop/rubocop-performance/blob/v1.11.5/lib/rubocop/cop/performance/collection_literal_in_loop.rb#L130
           def enumerable_method?(method_name)
             ENUMERABLE_METHOD_NAMES.include?(method_name)
+          end
+
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param current_node [RuboCop::AST::Node]
+          # @param parent_node [RuboCop::AST::Node]
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
+          # @param gda [RuboCop::Isucon::GDA::Client]
+          def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:)
+            corrector = Correctors::Mysql2NPlusOneQueryCorrector.new(
+              corrector: corrector, current_node: current_node,
+              parent_node: parent_node, type: type, gda: gda
+            )
+            corrector.correct
           end
         end
       end
