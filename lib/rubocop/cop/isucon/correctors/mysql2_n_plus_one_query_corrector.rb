@@ -92,7 +92,7 @@ module RuboCop
             true
           end
 
-          # @return [RuboCop::AST::Node]
+          # @return [RuboCop::AST::Node,nil]
           def parent_receiver
             parent_node.child_nodes&.first&.receiver
           end
@@ -111,6 +111,7 @@ module RuboCop
             matched[1]
           end
 
+          # @return [RuboCop::AST::Node]
           def xquery_arg
             current_node.child_nodes[2]
           end
@@ -145,6 +146,7 @@ module RuboCop
             corrector.replace(xquery_chained_method_range, "each_with_object({}) { |v, hash| hash[v[:id]] = v }")
           end
 
+          # @return [RuboCop::AST::Node]
           def xquery_chained_method
             current_node.parent.node_parts[1]
           end
@@ -172,6 +174,7 @@ module RuboCop
             "@#{gda.table_names[0]}_by_#{where_column.delete('`')}"
           end
 
+          # @return [RuboCop::AST::Node,nil]
           def xquery_lvar
             current_node.parent&.parent
           end
@@ -193,6 +196,7 @@ module RuboCop
             corrector.replace(range, "#{' ' * indent_level}#{generate_second_line}")
           end
 
+          # @return [String]
           def generate_second_line
             object_source = xquery_arg.node_parts[0].source
             symbol_source = xquery_arg.node_parts[2].source
