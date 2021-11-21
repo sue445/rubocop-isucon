@@ -25,6 +25,7 @@ Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
   Enabled: true
   VersionAdded: '<<next>>'
+  SafeAutoCorrect: false
 
 Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
