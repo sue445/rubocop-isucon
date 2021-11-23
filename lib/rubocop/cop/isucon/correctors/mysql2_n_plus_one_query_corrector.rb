@@ -69,7 +69,7 @@ module RuboCop
 
           # @return [Boolean]
           def correctable?
-            if !correctable_gda? || !correctable_xquery_arg? || !parent_receiver.lvar_type? ||
+            if !correctable_gda? || !correctable_query? || !correctable_xquery_arg? || !parent_receiver.lvar_type? ||
                current_node.child_nodes.count != 3 || !xquery_lvar.lvasgn_type?
 
               return false
@@ -83,6 +83,14 @@ module RuboCop
           # @return [Boolean]
           def correctable_gda?
             gda&.select_query? && gda.table_names.count == 1 && gda.where_nodes.count == 1
+          end
+
+          # @return [Boolean]
+          def correctable_query?
+            primary_keys = connection.primary_keys(gda.table_names[0])
+            return false unless primary_keys.count == 1
+
+            primary_keys.first == where_column_without_quote
           end
 
           # @return [Boolean]
@@ -176,7 +184,12 @@ module RuboCop
 
           # @return [String]
           def instance_var_name
-            "@#{gda.table_names[0]}_by_#{where_column.delete('`')}"
+            "@#{gda.table_names[0]}_by_#{where_column_without_quote}"
+          end
+
+          # @return [String]
+          def where_column_without_quote
+            where_column&.delete("`")
           end
 
           # @return [RuboCop::AST::Node,nil]
