@@ -4,6 +4,14 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
   let(:config) { RuboCop::Config.new("Isucon/Mysql2/NPlusOneQuery" => cop_config) }
   let(:cop_config) { {} }
 
+  include_context :database_cop do
+    let(:schema) do
+      %w[
+        schemas/create_users.rb
+      ]
+    end
+  end
+
   context "exists no N+1 query" do
     it "does not register an offense" do
       expect_no_offenses(<<~RUBY)
@@ -112,14 +120,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
   end
 
   describe "#perform_autocorrect" do
-    include_context :database_cop do
-      let(:schema) do
-        %w[
-          schemas/create_users.rb
-        ]
-      end
-    end
-
     context "correctable" do
       it "registers an offense and correct" do
         # FIXME: duplicate offense messages
