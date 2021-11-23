@@ -22,6 +22,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
               reservation
             end
           RUBY
+
+          expect_no_corrections
         end
       end
 
@@ -92,6 +94,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
               reservation
             end
           RUBY
+
+          expect_no_corrections
         end
       end
     end
@@ -105,6 +109,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
             reservation
           end
         RUBY
+
+        expect_no_corrections
       end
     end
   end
@@ -127,6 +133,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
           )
         end
       RUBY
+
+      expect_no_corrections
     end
   end
 
@@ -152,6 +160,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
           ^^ This looks like N+1 query.
         end
       RUBY
+
+      expect_no_corrections
     end
   end
 end
