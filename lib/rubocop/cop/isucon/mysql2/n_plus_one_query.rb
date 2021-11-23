@@ -31,6 +31,7 @@ module RuboCop
         #   SQL
         #
         class NPlusOneQuery < Base
+          include Mixin::DatabaseMethods
           include Mixin::Mysql2Methods
 
           extend AutoCorrector
@@ -119,9 +120,11 @@ module RuboCop
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param gda [RuboCop::Isucon::GDA::Client]
           def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:)
+            return unless enabled_database?
+
             corrector = Correctors::Mysql2NPlusOneQueryCorrector.new(
               corrector: corrector, current_node: current_node,
-              parent_node: parent_node, type: type, gda: gda
+              parent_node: parent_node, type: type, gda: gda, connection: connection
             )
             corrector.correct
           end

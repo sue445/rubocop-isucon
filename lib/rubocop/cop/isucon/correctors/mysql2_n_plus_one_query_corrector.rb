@@ -38,17 +38,22 @@ module RuboCop
           # @return [RuboCop::Isucon::GDA::Client]
           attr_reader :gda
 
+          # @return [RuboCop::Isucon::DatabaseConnection]
+          attr_reader :connection
+
           # @param corrector [RuboCop::Cop::Corrector]
           # @param current_node [RuboCop::AST::Node]
           # @param parent_node [RuboCop::AST::Node]
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param gda [RuboCop::Isucon::GDA::Client]
-          def initialize(corrector:, current_node:, parent_node:, type:, gda:)
+          # @param connection [RuboCop::Isucon::DatabaseConnection]
+          def initialize(corrector:, current_node:, parent_node:, type:, gda:, connection:) # rubocop:disable Metrics/ParameterLists
             @corrector = corrector
             @current_node = current_node
             @parent_node = parent_node
             @type = type
             @gda = gda
+            @connection = connection
           end
 
           def correct
