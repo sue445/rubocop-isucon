@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
-  let(:config) { RuboCop::Config.new }
+  let(:config) { RuboCop::Config.new("Isucon/Mysql2/NPlusOneQuery" => cop_config) }
+  let(:cop_config) { {} }
 
   context "exists no N+1 query" do
     it "does not register an offense" do
@@ -24,61 +25,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
           RUBY
 
           expect_no_corrections
-        end
-      end
-
-      context "with single line SQL (2)" do
-        it "registers an offense and correct" do
-          # FIXME: duplicate offense messages
-          # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
-          expect_offense(<<~RUBY)
-            courses = db.xquery(
-              "SELECT `courses`.*" \\
-              " FROM `courses`" \\
-              " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
-              " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-              STATUS_CLOSED, user_id,
-            )
-
-            courses.map do |course|
-              teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
-                        ^^ This looks like N+1 query.
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
-              raise unless teacher
-
-              {
-                id: course[:id],
-                name: course[:name],
-                teacher: teacher[:name],
-                period: course[:period],
-                day_of_week: course[:day_of_week],
-              }
-            end
-          RUBY
-
-          expect_correction(<<~RUBY)
-            courses = db.xquery(
-              "SELECT `courses`.*" \\
-              " FROM `courses`" \\
-              " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
-              " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-              STATUS_CLOSED, user_id,
-            )
-
-            courses.map do |course|
-              @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
-              teacher = @users_by_id[course[:teacher_id]]
-              raise unless teacher
-
-              {
-                id: course[:id],
-                name: course[:name],
-                teacher: teacher[:name],
-                period: course[:period],
-                day_of_week: course[:day_of_week],
-              }
-            end
-          RUBY
         end
       end
 
@@ -162,6 +108,102 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
       RUBY
 
       expect_no_corrections
+    end
+  end
+
+  describe "#perform_autocorrect" do
+    include_context :database_cop do
+      let(:schema) do
+        %w[
+          schemas/create_users.rb
+        ]
+      end
+    end
+
+    context "correctable" do
+      it "registers an offense and correct" do
+        # FIXME: duplicate offense messages
+        # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
+        expect_offense(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
+                      ^^ This looks like N+1 query.
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+            teacher = @users_by_id[course[:teacher_id]]
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+      end
+    end
+
+    context "column in WHERE column isn't PrimaryKey" do
+      it "registers an offense and correct" do
+        expect_offense(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            teacher = db.xquery('SELECT * FROM `users` WHERE `name` = ?', course[:teacher_id]).first
+                      ^^ This looks like N+1 query.
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+
+        expect_no_corrections
+      end
     end
   end
 end
