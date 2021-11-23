@@ -69,15 +69,9 @@ module RuboCop
 
           # @return [Boolean]
           def correctable?
-            if !correctable_gda? || !correctable_query? || !correctable_xquery_arg? || !parent_receiver.lvar_type? ||
-               current_node.child_nodes.count != 3 || !xquery_lvar.lvasgn_type?
-
-              return false
-            end
-
-            return false unless %i[first last].include?(xquery_chained_method)
-
-            true
+            correctable_gda? && correctable_query? && correctable_xquery_arg? &&
+              parent_receiver.lvar_type? && current_node.child_nodes.count == 3 &&
+              xquery_lvar.lvasgn_type? && %i[first last].include?(xquery_chained_method)
           end
 
           # @return [Boolean]
