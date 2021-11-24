@@ -91,9 +91,8 @@ module RuboCop
           def correctable_xquery_arg? # rubocop:disable Metrics/AbcSize
             return false if !xquery_arg&.send_type? || xquery_arg.node_parts.count != 3 || !xquery_arg.node_parts[0].lvar_type?
 
-            # TODO: check all patterns
-            # e.g. course[:teacher_id], course["teacher_id"], course.fetch(:teacher_id), course.fetch("teacher_id")
-            return false unless xquery_arg.node_parts[1] == :[]
+            # Check one of hash[:key], hash["key"], hash.fetch(:key), hash.fetch("key")
+            return false unless %i[[] fetch].include?(xquery_arg.node_parts[1])
             return false unless %i[sym str].include?(xquery_arg.node_parts[2].type)
 
             true
