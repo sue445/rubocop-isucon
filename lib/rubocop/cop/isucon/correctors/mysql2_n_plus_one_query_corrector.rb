@@ -94,7 +94,7 @@ module RuboCop
             # TODO: check all patterns
             # e.g. course[:teacher_id], course["teacher_id"], course.fetch(:teacher_id), course.fetch("teacher_id")
             return false unless xquery_arg.node_parts[1] == :[]
-            return false if !xquery_arg.node_parts[2].sym_type? && !xquery_arg.node_parts[2].str_type?
+            return false unless %i[sym str].include?(xquery_arg.node_parts[2].type)
 
             true
           end
