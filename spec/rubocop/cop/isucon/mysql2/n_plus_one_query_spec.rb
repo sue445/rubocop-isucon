@@ -120,7 +120,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
   end
 
   describe "#perform_autocorrect" do
-    context "correctable" do
+    context "Hash#[] with symbol key" do
       it "registers an offense and correct" do
         # FIXME: duplicate offense messages
         # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
@@ -161,6 +161,61 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
           courses.map do |course|
             @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
             teacher = @users_by_id[course[:teacher_id]]
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+      end
+    end
+
+    context "Hash#[] with string key" do
+      it "registers an offense and correct" do
+        # FIXME: duplicate offense messages
+        # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
+        expect_offense(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course["teacher_id"]).first
+                      ^^ This looks like N+1 query.
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course["teacher_id"] }).each_with_object({}) { |v, hash| hash[v["id"]] = v }
+            teacher = @users_by_id[course["teacher_id"]]
             raise unless teacher
 
             {
