@@ -155,6 +155,10 @@ module RuboCop
                                         xquery_chained_method_begin_pos,
                                         xquery_chained_method_begin_pos + xquery_chained_method.length)
 
+            corrector.replace(xquery_chained_method_range, generate_each_with_object)
+          end
+
+          def generate_each_with_object
             hash_key =
               case xquery_arg.node_parts[2].type
               when :sym
@@ -163,7 +167,7 @@ module RuboCop
                 %("#{where_column_without_quote}")
               end
 
-            corrector.replace(xquery_chained_method_range, "each_with_object({}) { |v, hash| hash[v[#{hash_key}]] = v }")
+            "each_with_object({}) { |v, hash| hash[v[#{hash_key}]] = v }"
           end
 
           # @return [RuboCop::AST::Node]
