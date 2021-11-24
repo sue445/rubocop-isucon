@@ -94,7 +94,7 @@ module RuboCop
             # TODO: check all patterns
             # e.g. course[:teacher_id], course["teacher_id"], course.fetch(:teacher_id), course.fetch("teacher_id")
             return false unless xquery_arg.node_parts[1] == :[]
-            return false unless xquery_arg.node_parts[2].sym_type?
+            return false if !xquery_arg.node_parts[2].sym_type? && !xquery_arg.node_parts[2].str_type?
 
             true
           end
@@ -155,7 +155,15 @@ module RuboCop
                                         xquery_chained_method_begin_pos,
                                         xquery_chained_method_begin_pos + xquery_chained_method.length)
 
-            corrector.replace(xquery_chained_method_range, "each_with_object({}) { |v, hash| hash[v[:id]] = v }")
+            hash_key =
+              case xquery_arg.node_parts[2].type
+              when :sym
+                ":#{where_column_without_quote}"
+              when :str
+                %("#{where_column_without_quote}")
+              end
+
+            corrector.replace(xquery_chained_method_range, "each_with_object({}) { |v, hash| hash[v[#{hash_key}]] = v }")
           end
 
           # @return [RuboCop::AST::Node]
