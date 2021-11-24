@@ -120,7 +120,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
   end
 
   describe "#perform_autocorrect" do
-    context "correctable" do
+    context "Hash#[] with symbol key" do
       it "registers an offense and correct" do
         # FIXME: duplicate offense messages
         # c.f. https://github.com/isucon/isucon11-final/blob/667be3ec70c025eadde541e21d5ab1167efa1dd3/webapp/ruby/app.rb#L171-L190
