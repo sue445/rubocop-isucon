@@ -158,6 +158,7 @@ module RuboCop
             corrector.replace(xquery_chained_method_range, generate_each_with_object)
           end
 
+          # @return [String]
           def generate_each_with_object
             hash_key =
               case xquery_arg.node_parts[2].type
