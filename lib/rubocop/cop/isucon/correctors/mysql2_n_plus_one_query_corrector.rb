@@ -70,7 +70,7 @@ module RuboCop
           # @return [Boolean]
           def correctable?
             correctable_gda? && correctable_query? && correctable_xquery_arg? &&
-              parent_receiver.lvar_type? && current_node.child_nodes.count == 3 &&
+              correctable_parent_receiver? && current_node.child_nodes.count == 3 &&
               xquery_lvar.lvasgn_type? && %i[first last].include?(xquery_chained_method)
           end
 
@@ -97,6 +97,11 @@ module RuboCop
             return false unless xquery_arg.node_parts[2].sym_type?
 
             true
+          end
+
+          # @return [Boolean]
+          def correctable_parent_receiver?
+            parent_receiver.lvar_type? || parent_receiver.send_type?
           end
 
           # @return [RuboCop::AST::Node,nil]

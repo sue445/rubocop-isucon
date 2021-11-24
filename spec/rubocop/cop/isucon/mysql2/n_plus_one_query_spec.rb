@@ -205,5 +205,42 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
         expect_no_corrections
       end
     end
+
+    context "parent_receiver is send_type" do
+      it "registers an offense and correct" do
+        expect_offense(<<~RUBY)
+          courses.map do |course|
+            teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
+                      ^^ This looks like N+1 query.
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          courses.map do |course|
+            @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+            teacher = @users_by_id[course[:teacher_id]]
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+      end
+    end
   end
 end
