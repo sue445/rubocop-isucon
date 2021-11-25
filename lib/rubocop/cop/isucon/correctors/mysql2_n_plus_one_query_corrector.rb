@@ -76,7 +76,7 @@ module RuboCop
 
           # @return [Boolean]
           def correctable_gda?
-            gda&.select_query? && gda.table_names.count == 1 && gda.where_nodes.count == 1
+            gda&.select_query? && gda.table_names.count == 1 && gda.where_nodes.count == 1 && !gda.ast.limit_count
           end
 
           # @return [Boolean]
