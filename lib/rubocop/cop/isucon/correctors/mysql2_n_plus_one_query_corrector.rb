@@ -69,18 +69,20 @@ module RuboCop
 
           # @return [Boolean]
           def correctable?
-            correctable_gda? && correctable_query? && correctable_xquery_arg? &&
+            correctable_gda? && correctable_xquery_arg? &&
               correctable_parent_receiver? && current_node.child_nodes.count == 3 &&
               xquery_lvar.lvasgn_type? && %i[first last].include?(xquery_chained_method)
           end
 
           # @return [Boolean]
           def correctable_gda?
-            gda&.select_query? && gda.table_names.count == 1 && gda.where_nodes.count == 1 && !gda.ast.limit_count
+            gda&.select_query? && gda.table_names.count == 1 && !gda.ast.limit_count && where_clause_with_only_primary_key?
           end
 
           # @return [Boolean]
-          def correctable_query?
+          def where_clause_with_only_primary_key?
+            return false unless gda.where_nodes.count == 1
+
             primary_keys = connection.primary_keys(gda.table_names[0])
             return false unless primary_keys.count == 1
 
