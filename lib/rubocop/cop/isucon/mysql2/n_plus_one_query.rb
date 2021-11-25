@@ -85,6 +85,8 @@ module RuboCop
 
           private
 
+          # @param node [RuboCop::AST::Node]
+          # @return [RuboCop::AST::Node]
           def parent_loop_node(node)
             node.each_ancestor.find { |ancestor| loop?(ancestor, node) }
           end
