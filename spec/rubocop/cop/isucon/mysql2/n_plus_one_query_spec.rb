@@ -438,5 +438,37 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
         expect_no_corrections
       end
     end
+
+    context "has GROUP BY" do
+      it "registers an offense" do
+        # FIXME: duplicate offense messages
+        expect_offense(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ? GROUP BY name', course[:teacher_id]).first
+                      ^^ This looks like N+1 query.
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+
+        expect_no_corrections
+      end
+    end
   end
 end

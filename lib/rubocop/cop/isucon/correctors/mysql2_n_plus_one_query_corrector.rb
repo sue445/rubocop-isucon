@@ -76,7 +76,8 @@ module RuboCop
 
           # @return [Boolean]
           def correctable_gda?
-            gda&.select_query? && gda.table_names.count == 1 && !gda.ast.limit_count && where_clause_with_only_primary_key?
+            gda&.select_query? && gda.table_names.count == 1 && !gda.ast.limit_count &&
+              gda.ast.group_by.empty? && where_clause_with_only_primary_key?
           end
 
           # @return [Boolean]
