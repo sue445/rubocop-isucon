@@ -145,6 +145,8 @@ module RuboCop
 
             corrector.replace(
               xquery_arg.loc.expression,
+              # e.g.
+              # courses.map { |course| course[:teacher_id] }
               "#{parent_receiver.source}.map { |#{object_source}| #{object_source}[#{symbol_source}] }",
             )
           end
@@ -161,6 +163,9 @@ module RuboCop
           end
 
           # @return [String]
+          #
+          # @example
+          #   each_with_object({}) { |v, hash| hash[v[:id]] = v }
           def generate_each_with_object
             hash_key =
               case xquery_arg.node_parts[2].type
@@ -178,18 +183,17 @@ module RuboCop
             current_node.parent.node_parts[1]
           end
 
+          # rubocop:disable Layout/LineLength
+
+          # Split line
+          #
+          # @example Before
+          #   teacher = db.xquery("SELECT * FROM `users` WHERE `id` IN (?)", courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+          #
+          # @example After
+          #   @users_by_id ||= db.xquery("SELECT * FROM `users` WHERE `id` IN (?)", ...).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+          #   teacher = @users_by_id[course[:teacher_id]]
           def replace_to_2_lines
-            # rubocop:disable Layout/LineLength
-            #
-            # Split line
-            # e.g.
-            # Before
-            #   teacher = db.xquery("SELECT * FROM `users` WHERE `id` IN (?)", courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
-            #
-            # After
-            #   @users_by_id ||= db.xquery("SELECT * FROM `users` WHERE `id` IN (?)", ...).each_with_object({}) { |v, hash| hash[v[:id]] = v }
-            #   teacher = @users_by_id[course[:teacher_id]]
-            #
             # rubocop:enable Layout/LineLength
 
             replace_to_2_lines_for_1st_line
@@ -229,6 +233,9 @@ module RuboCop
           end
 
           # @return [String]
+          #
+          # @example response example
+          #   teacher = @users_by_id[course[:teacher_id]]
           def generate_second_line
             object_source = xquery_arg.node_parts[0].source
             symbol_source = xquery_arg.node_parts[2].source
