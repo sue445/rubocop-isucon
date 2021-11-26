@@ -164,7 +164,7 @@ module RuboCop
 
           # @return [String]
           #
-          # @example
+          # @example response example
           #   each_with_object({}) { |v, hash| hash[v[:id]] = v }
           def generate_each_with_object
             hash_key =
