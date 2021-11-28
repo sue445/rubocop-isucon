@@ -4,6 +4,8 @@ module RuboCop
   module Cop
     module Isucon
       module Mysql2
+        # rubocop:disable Layout/LineLength
+
         # Checks that N+1 query is not used
         #
         # @example
@@ -41,6 +43,8 @@ module RuboCop
         #     teacher = @users_by_id[course[:teacher_id]]
         #   end
         class NPlusOneQuery < Base
+          # rubocop:enable Layout/LineLength
+
           include Mixin::DatabaseMethods
           include Mixin::Mysql2Methods
 
