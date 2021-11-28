@@ -30,6 +30,16 @@ module RuboCop
         #     WHERE r.schedule_id = ?
         #   SQL
         #
+        #   # bad
+        #   courses.map do |course|
+        #     teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
+        #   end
+        #
+        #   # good
+        #   courses.map do |course|
+        #     @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+        #     teacher = @users_by_id[course[:teacher_id]]
+        #   end
         class NPlusOneQuery < Base
           include Mixin::DatabaseMethods
           include Mixin::Mysql2Methods
