@@ -26,6 +26,14 @@ Isucon/Mysql2/NPlusOneQuery:
   Enabled: true
   VersionAdded: '0.1.0'
   SafeAutoCorrect: false
+  # Database:
+  #   adapter: mysql2
+  #   host: # TODO: Fix this
+  #   database: # TODO: Fix this
+  #   username: isucon
+  #   password: isucon
+  #   encoding: utf8
+  #   port: 3306
 
 Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
