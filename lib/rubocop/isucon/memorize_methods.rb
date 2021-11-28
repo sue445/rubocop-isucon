@@ -5,6 +5,8 @@ module RuboCop
     # Memorize helper
     #
     module MemorizeMethods
+      # Define memorize method
+      #
       # @param method_name [String,Symbol]
       #
       # @example Usage
