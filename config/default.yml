@@ -11,7 +11,7 @@
 Isucon/Mysql2/JoinWithoutIndex:
   Description: 'Check for `JOIN` without index'
   Enabled: true
-  VersionAdded: '<<next>>'
+  VersionAdded: '0.1.0'
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -24,13 +24,13 @@ Isucon/Mysql2/JoinWithoutIndex:
 Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
   Enabled: true
-  VersionAdded: '<<next>>'
+  VersionAdded: '0.1.0'
   SafeAutoCorrect: false
 
 Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: true
-  VersionAdded: '<<next>>'
+  VersionAdded: '0.1.0'
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -43,7 +43,7 @@ Isucon/Mysql2/SelectAsterisk:
 Isucon/Mysql2/WhereWithoutIndex:
   Description: 'Check for `WHERE` without index'
   Enabled: true
-  VersionAdded: '<<next>>'
+  VersionAdded: '0.1.0'
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -56,4 +56,4 @@ Isucon/Mysql2/WhereWithoutIndex:
 Isucon/Sinatra/DisableLogging:
   Description: 'Disable sinatra logging'
   Enabled: true
-  VersionAdded: '<<next>>'
+  VersionAdded: '0.1.0'
