@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Mixin
-        # Helper methods for `db.xquery` in AST
+        # Helper methods for `db.xquery` or `db.query` in AST
         module Mysql2Methods
           extend NodePattern::Macros
 
