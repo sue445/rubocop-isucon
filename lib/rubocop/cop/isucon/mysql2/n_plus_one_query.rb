@@ -8,6 +8,8 @@ module RuboCop
 
         # Checks that N+1 query is not used
         #
+        # @note If `Database` isn't configured, auto-correct will not be available. (Only offense detection can be used)
+        #
         # @example
         #   # bad
         #   reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
