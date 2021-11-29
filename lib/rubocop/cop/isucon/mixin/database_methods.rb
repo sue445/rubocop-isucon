@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Mixin
-        # Database util methods for Isucon/Mysql cops
+        # Database util methods for {RuboCop::Cop::Isucon::Mysql2}
         module DatabaseMethods
           # @return [RuboCop::Isucon::DatabaseConnection]
           # @raise [RuboCop::Isucon::DatabaseConfigurationError] `Database` isn't configured in `.rubocop.yml`
