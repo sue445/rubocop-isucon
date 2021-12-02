@@ -630,5 +630,32 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
         expect_no_corrections
       end
     end
+
+    context "WHERE with unique index" do
+      include_context :database_cop do
+        let(:schema) do
+          %w[
+            schemas/create_courses.rb
+          ]
+        end
+      end
+
+      it "registers an offense and correct" do
+        expect_offense(<<~RUBY)
+          courses.map do |course|
+            c = db.xquery('SELECT * FROM `courses` WHERE `code` = ?', course[:code]).first
+                ^^ This looks like N+1 query.
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This looks like N+1 query.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          courses.map do |course|
+            @courses_by_code ||= db.xquery('SELECT * FROM `courses` WHERE `code` IN (?)', courses.map { |course| course[:code] }).each_with_object({}) { |v, hash| hash[v[:code]] = v }
+            c = @courses_by_code[course[:code]]
+          end
+        RUBY
+      end
+    end
   end
 end
