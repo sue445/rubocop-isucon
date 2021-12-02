@@ -27,6 +27,12 @@ module RuboCop
       end
 
       # @param table_name [String]
+      # @return [Array<Array<String>>] column names of indexes
+      def unique_index_columns(table_name)
+        indexes(table_name).select(&:unique).map(&:columns)
+      end
+
+      # @param table_name [String]
       # @return [Array<String>] primary key's column names
       def primary_keys(table_name)
         @primary_keys_by_table[table_name] ||= ActiveRecord::Base.connection.primary_keys(table_name)
