@@ -96,6 +96,27 @@ module RuboCop
           ast.is_a?(::GDA::Nodes::Select)
         end
 
+        # Whether `SELECT` clause contains aggregate functions (`COUNT`, `MAX`, `MIN`, `SUM` or `AVG`)
+        # @return [Boolean]
+        def contains_aggregate_functions?
+          aggregate_function_names = %w[COUNT MAX MIN SUM AVG]
+          ast.expr_list.any? do |select_field_node|
+            aggregate_function_names.include?(select_field_node.expr.func&.function_name&.upcase)
+          end
+        end
+
+        # Whether AST has `GROUP BY` clause
+        # @return [Boolean]
+        def group_by_clause?
+          !ast.group_by.empty?
+        end
+
+        # Whether AST has `LIMIT` clause
+        # @return [Boolean]
+        def limit_clause?
+          !!ast.limit_count
+        end
+
         private
 
         # @return [GDA::SQL::Statement]
