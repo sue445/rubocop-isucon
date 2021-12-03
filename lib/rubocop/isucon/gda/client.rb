@@ -96,6 +96,15 @@ module RuboCop
           ast.is_a?(::GDA::Nodes::Select)
         end
 
+        # Whether `SELECT` clause contains aggregate functions (`COUNT`, `MAX`, `MIN`, `SUM` or `AVG`)
+        # @return [Boolean]
+        def contains_aggregate_functions?
+          aggregate_function_names = %w[COUNT MAX MIN SUM AVG]
+          ast.expr_list.any? do |select_field_node|
+            aggregate_function_names.include?(select_field_node.expr.func&.function_name&.upcase)
+          end
+        end
+
         private
 
         # @return [GDA::SQL::Statement]

@@ -77,7 +77,7 @@ module RuboCop
           # @return [Boolean]
           def correctable_gda? # rubocop:disable Metrics/AbcSize
             gda&.select_query? && gda.table_names.count == 1 && !gda.ast.limit_count &&
-              gda.ast.group_by.empty? && !contains_aggregate_functions? && where_clause_with_only_single_unique_key?
+              gda.ast.group_by.empty? && !gda.contains_aggregate_functions? && where_clause_with_only_single_unique_key?
           end
 
           # @return [Boolean]
@@ -105,14 +105,6 @@ module RuboCop
             end
 
             false
-          end
-
-          # @return [Boolean]
-          def contains_aggregate_functions?
-            aggregate_function_names = %w[COUNT MAX MIN SUM AVG]
-            gda.ast.expr_list.any? do |select_field_node|
-              aggregate_function_names.include?(select_field_node.expr.func&.function_name&.upcase)
-            end
           end
 
           # @return [Boolean]
