@@ -79,17 +79,17 @@ module RuboCop
               replace_to_2_lines_for_2nd_line
             end
 
-            # @return [String]
-            def instance_var_name
-              "@#{gda.table_names[0]}_by_#{where_column_without_quote}"
-            end
-
             def replace_to_2_lines_for_1st_line
               range =
                 Parser::Source::Range.new(current_node.loc.expression.source_buffer,
                                           xquery_lvar.loc.expression.begin_pos, current_node.loc.expression.begin_pos)
 
               corrector.replace(range, "#{instance_var_name} ||= ")
+            end
+
+            # @return [String]
+            def instance_var_name
+              "@#{gda.table_names[0]}_by_#{where_column_without_quote}"
             end
 
             def replace_to_2_lines_for_2nd_line
@@ -101,6 +101,15 @@ module RuboCop
               corrector.replace(range, "#{' ' * indent_level}#{generate_second_line}")
             end
 
+            # @param node [RuboCop::AST::Node]
+            # @return [Integer]
+            def indent_level(node)
+              node.loc.expression.source_line =~ /^(\s+)/
+              return 0 unless Regexp.last_match(1)
+
+              Regexp.last_match(1).length
+            end
+
             # @return [String]
             #
             # @example response example
@@ -109,15 +118,6 @@ module RuboCop
               object_source = xquery_arg.node_parts[0].source
               symbol_source = xquery_arg.node_parts[2].source
               "#{xquery_lvar.node_parts[0]} = #{instance_var_name}[#{object_source}[#{symbol_source}]]\n"
-            end
-
-            # @param node [RuboCop::AST::Node]
-            # @return [Integer]
-            def indent_level(node)
-              node.loc.expression.source_line =~ /^(\s+)/
-              return 0 unless Regexp.last_match(1)
-
-              Regexp.last_match(1).length
             end
           end
         end
