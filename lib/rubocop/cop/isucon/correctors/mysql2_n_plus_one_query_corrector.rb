@@ -75,10 +75,14 @@ module RuboCop
           end
 
           # @return [Boolean]
-          def correctable_gda? # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity
+          def correctable_gda? # rubocop:disable Metrics/AbcSize
             gda&.select_query? && gda.table_names.count == 1 && !gda.ast.limit_count &&
-              gda.ast.group_by.empty? && !contains_aggregate_functions? &&
-              (where_clause_with_only_primary_key? || where_clause_with_only_single_unique_index_column?)
+              gda.ast.group_by.empty? && !contains_aggregate_functions? && where_clause_with_only_single_unique_key?
+          end
+
+          # @return [Boolean]
+          def where_clause_with_only_single_unique_key?
+            where_clause_with_only_primary_key? || where_clause_with_only_single_unique_index_column?
           end
 
           # @return [Boolean]
