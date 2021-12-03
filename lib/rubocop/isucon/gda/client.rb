@@ -111,6 +111,12 @@ module RuboCop
           !ast.group_by.empty?
         end
 
+        # Whether AST has `LIMIT` clause
+        # @return [Boolean]
+        def limit_clause?
+          !!ast.limit_count
+        end
+
         private
 
         # @return [GDA::SQL::Statement]
