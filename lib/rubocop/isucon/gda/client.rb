@@ -105,6 +105,12 @@ module RuboCop
           end
         end
 
+        # Whether AST has `GROUP BY` clause
+        # @return [Boolean]
+        def group_by_clause?
+          !ast.group_by.empty?
+        end
+
         private
 
         # @return [GDA::SQL::Statement]

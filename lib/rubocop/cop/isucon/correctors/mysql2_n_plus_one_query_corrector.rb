@@ -77,7 +77,7 @@ module RuboCop
           # @return [Boolean]
           def correctable_gda? # rubocop:disable Metrics/AbcSize
             gda&.select_query? && gda.table_names.count == 1 && !gda.ast.limit_count &&
-              gda.ast.group_by.empty? && !gda.contains_aggregate_functions? && where_clause_with_only_single_unique_key?
+              !gda.group_by_clause? && !gda.contains_aggregate_functions? && where_clause_with_only_single_unique_key?
           end
 
           # @return [Boolean]
