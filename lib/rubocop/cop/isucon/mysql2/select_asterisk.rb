@@ -26,6 +26,8 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_xquery(node) do |type, root_gda|
+              next unless root_gda
+
               check_and_register_offence(type: type, root_gda: root_gda, node: node)
             end
           end
@@ -36,8 +38,6 @@ module RuboCop
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           # @param node [RuboCop::AST::Node]
           def check_and_register_offence(type:, root_gda:, node:)
-            return unless root_gda
-
             root_gda.visit_all do |gda|
               next unless gda.ast.respond_to?(:expr_list)
 
