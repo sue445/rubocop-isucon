@@ -213,4 +213,20 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
       end
     end
   end
+
+  context "Non DSL" do
+    include_context :database_cop do
+      let(:schema) do
+        %w[
+          schemas/create_courses.rb
+        ]
+      end
+    end
+
+    it "does not register an offense" do
+      expect_no_offenses(<<~RUBY)
+        db.query('BEGIN')
+      RUBY
+    end
+  end
 end

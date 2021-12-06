@@ -29,7 +29,14 @@ module RuboCop
 
         # @return [Array<String>]
         def table_names
-          @table_names ||= ast.from.targets.map(&:table_name).compact.uniq
+          return @table_names if @table_names
+
+          @table_names =
+            if ast.respond_to?(:from)
+              ast.from.targets.map(&:table_name).compact.uniq
+            else
+              []
+            end
         end
 
         # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]
@@ -65,6 +72,8 @@ module RuboCop
 
         # @return [Array<GDA::Nodes::Operation>]
         def where_nodes
+          return [] unless ast.respond_to?(:where_cond)
+
           ast.where_cond.to_a.
             select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }
         end
