@@ -215,4 +215,12 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
       RUBY
     end
   end
+
+  context "Non SELECT query" do
+    it "does not register an offense" do
+      expect_no_offenses(<<~RUBY)
+        db.xquery("UPDATE `courses` SET `status` = ? WHERE `id` = ?", json_params[:status], params[:course_id])
+      RUBY
+    end
+  end
 end

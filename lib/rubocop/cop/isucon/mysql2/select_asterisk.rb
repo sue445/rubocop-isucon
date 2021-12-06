@@ -40,7 +40,7 @@ module RuboCop
               next unless gda.ast.respond_to?(:expr_list)
 
               gda.ast.expr_list.each do |select_field_node|
-                next unless select_field_node.expr.value == "*"
+                next if !select_field_node.respond_to?(:expr) || select_field_node.expr.value != "*"
 
                 loc = offense_location(type: type, node: node, gda_location: select_field_node.expr.location)
                 next unless loc
