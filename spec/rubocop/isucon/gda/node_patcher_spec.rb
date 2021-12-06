@@ -73,5 +73,30 @@ RSpec.describe RuboCop::Isucon::GDA::NodePatcher do
         expect(join_operands[1].location).to eq location(begin_pos: 103, end_pos: 113, body: "r.sheet_id")
       end
     end
+
+    context "Contains `*` operation" do
+      let(:sql) do
+        # c.f. https://github.com/isucon/isucon11-final/blob/a4ca72f2b4c470d93afe9edd572a2dbd563308fe/webapp/ruby/app.rb#L360-L374
+        <<~SQL
+          SELECT IFNULL(SUM(`submissions`.`score` * `courses`.`credit`), 0) / 100 / `credits`.`credits` AS `gpa`
+           FROM `users`
+           JOIN (
+               SELECT `users`.`id` AS `user_id`, SUM(`courses`.`credit`) AS `credits`
+               FROM `users`
+               JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`
+               JOIN `courses` ON `registrations`.`course_id` = `courses`.`id` AND `courses`.`status` = ?
+               GROUP BY `users`.`id`
+           ) AS `credits` ON `credits`.`user_id` = `users`.`id`
+           JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`
+           JOIN `courses` ON `registrations`.`course_id` = `courses`.`id` AND `courses`.`status` = ?
+           LEFT JOIN `classes` ON `courses`.`id` = `classes`.`course_id`
+           LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`
+           WHERE `users`.`type` = ?
+           GROUP BY `users`.`id`
+        SQL
+      end
+
+      it { expect { subject }.not_to output.to_stderr }
+    end
   end
 end

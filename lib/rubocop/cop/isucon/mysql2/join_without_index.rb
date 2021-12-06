@@ -37,6 +37,8 @@ module RuboCop
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           # @param node [RuboCop::AST::Node]
           def check_and_register_offence(type:, root_gda:, node:)
+            return unless root_gda
+
             root_gda.visit_all do |gda|
               gda.join_conditions.each do |join_condition|
                 join_operand = join_operand_without_index(join_condition)
@@ -51,6 +53,8 @@ module RuboCop
           # @return [RuboCop::Isucon::GDA::JoinOperand,nil]
           def join_operand_without_index(join_condition)
             join_condition.operands.each do |join_operand|
+              next unless join_operand.table_name
+
               unless indexed_column?(table_name: join_operand.table_name, column_name: join_operand.column_name)
                 return join_operand
               end

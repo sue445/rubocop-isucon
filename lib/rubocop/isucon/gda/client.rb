@@ -4,7 +4,7 @@ module RuboCop
   module Isucon
     module GDA
       # Client for `GDA`
-      class Client
+      class Client # rubocop:disable Metrics/ClassLength
         # @return [GDA::Nodes::Select]
         attr_reader :ast
 
@@ -29,7 +29,14 @@ module RuboCop
 
         # @return [Array<String>]
         def table_names
-          @table_names ||= ast.from.targets.map(&:table_name).compact.uniq
+          return @table_names if @table_names
+
+          @table_names =
+            if ast.respond_to?(:from)
+              ast.from.targets.map(&:table_name).compact.uniq
+            else
+              []
+            end
         end
 
         # @return [Array<RuboCop::Isucon::GDA::WhereCondition>]
@@ -49,6 +56,8 @@ module RuboCop
 
         # @return [Array<RuboCop::Isucon::GDA::JoinCondition>]
         def join_conditions
+          return [] unless ast.respond_to?(:from)
+
           ast.from.joins.map do |node|
             join_operands = node.expr.cond.operands.map do |operand|
               create_join_operand(operand)
@@ -63,6 +72,8 @@ module RuboCop
 
         # @return [Array<GDA::Nodes::Operation>]
         def where_nodes
+          return [] unless ast.respond_to?(:where_cond)
+
           ast.where_cond.to_a.
             select { |node| node.instance_of?(::GDA::Nodes::Operation) && node.operator }
         end
@@ -76,6 +87,8 @@ module RuboCop
 
         # @yieldparam gda [RuboCop::Isucon::GDA::Client]
         def visit_subquery_recursive(&block)
+          return unless ast.respond_to?(:from)
+
           ast.from.targets.each do |target|
             next unless target.expr.select
 
