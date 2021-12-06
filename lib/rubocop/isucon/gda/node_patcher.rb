@@ -33,9 +33,9 @@ module RuboCop
         def operand_pattern(node)
           case node.operands.count
           when 1
-            /#{node.operands[0].value}\s*#{node.operator}/
+            /#{Regexp.escape(node.operands[0].value)}\s*#{Regexp.escape(node.operator)}/
           when 2
-            /#{node.operands[0].value}\s*#{node.operator}\s*#{node.operands[1].value}/
+            /#{Regexp.escape(node.operands[0].value)}\s*#{Regexp.escape(node.operator)}\s*#{Regexp.escape(node.operands[1].value)}/
           end
         end
 
