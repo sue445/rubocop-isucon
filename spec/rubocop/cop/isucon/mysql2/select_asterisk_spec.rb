@@ -207,4 +207,12 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
       RUBY
     end
   end
+
+  context "Non DSL" do
+    it "does not register an offense" do
+      expect_no_offenses(<<~RUBY)
+        db.query('BEGIN')
+      RUBY
+    end
+  end
 end

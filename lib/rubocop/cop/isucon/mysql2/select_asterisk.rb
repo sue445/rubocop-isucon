@@ -37,6 +37,8 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def check_and_register_offence(type:, root_gda:, node:)
             root_gda.visit_all do |gda|
+              next unless gda.ast.respond_to?(:expr_list)
+
               gda.ast.expr_list.each do |select_field_node|
                 next unless select_field_node.expr.value == "*"
 

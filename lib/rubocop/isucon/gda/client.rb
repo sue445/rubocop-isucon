@@ -76,6 +76,8 @@ module RuboCop
 
         # @yieldparam gda [RuboCop::Isucon::GDA::Client]
         def visit_subquery_recursive(&block)
+          return unless ast.respond_to?(:from)
+
           ast.from.targets.each do |target|
             next unless target.expr.select
 
