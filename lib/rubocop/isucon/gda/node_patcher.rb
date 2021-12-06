@@ -31,11 +31,14 @@ module RuboCop
         # @param node [GDA::Nodes::Operation]
         # @return [Regexp,nil]
         def operand_pattern(node)
+          operand0 = Regexp.escape(node.operands[0].value)
+          operator = Regexp.escape(node.operator)
+
           case node.operands.count
           when 1
-            /#{Regexp.escape(node.operands[0].value)}\s*#{Regexp.escape(node.operator)}/
+            /#{operand0}\s*#{operator}/
           when 2
-            /#{Regexp.escape(node.operands[0].value)}\s*#{Regexp.escape(node.operator)}\s*#{Regexp.escape(node.operands[1].value)}/
+            /#{operand0}\s*#{operator}\s*#{Regexp.escape(node.operands[1].value)}/
           end
         end
 
