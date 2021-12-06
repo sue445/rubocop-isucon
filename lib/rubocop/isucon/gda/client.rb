@@ -4,7 +4,7 @@ module RuboCop
   module Isucon
     module GDA
       # Client for `GDA`
-      class Client
+      class Client # rubocop:disable Metrics/ClassLength
         # @return [GDA::Nodes::Select]
         attr_reader :ast
 
