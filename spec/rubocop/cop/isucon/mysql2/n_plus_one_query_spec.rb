@@ -119,6 +119,34 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
     end
   end
 
+  context "auto corrected code" do
+    it "does not register an offense" do
+      expect_no_offenses(<<~RUBY)
+        courses = db.xquery(
+          "SELECT `courses`.*" \\
+          " FROM `courses`" \\
+          " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+          " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+          STATUS_CLOSED, user_id,
+        )
+
+        courses.map do |course|
+          @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
+          teacher = @users_by_id[course[:teacher_id]]
+          raise unless teacher
+
+          {
+            id: course[:id],
+            name: course[:name],
+            teacher: teacher[:name],
+            period: course[:period],
+            day_of_week: course[:day_of_week],
+          }
+        end
+      RUBY
+    end
+  end
+
   describe "#perform_autocorrect" do
     context "Hash#[] with symbol key" do
       it "registers an offense and correct" do
