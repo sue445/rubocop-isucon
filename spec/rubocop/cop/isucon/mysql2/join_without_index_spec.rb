@@ -67,4 +67,35 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex, :config do
       RUBY
     end
   end
+
+  context "AST Node has NULL JOIN operand" do
+    include_context :database_cop do
+      let(:schema) do
+        %w[
+          schemas/create_users.rb
+          schemas/create_registrations.rb
+          schemas/create_courses.rb
+          schemas/create_classes.rb
+          schemas/create_submissions.rb
+        ]
+      end
+    end
+
+    it "does not register an offense" do
+      # c.f. https://github.com/isucon/isucon11-final/blob/a4ca72f2b4c470d93afe9edd572a2dbd563308fe/webapp/ruby/app.rb#L323-L333
+      expect_no_offenses(<<~RUBY)
+        totals = db.xquery(
+          "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \\
+          " FROM `users`" \\
+          " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \\
+          " JOIN `courses` ON `registrations`.`course_id` = `courses`.`id`" \\
+          " LEFT JOIN `classes` ON `courses`.`id` = `classes`.`course_id`" \\
+          " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \\
+          " WHERE `courses`.`id` = ?" \\
+          " GROUP BY `users`.`id`",
+          course[:id]
+        ).map { |_| _[:total_score] }
+      RUBY
+    end
+  end
 end

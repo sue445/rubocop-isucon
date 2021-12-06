@@ -51,6 +51,8 @@ module RuboCop
           # @return [RuboCop::Isucon::GDA::JoinOperand,nil]
           def join_operand_without_index(join_condition)
             join_condition.operands.each do |join_operand|
+              next unless join_operand.table_name
+
               unless indexed_column?(table_name: join_operand.table_name, column_name: join_operand.column_name)
                 return join_operand
               end
