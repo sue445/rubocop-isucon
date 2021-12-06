@@ -49,6 +49,8 @@ module RuboCop
 
         # @return [Array<RuboCop::Isucon::GDA::JoinCondition>]
         def join_conditions
+          return [] unless ast.respond_to?(:from)
+
           ast.from.joins.map do |node|
             join_operands = node.expr.cond.operands.map do |operand|
               create_join_operand(operand)
