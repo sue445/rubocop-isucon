@@ -42,15 +42,26 @@ module RuboCop
               next unless gda.ast.respond_to?(:expr_list)
 
               gda.ast.expr_list.each do |select_field_node|
-                next if !select_field_node.respond_to?(:expr) || select_field_node.expr.value != "*"
-
-                loc = offense_location(type: type, node: node, gda_location: select_field_node.expr.location)
-                next unless loc
-
-                add_offense(loc) do |corrector|
-                  perform_autocorrect(corrector: corrector, loc: loc, gda: gda)
-                end
+                check_and_register_offence_for_select_field_node(
+                  type: type, node: node, gda: gda,
+                  select_field_node: select_field_node
+                )
               end
+            end
+          end
+
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
+          # @param node [RuboCop::AST::Node]
+          # @param gda [RuboCop::Isucon::GDA::Client]
+          # @param select_field_node [GDA::Nodes::SelectField]
+          def check_and_register_offence_for_select_field_node(type:, node:, gda:, select_field_node:)
+            return if !select_field_node.respond_to?(:expr) || select_field_node.expr.value != "*"
+
+            loc = offense_location(type: type, node: node, gda_location: select_field_node.expr.location)
+            return unless loc
+
+            add_offense(loc) do |corrector|
+              perform_autocorrect(corrector: corrector, loc: loc, gda: gda)
             end
           end
 
