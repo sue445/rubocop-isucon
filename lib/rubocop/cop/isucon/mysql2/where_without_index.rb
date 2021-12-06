@@ -30,6 +30,7 @@ module RuboCop
             return unless enabled_database?
 
             with_xquery(node) do |type, root_gda|
+              next unless root_gda
               next if exists_index_in_where_clause_columns?(root_gda)
 
               register_offense(type: type, node: node, root_gda: root_gda)
