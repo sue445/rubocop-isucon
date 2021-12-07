@@ -4,6 +4,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
   let(:config) { RuboCop::Config.new("Isucon/Mysql2/SelectAsterisk" => cop_config) }
   let(:cop_config) { {} }
 
+  include_examples :mysql2_cop_common_examples
+
   context "When using `SELECT *`" do
     context "with xquery" do
       context "without Database config" do

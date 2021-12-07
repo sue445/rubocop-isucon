@@ -4,6 +4,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex, :config do
   let(:config) { RuboCop::Config.new("Isucon/Mysql2/JoinWithoutIndex" => cop_config) }
   let(:cop_config) { {} }
 
+  include_examples :mysql2_cop_common_examples
+
   context "without index" do
     include_context :database_cop do
       let(:schema) do

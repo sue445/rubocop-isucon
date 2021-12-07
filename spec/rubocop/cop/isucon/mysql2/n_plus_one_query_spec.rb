@@ -12,6 +12,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
     end
   end
 
+  include_examples :mysql2_cop_common_examples
+
   context "exists no N+1 query" do
     it "does not register an offense" do
       expect_no_offenses(<<~RUBY)
