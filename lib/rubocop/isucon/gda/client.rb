@@ -56,7 +56,7 @@ module RuboCop
 
         # @return [Array<RuboCop::Isucon::GDA::JoinCondition>]
         def join_conditions
-          return [] if !ast.respond_to?(:from) || !ast.from.respond_to?(:joins)
+          return [] unless from_joins?
 
           ast.from.joins.map do |node|
             join_operands = node.expr.cond.operands.map do |operand|
@@ -87,7 +87,7 @@ module RuboCop
 
         # @yieldparam gda [RuboCop::Isucon::GDA::Client]
         def visit_subquery_recursive(&block)
-          return if !ast.respond_to?(:from) || !ast.from.respond_to?(:targets)
+          return unless from_targets?
 
           ast.from.targets.each do |target|
             next unless target.expr.select
@@ -128,6 +128,16 @@ module RuboCop
         # @return [Boolean]
         def limit_clause?
           !!ast.limit_count
+        end
+
+        # @return [Boolean]
+        def from_joins?
+          ast.respond_to?(:from) && ast.from.respond_to?(:joins)
+        end
+
+        # @return [Boolean]
+        def from_targets?
+          ast.respond_to?(:from) && ast.from.respond_to?(:targets)
         end
 
         private
