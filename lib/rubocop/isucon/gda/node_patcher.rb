@@ -78,7 +78,12 @@ module RuboCop
 
           escaped_value = Regexp.escape(node.value).gsub("\\.", "\\s*\\.\\s*")
           node.location = search_expr_location(/(?<=[\s,])#{escaped_value}(?=[\s,])/)
-          super
+
+          begin
+            super
+          rescue RuntimeError => e
+            raise unless e.message.strip == "unknown node type: 505"
+          end
         end
 
         # @param pattern [Regexp]
