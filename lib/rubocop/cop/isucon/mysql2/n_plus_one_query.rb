@@ -93,6 +93,8 @@ module RuboCop
               parent = parent_loop_node(receiver)
               next unless parent
 
+              next if or_assignment_to_instance_variable?(node)
+
               add_offense(receiver) do |corrector|
                 perform_autocorrect(corrector: corrector, current_node: receiver, parent_node: parent, type: type, gda: root_gda)
               end
@@ -100,6 +102,21 @@ module RuboCop
           end
 
           private
+
+          # Whether match to `@instance_var ||=`
+          # @param node [RuboCop::AST::Node]
+          # @return [Boolean]
+          def or_assignment_to_instance_variable?(node)
+            _or_assignment_to_instance_variable?(node.parent&.parent) ||
+              _or_assignment_to_instance_variable?(node.parent&.parent&.parent)
+          end
+
+          # Whether match to `@instance_var ||=`
+          # @param node [RuboCop::AST::Node]
+          # @return [Boolean]
+          def _or_assignment_to_instance_variable?(node)
+            node&.or_asgn_type? && node.child_nodes&.first&.ivasgn_type?
+          end
 
           # @param node [RuboCop::AST::Node]
           # @return [RuboCop::AST::Node]
