@@ -32,7 +32,7 @@ module RuboCop
           return @table_names if @table_names
 
           @table_names =
-            if ast.respond_to?(:from) && ast.from.respond_to?(:targets)
+            if from_targets?
               ast.from.targets.map(&:table_name).compact.uniq
             else
               []
