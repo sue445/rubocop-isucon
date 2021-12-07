@@ -77,4 +77,15 @@ RSpec.shared_examples :mysql2_cop_common_examples do
       RUBY
     end
   end
+
+  context "without FROM" do
+    include_context :database_cop
+
+    it "does not register an offense" do
+      # c.f. https://github.com/isucon/isucon10-final/blob/e858b2588a199f9c7407baacf48b53126b8aeed6/webapp/ruby/app.rb#L711
+      expect_no_offenses(<<~RUBY)
+        team_id = db.xquery('SELECT LAST_INSERT_ID() AS `id`').first&.fetch(:id)
+      RUBY
+    end
+  end
 end

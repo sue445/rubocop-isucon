@@ -32,7 +32,7 @@ module RuboCop
           return @table_names if @table_names
 
           @table_names =
-            if ast.respond_to?(:from)
+            if ast.respond_to?(:from) && ast.from.respond_to?(:targets)
               ast.from.targets.map(&:table_name).compact.uniq
             else
               []
@@ -56,7 +56,7 @@ module RuboCop
 
         # @return [Array<RuboCop::Isucon::GDA::JoinCondition>]
         def join_conditions
-          return [] unless ast.respond_to?(:from)
+          return [] if !ast.respond_to?(:from) || !ast.from.respond_to?(:joins)
 
           ast.from.joins.map do |node|
             join_operands = node.expr.cond.operands.map do |operand|
@@ -87,7 +87,7 @@ module RuboCop
 
         # @yieldparam gda [RuboCop::Isucon::GDA::Client]
         def visit_subquery_recursive(&block)
-          return unless ast.respond_to?(:from)
+          return if !ast.respond_to?(:from) || !ast.from.respond_to?(:targets)
 
           ast.from.targets.each do |target|
             next unless target.expr.select
