@@ -51,8 +51,10 @@ module RuboCop
             when :str
               params[0]
             when :dstr
-              # heredoc
-              params.map(&:value).join
+              if params.all? { |param| param.respond_to?(:value) }
+                # heredoc
+                params.map(&:value).join
+              end
             end
           end
 
