@@ -11,13 +11,7 @@ RSpec.shared_examples :mysql2_cop_common_examples do
   end
 
   context "Non DML" do
-    include_context :database_cop do
-      let(:schema) do
-        %w[
-          schemas/create_courses.rb
-        ]
-      end
-    end
+    include_context :database_cop
 
     it "does not register an offense" do
       expect_no_offenses(<<~RUBY)
@@ -27,9 +21,7 @@ RSpec.shared_examples :mysql2_cop_common_examples do
   end
 
   context "Unknown AST" do
-    include_context :database_cop do
-      let(:schema) { [] }
-    end
+    include_context :database_cop
 
     it "does not register an offense" do
       # c.f. https://github.com/isucon/isucon11-final/blob/a4ca72f2b4c470d93afe9edd572a2dbd563308fe/webapp/ruby/app.rb#L764-L803
