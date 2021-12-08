@@ -40,11 +40,7 @@ module RuboCop
               return false unless gda.where_nodes.count == 1
 
               unique_index_columns = connection.unique_index_columns(gda.table_names[0])
-              unique_index_columns.each do |columns|
-                return true if columns.count == 1 && columns.first == where_column_without_quote
-              end
-
-              false
+              unique_index_columns.any? { |columns| columns.count == 1 && columns.first == where_column_without_quote }
             end
 
             # @return [Boolean]
