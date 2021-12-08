@@ -69,6 +69,15 @@ Isucon/Mysql2:
     port: 3306
 ```
 
+`Database` isn't configured in `.rubocop.yml`, some cops doesn't work
+
+| cop                               | offense detection          | auto-correct               |
+|-----------------------------------|----------------------------|----------------------------|
+| `Isucon/Mysql2/JoinWithoutIndex`  | `Database` is **required** | `Database` is **required** |
+| `Isucon/Mysql2/NPlusOneQuery`     | `Database` is optional     | `Database` is **required** |
+| `Isucon/Mysql2/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
+| `Isucon/Mysql2/WhereWithoutIndex` | `Database` is **required** | `Database` is **required** |
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
