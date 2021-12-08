@@ -49,13 +49,14 @@ module RuboCop
           def xquery_param(type:, params:)
             case type
             when :str
-              params[0]
+              return params[0]
             when :dstr
               if params.all? { |param| param.respond_to?(:value) }
                 # heredoc
-                params.map(&:value).join
+                return params.map(&:value).join
               end
             end
+            nil
           end
 
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
