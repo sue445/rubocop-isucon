@@ -79,7 +79,7 @@ module RuboCop
           # @return [Integer,nil]
           def begin_position_from_gda_location_for_str(node:, gda_location:)
             str_node = node.child_nodes[1]
-            return nil if !str_node || !str_node.str_type?
+            return nil unless str_node&.str_type?
 
             str_node.loc.begin.end_pos + gda_location.begin_pos
           end
@@ -89,7 +89,7 @@ module RuboCop
           # @return [Integer,nil]
           def begin_position_from_gda_location_for_dstr(node:, gda_location:)
             dstr_node = node.child_nodes[1]
-            return nil if !dstr_node || !dstr_node.dstr_type?
+            return nil unless dstr_node&.dstr_type?
 
             str_node = find_str_node_from_gda_location(dstr_node: dstr_node, gda_location: gda_location)
             index = str_node.value.index(gda_location.body)
@@ -133,7 +133,7 @@ module RuboCop
           # @return [Integer]
           def heredoc_indent_level(node)
             dstr_node = node.child_nodes[1]
-            return 0 if !dstr_node || !dstr_node.dstr_type?
+            return 0 unless dstr_node&.dstr_type?
 
             heredoc_indent_type = heredoc_indent_type(node)
             return 0 unless heredoc_indent_type == "~"
