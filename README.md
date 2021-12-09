@@ -73,10 +73,10 @@ Isucon/Mysql2:
 
 | cop                               | offense detection          | auto-correct               |
 |-----------------------------------|----------------------------|----------------------------|
-| `Isucon/Mysql2/JoinWithoutIndex`  | `Database` is **required** | `Database` is **required** |
+| `Isucon/Mysql2/JoinWithoutIndex`  | `Database` is **required** | Not supported              |
 | `Isucon/Mysql2/NPlusOneQuery`     | `Database` is optional     | `Database` is **required** |
 | `Isucon/Mysql2/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
-| `Isucon/Mysql2/WhereWithoutIndex` | `Database` is **required** | `Database` is **required** |
+| `Isucon/Mysql2/WhereWithoutIndex` | `Database` is **required** | Not supported              |
 
 ## Development
 
