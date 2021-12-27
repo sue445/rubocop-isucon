@@ -26,6 +26,11 @@ jobs:
         gemfile:
           - activerecord_6_1
           - activerecord_7_0
+        exclude:
+          # FIXME: Ruby 3.1.0 + activerecord 7.0.0 doesn't work yet
+          # c.f. https://gist.github.com/yahonda/2776d8d7b6ea7045359f38c10449937b
+          - ruby:    "3.1"
+            gemfile: "activerecord_7_0"
 
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
