@@ -2,10 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "activerecord", "~> 7.0.0"
+gem "activerecord", "~> 7.0.1"
 
 group :sqlite3 do
-  # c.f. https://github.com/rails/rails/blob/v7.0.0/activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb#L13
+  # c.f. https://github.com/rails/rails/blob/v7.0.1/activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb#L13
   gem "sqlite3", "~> 1.4"
 end
 
