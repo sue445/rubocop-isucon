@@ -2,37 +2,37 @@
 ## [parse_table.rb](parse_table.rb)
 ```bash
 $ ruby -v
-ruby 3.0.2p107 (2021-07-07 revision 0db68f0233) [x86_64-darwin20]
+ruby 3.1.0p0 (2021-12-25 revision fb4df44d16) [x86_64-darwin21]
 
 $ bundle exec ruby benchmark/parse_table.rb
 Warming up --------------------------------------
 RuboCop::Isucon::SqlParser.parse_tables
-                         4.966k i/100ms
+                         3.217k i/100ms
 RuboCop::Isucon::GDA::Client#table_names
-                        87.000  i/100ms
+                        42.000  i/100ms
 Calculating -------------------------------------
 RuboCop::Isucon::SqlParser.parse_tables
-                         49.124k (± 0.5%) i/s -    248.300k in   5.054728s
+                         31.132k (± 9.7%) i/s -    154.416k in   5.029165s
 RuboCop::Isucon::GDA::Client#table_names
-                        846.523  (± 1.5%) i/s -      4.263k in   5.037134s
+                        418.115  (± 5.3%) i/s -      2.100k in   5.037008s
 ```
 
 ## [memorize.rb](memorize.rb)
 ```bash
 $ ruby -v
-ruby 3.0.2p107 (2021-07-07 revision 0db68f0233) [x86_64-darwin20]
+ruby 3.1.0p0 (2021-12-25 revision fb4df44d16) [x86_64-darwin21]
 
 $ bundle exec ruby benchmark/memorize.rb
 Warming up --------------------------------------
 DefineMethodWithInstanceVariableMemorizer
-                        69.588k i/100ms
+                        49.496k i/100ms
 DefineMethodWithHashMemorizer
-                       151.251k i/100ms
-  ClassEvalMemorizer   543.081k i/100ms
+                       106.697k i/100ms
+  ClassEvalMemorizer   394.612k i/100ms
 Calculating -------------------------------------
 DefineMethodWithInstanceVariableMemorizer
-                        693.195k (± 1.5%) i/s -      3.479M in   5.020618s
+                        635.641k (±16.3%) i/s -      3.118M in   5.060364s
 DefineMethodWithHashMemorizer
-                          1.502M (± 3.0%) i/s -      7.563M in   5.039638s
-  ClassEvalMemorizer      5.534M (± 1.0%) i/s -     27.697M in   5.005370s
+                          1.368M (±13.9%) i/s -      6.722M in   5.046721s
+  ClassEvalMemorizer      4.422M (±11.2%) i/s -     22.098M in   5.084224s
 ```
