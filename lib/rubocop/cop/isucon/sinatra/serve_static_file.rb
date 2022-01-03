@@ -40,7 +40,7 @@ module RuboCop
 
             return unless end_of_block?(node: node, parent: parent)
 
-            add_offense(node)
+            add_offense(parent)
           end
 
           private
