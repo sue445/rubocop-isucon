@@ -6,35 +6,19 @@ module RuboCop
       module Sinatra
         # Serve static files on front server (e.g. nginx)
         #
-        # @example EnforcedStyle: bar (default)
-        #   # Description of the `bar` style.
-        #
+        # @example
         #   # bad
-        #   bad_bar_method
+        #   class App < Sinatra::Base
+        #     get '/' do
+        #       content_type :html
+        #       File.read(File.join(__dir__, '..', 'public', 'index.html'))
+        #     end
+        #   end
         #
-        #   # bad
-        #   bad_bar_method(args)
-        #
-        #   # good
-        #   good_bar_method
-        #
-        #   # good
-        #   good_bar_method(args)
-        #
-        # @example EnforcedStyle: foo
-        #   # Description of the `foo` style.
-        #
-        #   # bad
-        #   bad_foo_method
-        #
-        #   # bad
-        #   bad_foo_method(args)
-        #
-        #   # good
-        #   good_foo_method
-        #
-        #   # good
-        #   good_foo_method(args)
+        #   # good (e.g. Serve on nginx)
+        #   location / {
+        #     try_files $uri $uri/ /index.html;
+        #   }
         #
         class ServeStaticFile < Base
           MSG = "Serve static files on front server (e.g. nginx)"
