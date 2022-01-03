@@ -4,14 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Sinatra
-        # TODO: Write cop description and example of bad / good code. For every
-        # `SupportedStyle` and unique configuration, there needs to be examples.
-        # Examples must have valid Ruby syntax. Do not use upticks.
-        #
-        # @safety
-        #   Delete this section if the cop is not unsafe (`Safe: false` or
-        #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-        #   unsafe.
+        # Serve static files on front server (e.g. nginx)
         #
         # @example EnforcedStyle: bar (default)
         #   # Description of the `bar` style.
