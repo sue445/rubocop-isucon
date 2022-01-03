@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Sinatra
-        # Serve static files on front server (e.g. nginx)
+        # Serve static files on front server (e.g. nginx) instead of sinatra app
         #
         # @example
         #   # bad
@@ -21,7 +21,7 @@ module RuboCop
         #   }
         #
         class ServeStaticFile < Base
-          MSG = "Serve static files on front server (e.g. nginx)"
+          MSG = "Serve static files on front server (e.g. nginx) instead of sinatra app"
 
           def_node_matcher :file_read_method?, <<~PATTERN
             (send (const nil? :File) :read ...)
