@@ -3,19 +3,28 @@
 RSpec.describe RuboCop::Cop::Isucon::Sinatra::ServeStaticFile, :config do
   let(:config) { RuboCop::Config.new }
 
-  # TODO: Write test code
-  #
-  # For example
-  it 'registers an offense when using `#bad_method`' do
-    expect_offense(<<~RUBY)
-      bad_method
-      ^^^^^^^^^^ Use `#good_method` instead of `#bad_method`.
-    RUBY
+  context "`File.read` is at end of block" do
+    it "registers an offense" do
+      # c.f. https://github.com/isucon/isucon8-final/blob/38c4f6e20388d1c4f1ed393fb75b38d472e44abf/webapp/ruby/app.rb#L55-L58
+      expect_offense(<<~RUBY)
+        get '/' do
+          content_type :html
+          File.read(File.join(__dir__, '..', 'public', 'index.html'))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Serve static files on front server (e.g. nginx)
+        end
+      RUBY
+    end
   end
 
-  it 'does not register an offense when using `#good_method`' do
-    expect_no_offenses(<<~RUBY)
-      good_method
-    RUBY
+  context "`File.read` isn't at end of block" do
+    it "registers an offense" do
+      expect_no_offenses(<<~RUBY)
+        get '/' do
+          content_type :html
+          File.read(File.join(__dir__, '..', 'public', 'index.html'))
+          ""
+        end
+      RUBY
+    end
   end
 end

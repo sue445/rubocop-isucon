@@ -44,22 +44,41 @@ module RuboCop
         #   good_foo_method(args)
         #
         class ServeStaticFile < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = 'Use `#good_method` instead of `#bad_method`.'
+          MSG = "Serve static files on front server (e.g. nginx)"
 
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
+          def_node_matcher :file_read_method?, <<~PATTERN
+            (send (const nil? :File) :read ...)
           PATTERN
 
+          def_node_matcher :get_method?, <<~PATTERN
+            (block (send nil? :get ...) ...)
+          PATTERN
+
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
-            return unless bad_method?(node)
+            return unless file_read_method?(node)
+
+            parent = parent_get_node(node)
+            return unless parent
+
+            return unless end_of_block?(node: node, parent: parent)
 
             add_offense(node)
+          end
+
+          private
+
+          # @param node [RuboCop::AST::Node]
+          # @return [RuboCop::AST::Node]
+          def parent_get_node(node)
+            node.each_ancestor.find { |ancestor| get_method?(ancestor) }
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @param parent [RuboCop::AST::Node]
+          # @return [Boolean]
+          def end_of_block?(node:, parent:)
+            parent.child_nodes.last&.child_nodes&.last == node
           end
         end
       end
