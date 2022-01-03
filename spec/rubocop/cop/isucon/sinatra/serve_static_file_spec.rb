@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Isucon/Sinatra::ServeStaticFile, :config do
+RSpec.describe RuboCop::Cop::Isucon::Sinatra::ServeStaticFile, :config do
   let(:config) { RuboCop::Config.new }
 
   # TODO: Write test code
