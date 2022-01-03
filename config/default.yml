@@ -67,6 +67,6 @@ Isucon/Sinatra/DisableLogging:
   VersionAdded: '0.1.0'
 
 Isucon/Sinatra/ServeStaticFile:
-  Description: 'Serve static files on front server (e.g. nginx)'
+  Description: 'Serve static files on front server (e.g. nginx) instead of sinatra app'
   Enabled: true
   VersionAdded: '0.1.0'
