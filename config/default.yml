@@ -65,3 +65,8 @@ Isucon/Sinatra/DisableLogging:
   Description: 'Disable sinatra logging'
   Enabled: true
   VersionAdded: '0.1.0'
+
+Isucon/Sinatra/ServeStaticFile:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
