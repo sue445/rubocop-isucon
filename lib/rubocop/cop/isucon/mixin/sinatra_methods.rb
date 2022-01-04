@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Mixin
-        # Util methods for {RuboCop::Cop::Isucon::Sinatra}
+        # Helper methods for {RuboCop::Cop::Isucon::Sinatra}
         module SinatraMethods
           extend NodePattern::Macros
 
