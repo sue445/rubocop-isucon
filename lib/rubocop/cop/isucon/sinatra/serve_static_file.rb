@@ -29,7 +29,7 @@ module RuboCop
             (send (const nil? :File) :read ...)
           PATTERN
 
-          def_node_matcher :get_method?, <<~PATTERN
+          def_node_matcher :get_block?, <<~PATTERN
             (block (send nil? :get ...) ...)
           PATTERN
 
@@ -51,7 +51,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           # @return [RuboCop::AST::Node]
           def parent_get_node(node)
-            node.each_ancestor.find { |ancestor| get_method?(ancestor) }
+            node.each_ancestor.find { |ancestor| get_block?(ancestor) }
           end
 
           # @param node [RuboCop::AST::Node]
