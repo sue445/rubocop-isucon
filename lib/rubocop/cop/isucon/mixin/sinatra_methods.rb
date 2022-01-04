@@ -8,10 +8,12 @@ module RuboCop
         module SinatraMethods
           extend NodePattern::Macros
 
+          # Whether match to `class AnyClass < Sinatra::Base` node
           def_node_matcher :subclass_of_sinatra_base?, <<~PATTERN
             (class (const nil? _) (const (const nil? :Sinatra) :Base) ...)
           PATTERN
 
+          # Whether parent node match to `class AnyClass < Sinatra::Base` node
           # @param node [RuboCop::AST::Node]
           # @return [Boolean]
           def parent_is_sinatra_app?(node)
