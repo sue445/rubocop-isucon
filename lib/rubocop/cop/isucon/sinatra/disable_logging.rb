@@ -22,6 +22,8 @@ module RuboCop
         #   end
         #
         class DisableLogging < Base
+          include Mixin::SinatraMethods
+
           extend AutoCorrector
 
           MSG = "Disable sinatra logging."
@@ -32,6 +34,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
+            return unless parent_is_sinatra_app?(node)
             return unless logging_enabled?(node)
 
             add_offense(node) do |corrector|
