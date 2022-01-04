@@ -21,6 +21,8 @@ module RuboCop
         #   }
         #
         class ServeStaticFile < Base
+          include Mixin::SinatraMethods
+
           MSG = "Serve static files on front server (e.g. nginx) instead of sinatra app"
 
           def_node_matcher :file_read_method?, <<~PATTERN
@@ -33,6 +35,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
+            return unless parent_is_sinatra_app?(node)
             return unless file_read_method?(node)
 
             parent = parent_get_node(node)
