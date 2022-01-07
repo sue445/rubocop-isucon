@@ -35,10 +35,7 @@ Gem::Specification.new do |spec|
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 
-  # NOTE: Ruby 3.1.0 + activerecord 7.0.0 doesn't work yet
-  # c.f. https://gist.github.com/yahonda/2776d8d7b6ea7045359f38c10449937b
-  spec.add_runtime_dependency "activerecord", ">= 6.1.0", "!= 7.0.0"
-
+  spec.add_runtime_dependency "activerecord", ">= 6.1.0"
   spec.add_runtime_dependency "gda"
   spec.add_runtime_dependency "rubocop", ">= 1.23.0"
   spec.add_runtime_dependency "rubocop-performance"
