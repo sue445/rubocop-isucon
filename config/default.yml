@@ -1,4 +1,5 @@
-# Isucon/Mysql2:
+Isucon/Mysql2:
+  StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2/
 #   Database:
 #     adapter: mysql2
 #     host: # TODO: Fix this
@@ -12,6 +13,7 @@ Isucon/Mysql2/JoinWithoutIndex:
   Description: 'Check for `JOIN` without index'
   Enabled: true
   VersionAdded: '0.1.0'
+  StyleGuide: JoinWithoutIndex.html
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -26,6 +28,7 @@ Isucon/Mysql2/NPlusOneQuery:
   Enabled: true
   VersionAdded: '0.1.0'
   SafeAutoCorrect: false
+  StyleGuide: NPlusOneQuery.html
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -39,6 +42,7 @@ Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: true
   VersionAdded: '0.1.0'
+  StyleGuide: SelectAsterisk.html
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -52,6 +56,7 @@ Isucon/Mysql2/WhereWithoutIndex:
   Description: 'Check for `WHERE` without index'
   Enabled: true
   VersionAdded: '0.1.0'
+  StyleGuide: WhereWithoutIndex.html
   # Database:
   #   adapter: mysql2
   #   host: # TODO: Fix this
@@ -61,12 +66,17 @@ Isucon/Mysql2/WhereWithoutIndex:
   #   encoding: utf8
   #   port: 3306
 
+Isucon/Sinatra:
+  StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra/
+
 Isucon/Sinatra/DisableLogging:
   Description: 'Disable sinatra logging'
   Enabled: true
   VersionAdded: '0.1.0'
+  StyleGuide: DisableLogging.html
 
 Isucon/Sinatra/ServeStaticFile:
   Description: 'Serve static files on front server (e.g. nginx) instead of sinatra app'
   Enabled: true
   VersionAdded: '0.1.0'
+  StyleGuide: ServeStaticFile.html
