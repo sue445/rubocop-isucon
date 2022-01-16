@@ -6,12 +6,12 @@ RuboCop plugin for ruby reference implementation of [ISUCON](https://github.com/
 ## Installation
 At first, install [libgda](https://gitlab.gnome.org/GNOME/libgda)
 
-### for Mac
+### for Mac (recommended)
 ```bash
 brew install libgda
 ```
 
-### for Ubuntu, Debian
+### for Ubuntu, Debian (recommended)
 ```bash
 apt-get install -y libgda-5.0
 ```
