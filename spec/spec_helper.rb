@@ -28,6 +28,10 @@ def spec_dir
   Pathname(__dir__)
 end
 
+def root_dir
+  spec_dir.join("..")
+end
+
 module Rails
   def self.root
     spec_dir
