@@ -75,6 +75,12 @@ Isucon/Sinatra/DisableLogging:
   VersionAdded: '0.1.0'
   StyleGuide: DisableLogging.html
 
+Isucon/Sinatra/RackLogger:
+  Description: "Don't use `request.env['rack.logger']`"
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: RackLogger.html
+
 Isucon/Sinatra/ServeStaticFile:
   Description: 'Serve static files on front server (e.g. nginx) instead of sinatra app'
   Enabled: true
