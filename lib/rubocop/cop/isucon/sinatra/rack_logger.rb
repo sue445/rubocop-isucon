@@ -2,64 +2,51 @@
 
 module RuboCop
   module Cop
-    module Isucon::Sinatra
-      # TODO: Write cop description and example of bad / good code. For every
-      # `SupportedStyle` and unique configuration, there needs to be examples.
-      # Examples must have valid Ruby syntax. Do not use upticks.
-      #
-      # @safety
-      #   Delete this section if the cop is not unsafe (`Safe: false` or
-      #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-      #   unsafe.
-      #
-      # @example EnforcedStyle: bar (default)
-      #   # Description of the `bar` style.
-      #
-      #   # bad
-      #   bad_bar_method
-      #
-      #   # bad
-      #   bad_bar_method(args)
-      #
-      #   # good
-      #   good_bar_method
-      #
-      #   # good
-      #   good_bar_method(args)
-      #
-      # @example EnforcedStyle: foo
-      #   # Description of the `foo` style.
-      #
-      #   # bad
-      #   bad_foo_method
-      #
-      #   # bad
-      #   bad_foo_method(args)
-      #
-      #   # good
-      #   good_foo_method
-      #
-      #   # good
-      #   good_foo_method(args)
-      #
-      class RackLogger < Base
-        # TODO: Implement the cop in here.
+    module Isucon
+      module Sinatra
+        # Disable `request.env['rack.logger']` logging
         #
-        # In many cases, you can use a node matcher for matching node pattern.
-        # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
+        # @example
+        #   # bad
+        #   request.env['rack.logger'].warn 'drop post isu condition request'
         #
-        # For example
-        MSG = 'Use `#good_method` instead of `#bad_method`.'
+        #   # good
+        #   # no logging
+        class RackLogger < Base
+          MSG = "Don't use `request.env['rack.logger']`"
 
-        # @!method bad_method?(node)
-        def_node_matcher :bad_method?, <<~PATTERN
-          (send nil? :bad_method ...)
-        PATTERN
+          extend AutoCorrector
 
-        def on_send(node)
-          return unless bad_method?(node)
+          # @!method rack_logger?(node)
+          def_node_matcher :rack_logger?, <<~PATTERN
+            (send
+              (send
+                (send
+                  (send nil? :request)
+                  :env
+                )
+                :[]
+                (str "rack.logger")
+              )
+              {:debug | :error | :fatal | :info | :warn}
+              ...
+            )
+          PATTERN
 
-          add_offense(node)
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            return unless rack_logger?(node)
+
+            add_offense(node) do |corrector|
+              perform_autocorrect(corrector: corrector, node: node)
+            end
+          end
+
+          private
+
+          def perform_autocorrect(corrector:, node:)
+            corrector.replace(node, "")
+          end
         end
       end
     end
