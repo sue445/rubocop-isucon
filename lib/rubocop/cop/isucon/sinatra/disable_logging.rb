@@ -64,7 +64,13 @@ module RuboCop
 
           def perform_autocorrect_for_on_class(corrector:, node:)
             sinatra_base_node = node.child_nodes[1]
-            content = "\n#{' ' * (node.loc.column + 2)}disable :logging"
+
+            content = [
+              "\n",
+              (" " * (node.loc.column + 2)),
+              "disable :logging",
+            ].join
+
             corrector.insert_after(sinatra_base_node.loc.expression, content)
           end
         end
