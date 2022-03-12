@@ -12,13 +12,13 @@ module RuboCop
         #     enable :logging
         #   end
         #
-        #   # good
+        #   # bad
         #   class App < Sinatra::Base
-        #     disable :logging
         #   end
         #
         #   # good
         #   class App < Sinatra::Base
+        #     disable :logging
         #   end
         #
         class DisableLogging < Base
@@ -32,20 +32,40 @@ module RuboCop
             (send nil? :enable (sym :logging))
           PATTERN
 
+          def_node_matcher :logging?, <<~PATTERN
+            (send nil? _ (sym :logging))
+          PATTERN
+
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             return unless parent_is_sinatra_app?(node)
             return unless logging_enabled?(node)
 
             add_offense(node) do |corrector|
-              perform_autocorrect(corrector: corrector, node: node)
+              perform_autocorrect_for_on_send(corrector: corrector, node: node)
+            end
+          end
+
+          # @param node [RuboCop::AST::Node]
+          def on_class(node)
+            return unless subclass_of_sinatra_base?(node)
+            return if node.child_nodes.any? { |child| logging?(child) }
+
+            add_offense(node) do |corrector|
+              perform_autocorrect_for_on_class(corrector: corrector, node: node)
             end
           end
 
           private
 
-          def perform_autocorrect(corrector:, node:)
+          def perform_autocorrect_for_on_send(corrector:, node:)
             corrector.replace(node, "disable :logging")
+          end
+
+          def perform_autocorrect_for_on_class(corrector:, node:)
+            sinatra_base_node = node.child_nodes[1]
+            content = "\n#{' ' * (node.loc.column + 2)}disable :logging"
+            corrector.insert_after(sinatra_base_node.loc.expression, content)
           end
         end
       end

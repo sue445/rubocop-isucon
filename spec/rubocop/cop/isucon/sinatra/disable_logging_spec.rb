@@ -41,11 +41,40 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
   end
 
   context "logging is none" do
-    it "does not register an offense" do
-      expect_no_offenses(<<~RUBY)
-        class App < Sinatra::Base
-        end
-      RUBY
+    context "Top namespace" do
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          class App < Sinatra::Base
+          ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          class App < Sinatra::Base
+            disable :logging
+          end
+        RUBY
+      end
+    end
+
+    context "Nested namespace" do
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          module Isucon
+            class App < Sinatra::Base
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+            end
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          module Isucon
+            class App < Sinatra::Base
+              disable :logging
+            end
+          end
+        RUBY
+      end
     end
   end
 end
