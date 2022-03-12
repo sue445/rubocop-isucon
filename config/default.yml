@@ -66,11 +66,6 @@ Isucon/Mysql2/WhereWithoutIndex:
   #   encoding: utf8
   #   port: 3306
 
-Isucon/Sinatra/RackLogger:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
-
 Isucon/Sinatra:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra/
 
@@ -79,6 +74,12 @@ Isucon/Sinatra/DisableLogging:
   Enabled: true
   VersionAdded: '0.1.0'
   StyleGuide: DisableLogging.html
+
+Isucon/Sinatra/RackLogger:
+  Description: "Don't use `request.env['rack.logger']`"
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: RackLogger.html
 
 Isucon/Sinatra/ServeStaticFile:
   Description: 'Serve static files on front server (e.g. nginx) instead of sinatra app'
