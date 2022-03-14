@@ -42,18 +42,44 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
 
   context "logging is none" do
     context "Top namespace" do
-      it "registers an offense" do
-        expect_offense(<<~RUBY)
-          class App < Sinatra::Base
-          ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
-          end
-        RUBY
+      context "Empty class" do
+        it "registers an offense" do
+          expect_offense(<<~RUBY)
+            class App < Sinatra::Base
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+            end
+          RUBY
 
-        expect_correction(<<~RUBY)
-          class App < Sinatra::Base
-            disable :logging
-          end
-        RUBY
+          expect_correction(<<~RUBY)
+            class App < Sinatra::Base
+              disable :logging
+            end
+          RUBY
+        end
+      end
+
+      context "has body" do
+        it "registers an offense" do
+          expect_offense(<<~RUBY)
+            class App < Sinatra::Base
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+              configure :development do
+                require 'sinatra/reloader'
+                register Sinatra::Reloader
+              end
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            class App < Sinatra::Base
+              disable :logging
+              configure :development do
+                require 'sinatra/reloader'
+                register Sinatra::Reloader
+              end
+            end
+          RUBY
+        end
       end
     end
 

@@ -32,10 +32,6 @@ module RuboCop
             (send nil? :enable (sym :logging))
           PATTERN
 
-          def_node_matcher :logging?, <<~PATTERN
-            (send nil? _ (sym :logging))
-          PATTERN
-
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             return unless parent_is_sinatra_app?(node)
@@ -49,7 +45,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_class(node)
             return unless subclass_of_sinatra_base?(node)
-            return if node.child_nodes.any? { |child| logging?(child) }
+            return if subclass_of_sinatra_base_contains_logging?(node)
 
             add_offense(node) do |corrector|
               perform_autocorrect_for_on_class(corrector: corrector, node: node)
