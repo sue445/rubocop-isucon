@@ -58,6 +58,11 @@ inherit_gem:
     # Disable default cops (except Performance cops)
     - "config/enable-only-performance.yml"
 
+AllCops:
+  NewCops: enable
+  DisplayStyleGuide: true
+  # TargetRubyVersion: 3.1
+
 Isucon/Mysql2:
   Database:
     adapter: mysql2
