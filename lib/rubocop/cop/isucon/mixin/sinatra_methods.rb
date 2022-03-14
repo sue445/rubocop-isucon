@@ -13,6 +13,11 @@ module RuboCop
             (class (const nil? _) (const (const nil? :Sinatra) :Base) ...)
           PATTERN
 
+          # Whether match to `class AnyClass < Sinatra::Base` node and contains :logging configuration
+          def_node_matcher :subclass_of_sinatra_base_contains_logging?, <<~PATTERN
+            (class (const nil? _) (const (const nil? :Sinatra) :Base) ... `(send nil? _ (sym :logging)))
+          PATTERN
+
           # Whether parent node match to `class AnyClass < Sinatra::Base` node
           # @param node [RuboCop::AST::Node]
           # @return [Boolean]
