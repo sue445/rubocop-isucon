@@ -86,6 +86,9 @@ Isucon/Mysql2:
 ## Documentation
 See. https://sue445.github.io/rubocop-isucon/
 
+* `Isucon/Mysql2` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2.html
+* `Isucon/Sinatra` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra.html
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
