@@ -83,6 +83,9 @@ Isucon/Mysql2:
 | `Isucon/Mysql2/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
 | `Isucon/Mysql2/WhereWithoutIndex` | `Database` is **required** | Not supported              |
 
+## Documentation
+See. https://sue445.github.io/rubocop-isucon/
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
