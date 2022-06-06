@@ -87,6 +87,7 @@ Isucon/Mysql2:
 See. https://sue445.github.io/rubocop-isucon/
 
 * `Isucon/Mysql2` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2.html
+* `Isucon/Shell` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Shell.html
 * `Isucon/Sinatra` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra.html
 
 ## Development
