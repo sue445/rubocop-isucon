@@ -25,6 +25,7 @@ module RuboCop
         class Backtick < Base
           MSG = "Use libraries instead of external command execution if possible"
 
+          # @param node [RuboCop::AST::Node]
           def on_xstr(node)
             add_offense(node)
           end
