@@ -12,6 +12,11 @@ module RuboCop
         #     `printf "%s" #{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //'`.strip
         #   end
         #
+        #   # bad
+        #   def digest(src)
+        #     %x(printf "%s" \#{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //').strip
+        #   end
+        #
         #   # good
         #   def digest(src)
         #     OpenSSL::Digest::SHA512.hexdigest(src)
