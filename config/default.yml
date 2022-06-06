@@ -75,6 +75,12 @@ Isucon/Shell/Backtick:
   VersionAdded: '0.1.0'
   StyleGuide: Backtick.html
 
+Isucon/Shell/System:
+  Description: 'Avoid external command calls with `Kernel#system`'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: System.html
+
 Isucon/Sinatra:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra/
 
