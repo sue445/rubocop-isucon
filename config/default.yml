@@ -66,11 +66,6 @@ Isucon/Mysql2/WhereWithoutIndex:
   #   encoding: utf8
   #   port: 3306
 
-Isucon/Shell/System:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
-
 Isucon/Shell:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Shell/
 
@@ -79,6 +74,12 @@ Isucon/Shell/Backtick:
   Enabled: true
   VersionAdded: '0.1.0'
   StyleGuide: Backtick.html
+
+Isucon/Shell/System:
+  Description: 'Avoid external command calls with `Kernel#system`'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: System.html
 
 Isucon/Sinatra:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra/
