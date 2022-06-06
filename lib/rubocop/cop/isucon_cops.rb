@@ -13,4 +13,4 @@ require_relative "isucon/mysql2/where_without_index"
 require_relative "isucon/sinatra/disable_logging"
 require_relative "isucon/sinatra/rack_logger"
 require_relative "isucon/sinatra/serve_static_file"
-require_relative 'isucon/shell/backtick'
+require_relative "isucon/shell/backtick"

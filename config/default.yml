@@ -67,9 +67,10 @@ Isucon/Mysql2/WhereWithoutIndex:
   #   port: 3306
 
 Isucon/Shell/Backtick:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
+  Description: 'Avoid external command calls with backtick'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: Backtick.html
 
 Isucon/Sinatra:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra/
