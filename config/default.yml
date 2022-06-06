@@ -66,6 +66,9 @@ Isucon/Mysql2/WhereWithoutIndex:
   #   encoding: utf8
   #   port: 3306
 
+Isucon/Shell:
+  StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Shell/
+
 Isucon/Shell/Backtick:
   Description: 'Avoid external command calls with backtick'
   Enabled: true
