@@ -8,7 +8,7 @@ RSpec.describe RuboCop::Cop::Isucon::Shell::Backtick, :config do
       # https://github.com/catatsuy/private-isu/blob/e6e5faf608756a66b7fc135642999f40dfc665e5/webapp/ruby/app.rb#L80
       expect_offense(<<~RUBY)
         `printf "%s" \#{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //'`.strip
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use libraries instead of external command execution if possible
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use pure-ruby code instead of external command execution if possible
       RUBY
     end
   end
@@ -18,7 +18,7 @@ RSpec.describe RuboCop::Cop::Isucon::Shell::Backtick, :config do
       # https://github.com/catatsuy/private-isu/blob/e6e5faf608756a66b7fc135642999f40dfc665e5/webapp/ruby/app.rb#L80
       expect_offense(<<~RUBY)
         %x(printf "%s" \#{Shellwords.shellescape(src)} | openssl dgst -sha512 | sed 's/^.*= //').strip
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use libraries instead of external command execution if possible
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use pure-ruby code instead of external command execution if possible
       RUBY
     end
   end
