@@ -3,9 +3,16 @@
 RSpec.describe "rubocop-isucon project" do
   describe "config/default.yml" do
     default_config = YAML.load_file(root_dir.join("config", "default.yml"))
+    cop_configs = default_config.select { |cop_name, _| cop_name.split("/").count == 3 }
 
     describe "department config" do
       department_configs = default_config.select { |cop_name, _| cop_name.split("/").count == 2 }
+
+      departments_in_cop_configs = cop_configs.map { |cop_name, _| cop_name.gsub(%r{/[^/]+$}, "") }
+      departments_in_cop_configs.each do |department|
+        department_configs[department] ||= {}
+      end
+
       department_configs.each do |department_name, config|
         describe department_name do
           subject { config }
@@ -16,7 +23,6 @@ RSpec.describe "rubocop-isucon project" do
     end
 
     describe "cop config" do
-      cop_configs = default_config.select { |cop_name, _| cop_name.split("/").count == 3 }
       cop_configs.each do |cop_name, config|
         describe cop_name do
           subject { config }
