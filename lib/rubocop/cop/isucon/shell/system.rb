@@ -16,7 +16,9 @@ module RuboCop
         class System < Base
           MSG = "Use pure-ruby code instead of external command execution if possible"
 
-          # @!method bad_method?(node)
+          # Whether matches `system`
+          # @!method system?(node)
+          # @return [Boolean]
           def_node_matcher :system?, <<~PATTERN
             (send nil? :system ...)
           PATTERN
