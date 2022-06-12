@@ -1,8 +1,3 @@
-Isucon/Mysql2/PrepareExecute:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
-
 Isucon/Mysql2:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2/
   # Database:
@@ -42,6 +37,11 @@ Isucon/Mysql2/NPlusOneQuery:
   #   password: isucon
   #   encoding: utf8
   #   port: 3306
+
+Isucon/Mysql2/PrepareExecute:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
 
 Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
