@@ -44,23 +44,57 @@ module RuboCop
         #   good_foo_method(args)
         #
         class PrepareExecute < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = "Use `#good_method` instead of `#bad_method`."
+          MSG = "Use `db.xquery` instead of `db.prepare`"
 
-          # @!method bad_method?(node)
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
+          # @!method find_prepare_execute(node)
+          def_node_search :find_prepare_execute, <<~PATTERN
+            (send
+              (send
+                (send nil? _) :prepare _
+              )
+              :execute
+              $...
+            )
           PATTERN
 
-          def on_send(node)
-            return unless bad_method?(node)
+          # @!method prepare_with_execute?(node)
+          def_node_matcher :prepare_with_execute?, <<~PATTERN
+            (send
+              (send
+                (send nil? _) :prepare _
+              )
+              :execute
+              ...
+            )
+          PATTERN
 
-            add_offense(node)
+          # @!method execute?(node)
+          def_node_matcher :prepare?, <<~PATTERN
+            (send
+              (send nil? _) :prepare _
+            )
+          PATTERN
+
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            if prepare_with_execute?(node)
+              find_prepare_execute(node) do |param_nodes|
+                add_offense(node) do |corrector|
+                end
+              end
+              return
+            end
+
+            add_offense(node) if prepare_without_execute?(node)
+          end
+
+          private
+
+          # Whether `prepare` isn't followed by `execute`
+          # @param node [RuboCop::AST::Node]
+          # @return [Boolean]
+          def prepare_without_execute?(node)
+            prepare?(node) && !prepare_with_execute?(node.parent)
           end
         end
       end
