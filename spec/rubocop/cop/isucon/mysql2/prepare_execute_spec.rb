@@ -15,7 +15,9 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
         RUBY
 
         expect_correction(<<~RUBY)
-          db.xquery('SELECT * FROM `users` WHERE `id` = ?', session[:user][:id]).first
+          db.xquery('SELECT * FROM `users` WHERE `id` = ?',
+            session[:user][:id]
+          ).first
         RUBY
       end
     end

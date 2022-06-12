@@ -44,16 +44,18 @@ module RuboCop
         #   good_foo_method(args)
         #
         class PrepareExecute < Base
+          extend AutoCorrector
+
           MSG = "Use `db.xquery` instead of `db.prepare`"
 
           # @!method find_prepare_execute(node)
           def_node_search :find_prepare_execute, <<~PATTERN
             (send
               (send
-                (send nil? _) :prepare _
+                (send nil? _) :prepare $_
               )
               :execute
-              $...
+              ...
             )
           PATTERN
 
@@ -78,8 +80,9 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             if prepare_with_execute?(node)
-              find_prepare_execute(node) do |param_nodes|
+              find_prepare_execute(node) do |prepare_arg_node|
                 add_offense(node) do |corrector|
+                  perform_autocorrect(corrector: corrector, current_node: node, prepare_arg_node: prepare_arg_node)
                 end
               end
               return
@@ -89,6 +92,18 @@ module RuboCop
           end
 
           private
+
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param current_node [RuboCop::AST::Node]
+          # @param prepare_arg_node [RuboCop::AST::Node]
+          def perform_autocorrect(corrector:, current_node:, prepare_arg_node:)
+            prepare_begin_pos = current_node.child_nodes[0].loc.selector.begin_pos
+            execute_begin_pos = current_node.child_nodes[0].loc.end.end_pos + 1
+            execute_end_pos = execute_begin_pos + "execute(".length
+            loc = Parser::Source::Range.new(current_node.loc.expression.source_buffer, prepare_begin_pos, execute_end_pos)
+
+            corrector.replace(loc, "xquery(#{prepare_arg_node.source},")
+          end
 
           # Whether `prepare` isn't followed by `execute`
           # @param node [RuboCop::AST::Node]
