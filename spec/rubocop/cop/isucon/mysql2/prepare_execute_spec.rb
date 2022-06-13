@@ -67,7 +67,6 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
 
       context "execute()" do
         it "registers an offense and correct" do
-          # c.f. https://github.com/catatsuy/private-isu/blob/e6e5faf608756a66b7fc135642999f40dfc665e5/webapp/ruby/app.rb#L53-L55
           expect_offense(<<~RUBY)
             sql.each do |s|
               db.prepare(s).execute()
