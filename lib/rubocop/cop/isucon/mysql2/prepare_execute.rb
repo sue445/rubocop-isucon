@@ -7,7 +7,13 @@ module RuboCop
         # Use `db.xquery` instead of `db.prepare.execute`
         #
         # @example
-        #   # bad
+        #   # bad (no auto correction)
+        #   statement = db.prepare('SELECT * FROM `users` WHERE `id` = ?')
+        #   statement.execute(
+        #     session[:user][:id]
+        #   ).first
+        #
+        #   # bad (auto correction)
         #   db.prepare('SELECT * FROM `users` WHERE `id` = ?').execute(
         #     session[:user][:id]
         #   ).first
