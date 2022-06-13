@@ -24,7 +24,7 @@ module RuboCop
         class Mysql2NPlusOneQueryCorrector
           # rubocop:enable Layout/LineLength
 
-          include Mixin::Mysql2Methods
+          include Mixin::Mysql2XqueryMethods
           include CorrectableMethods
           include ReplaceMethods
 

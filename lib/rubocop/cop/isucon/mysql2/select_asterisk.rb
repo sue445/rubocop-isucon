@@ -21,7 +21,7 @@ module RuboCop
         #
         class SelectAsterisk < Base
           include Mixin::DatabaseMethods
-          include Mixin::Mysql2Methods
+          include Mixin::Mysql2XqueryMethods
 
           extend AutoCorrector
 
