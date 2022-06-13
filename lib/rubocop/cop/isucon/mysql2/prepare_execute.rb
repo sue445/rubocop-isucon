@@ -30,7 +30,7 @@ module RuboCop
 
           MSG = "Use `db.xquery` instead of `db.prepare.execute`"
 
-          EXECUTE_LENGTH = "execute(".length
+          EXECUTE_LENGTH = "execute".length
 
           # @!method find_prepare_execute(node)
           def_node_search :find_prepare_execute, <<~PATTERN
@@ -68,7 +68,7 @@ module RuboCop
             if prepare_with_execute?(node)
               find_prepare_execute(node) do |prepare_arg_node|
                 add_offense(node) do |corrector|
-                  perform_autocorrect(corrector: corrector, current_node: node, prepare_arg_node: prepare_arg_node)
+                  perform_autocorrect(corrector: corrector, node: node, prepare_arg_node: prepare_arg_node)
                 end
               end
               return
@@ -80,21 +80,47 @@ module RuboCop
           private
 
           # @param corrector [RuboCop::Cop::Corrector]
-          # @param current_node [RuboCop::AST::Node]
+          # @param node [RuboCop::AST::Node]
           # @param prepare_arg_node [RuboCop::AST::Node]
-          def perform_autocorrect(corrector:, current_node:, prepare_arg_node:)
-            loc = offence_location(current_node)
+          def perform_autocorrect(corrector:, node:, prepare_arg_node:)
+            if node.child_nodes[1]
+              perform_autocorrect_for_any_args(corrector: corrector, node: node, prepare_arg_node: prepare_arg_node)
+            else
+              perform_autocorrect_for_no_args(corrector: corrector, node: node, prepare_arg_node: prepare_arg_node)
+            end
+          end
+
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param node [RuboCop::AST::Node]
+          # @param prepare_arg_node [RuboCop::AST::Node]
+          def perform_autocorrect_for_any_args(corrector:, node:, prepare_arg_node:)
+            loc = offence_location(node: node, suffix_length: EXECUTE_LENGTH + 1)
             corrector.replace(loc, "xquery(#{prepare_arg_node.source},")
           end
 
-          # @param current_node [RuboCop::AST::Node]
-          # @return [Parser::Source::Rang]
-          def offence_location(current_node)
-            prepare_begin_pos = current_node.child_nodes[0].loc.selector.begin_pos
-            execute_begin_pos = current_node.child_nodes[0].loc.end.end_pos + 1
-            execute_end_pos = execute_begin_pos + EXECUTE_LENGTH
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param node [RuboCop::AST::Node]
+          # @param prepare_arg_node [RuboCop::AST::Node]
+          def perform_autocorrect_for_no_args(corrector:, node:, prepare_arg_node:)
+            suffix_length =
+              if node.source.end_with?("execute()")
+                EXECUTE_LENGTH + 2
+              else
+                EXECUTE_LENGTH
+              end
+            loc = offence_location(node: node, suffix_length: suffix_length)
+            corrector.replace(loc, "xquery(#{prepare_arg_node.source})")
+          end
 
-            Parser::Source::Range.new(current_node.loc.expression.source_buffer, prepare_begin_pos, execute_end_pos)
+          # @param node [RuboCop::AST::Node]
+          # @param suffix_length [Integer]
+          # @return [Parser::Source::Rang]
+          def offence_location(node:, suffix_length:)
+            prepare_begin_pos = node.child_nodes[0].loc.selector.begin_pos
+            execute_begin_pos = node.child_nodes[0].loc.end.end_pos + 1
+            execute_end_pos = execute_begin_pos + suffix_length
+
+            Parser::Source::Range.new(node.loc.expression.source_buffer, prepare_begin_pos, execute_end_pos)
           end
 
           # Whether `prepare` isn't followed by `execute`
