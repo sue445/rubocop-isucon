@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Mysql2
-        # Use `db.xquery` instead of `db.prepare`
+        # Use `db.xquery` instead of `db.prepare.execute`
         #
         # @example
         #   # bad
@@ -20,7 +20,7 @@ module RuboCop
         class PrepareExecute < Base
           extend AutoCorrector
 
-          MSG = "Use `db.xquery` instead of `db.prepare`"
+          MSG = "Use `db.xquery` instead of `db.prepare.execute`"
 
           EXECUTE_LENGTH = "execute(".length
 
