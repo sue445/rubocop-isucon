@@ -73,12 +73,17 @@ module RuboCop
           # @param current_node [RuboCop::AST::Node]
           # @param prepare_arg_node [RuboCop::AST::Node]
           def perform_autocorrect(corrector:, current_node:, prepare_arg_node:)
+            loc = offence_location(current_node)
+            corrector.replace(loc, "xquery(#{prepare_arg_node.source},")
+          end
+
+          # @param current_node [RuboCop::AST::Node]
+          def offence_location(current_node)
             prepare_begin_pos = current_node.child_nodes[0].loc.selector.begin_pos
             execute_begin_pos = current_node.child_nodes[0].loc.end.end_pos + 1
             execute_end_pos = execute_begin_pos + EXECUTE_LENGTH
-            loc = Parser::Source::Range.new(current_node.loc.expression.source_buffer, prepare_begin_pos, execute_end_pos)
 
-            corrector.replace(loc, "xquery(#{prepare_arg_node.source},")
+            Parser::Source::Range.new(current_node.loc.expression.source_buffer, prepare_begin_pos, execute_end_pos)
           end
 
           # Whether `prepare` isn't followed by `execute`
