@@ -38,6 +38,12 @@ Isucon/Mysql2/NPlusOneQuery:
   #   encoding: utf8
   #   port: 3306
 
+Isucon/Mysql2/PrepareExecute:
+  Description: 'Use `db.xquery` instead of `db.prepare`'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: PrepareExecute.html
+
 Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
   Enabled: true
