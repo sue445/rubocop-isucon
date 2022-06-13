@@ -39,9 +39,10 @@ Isucon/Mysql2/NPlusOneQuery:
   #   port: 3306
 
 Isucon/Mysql2/PrepareExecute:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
+  Description: 'Use `db.xquery` instead of `db.prepare`'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: PrepareExecute.html
 
 Isucon/Mysql2/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.xquery`'
