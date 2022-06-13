@@ -48,7 +48,7 @@ module RuboCop
           # rubocop:enable Layout/LineLength
 
           include Mixin::DatabaseMethods
-          include Mixin::Mysql2Methods
+          include Mixin::Mysql2XqueryMethods
 
           extend AutoCorrector
 
