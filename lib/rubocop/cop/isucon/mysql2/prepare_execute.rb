@@ -13,6 +13,8 @@ module RuboCop
         #   ).first
         #
         #   # good
+        #   require 'mysql2-cs-bind'
+        #
         #   db.xquery('SELECT * FROM `users` WHERE `id` = ?',
         #     session[:user][:id]
         #   ).first
@@ -36,6 +38,7 @@ module RuboCop
           PATTERN
 
           # @!method prepare_with_execute?(node)
+          # @return [Boolean]
           def_node_matcher :prepare_with_execute?, <<~PATTERN
             (send
               (send
@@ -46,7 +49,8 @@ module RuboCop
             )
           PATTERN
 
-          # @!method execute?(node)
+          # @!method prepare?(node)
+          # @return [Boolean]
           def_node_matcher :prepare?, <<~PATTERN
             (send
               (send nil? _) :prepare _
@@ -78,6 +82,7 @@ module RuboCop
           end
 
           # @param current_node [RuboCop::AST::Node]
+          # @return [Parser::Source::Rang]
           def offence_location(current_node)
             prepare_begin_pos = current_node.child_nodes[0].loc.selector.begin_pos
             execute_begin_pos = current_node.child_nodes[0].loc.end.end_pos + 1
