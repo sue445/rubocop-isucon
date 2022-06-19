@@ -20,19 +20,19 @@ RuboCop::Isucon::GDA::Client#table_names
 ## [memorize.rb](memorize.rb)
 ```bash
 $ ruby -v
-ruby 3.1.0p0 (2021-12-25 revision fb4df44d16) [x86_64-darwin21]
+ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [x86_64-darwin21]
 
 $ bundle exec ruby benchmark/memorize.rb
 Warming up --------------------------------------
 DefineMethodWithInstanceVariableMemorizer
-                        49.496k i/100ms
+                        79.803k i/100ms
 DefineMethodWithHashMemorizer
-                       106.697k i/100ms
-  ClassEvalMemorizer   394.612k i/100ms
+                        96.856k i/100ms
+  ClassEvalMemorizer   398.761k i/100ms
 Calculating -------------------------------------
 DefineMethodWithInstanceVariableMemorizer
-                        635.641k (±16.3%) i/s -      3.118M in   5.060364s
+                        731.070k (± 6.4%) i/s -      3.671M in   5.042419s
 DefineMethodWithHashMemorizer
-                          1.368M (±13.9%) i/s -      6.722M in   5.046721s
-  ClassEvalMemorizer      4.422M (±11.2%) i/s -     22.098M in   5.084224s
+                          1.391M (±19.3%) i/s -      6.296M in   5.003688s
+  ClassEvalMemorizer      5.003M (± 2.4%) i/s -     25.122M in   5.024651s
 ```
