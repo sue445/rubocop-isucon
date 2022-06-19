@@ -41,6 +41,7 @@ class DefineMethodWithHashMemorizer
   memorize :value
 end
 
+# @note This is the current #{RuboCop::Isucon::MemorizeMethods#memorize} implementation
 class ClassEvalMemorizer
   def self.memorize(method_name)
     class_eval <<~RUBY, __FILE__, __LINE__ + 1
