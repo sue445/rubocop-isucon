@@ -2,19 +2,19 @@
 ## [parse_table.rb](parse_table.rb)
 ```bash
 $ ruby -v
-ruby 3.1.0p0 (2021-12-25 revision fb4df44d16) [x86_64-darwin21]
+ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [x86_64-darwin21]
 
 $ bundle exec ruby benchmark/parse_table.rb
 Warming up --------------------------------------
-RuboCop::Isucon::SqlParser.parse_tables
-                         3.217k i/100ms
+SqlParser.parse_tables
+                         2.758k i/100ms
 RuboCop::Isucon::GDA::Client#table_names
-                        42.000  i/100ms
+                        18.000  i/100ms
 Calculating -------------------------------------
-RuboCop::Isucon::SqlParser.parse_tables
-                         31.132k (± 9.7%) i/s -    154.416k in   5.029165s
+SqlParser.parse_tables
+                         31.022k (± 7.5%) i/s -    154.448k in   5.008336s
 RuboCop::Isucon::GDA::Client#table_names
-                        418.115  (± 5.3%) i/s -      2.100k in   5.037008s
+                        410.141  (±10.0%) i/s -      2.034k in   5.026695s
 ```
 
 ## [memorize.rb](memorize.rb)
