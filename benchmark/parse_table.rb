@@ -1,6 +1,27 @@
 require "benchmark/ips"
 require "rubocop-isucon"
 
+# SQL Parser
+#
+# @deprecated Use {RuboCop::Isucon::GDA::Client}
+module SqlParser
+  # Parse table names in SQL (SELECT, UPDATE, INSERT, DELETE)
+  # @param sql [String]
+  # @return [Array<String>]
+  #
+  # @deprecated Use {RuboCop::Isucon::GDA::Client#table_names}
+  def self.parse_tables(sql)
+    # Remove `FOR UPDATE` in `SELECT`
+    sql = sql.gsub(/FOR\s+UPDATE/i, "")
+
+    # Remove `ON DUPLICATE KEY UPDATE` in `INSERT`
+    sql = sql.gsub(/ON\s+DUPLICATE\s+KEY\s+UPDATE/i, "")
+
+    sql.scan(/(?:FROM|INTO|UPDATE|JOIN)\s+([^(]+?)[\s(]/i).
+      map { |matched| matched[0].strip.delete("`") }.reject(&:empty?).uniq
+  end
+end
+
 # c.f. https://github.com/isucon/isucon10-final/blob/e858b2588a199f9c7407baacf48b53126b8aeed6/webapp/ruby/app.rb#L250-L318
 sql = <<~SQL
   SELECT
@@ -75,6 +96,6 @@ sql = <<~SQL
 SQL
 
 Benchmark.ips do |x|
-  x.report("RuboCop::Isucon::SqlParser.parse_tables") { RuboCop::Isucon::SqlParser.parse_tables(sql) }
+  x.report("SqlParser.parse_tables") { SqlParser.parse_tables(sql) }
   x.report("RuboCop::Isucon::GDA::Client#table_names") { RuboCop::Isucon::GDA::Client.new(sql).table_names }
 end
