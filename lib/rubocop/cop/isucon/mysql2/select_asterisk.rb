@@ -27,6 +27,8 @@ module RuboCop
 
           MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
+          TODO = "# TODO: Remove needless columns if necessary\n"
+
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_xquery(node) do |type, root_gda|
@@ -65,20 +67,28 @@ module RuboCop
             return unless loc
 
             add_offense(loc) do |corrector|
-              perform_autocorrect(corrector: corrector, loc: loc, gda: gda)
+              perform_autocorrect(corrector: corrector, loc: loc, gda: gda, node: node)
             end
           end
 
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
           # @param gda [RuboCop::Isucon::GDA::Client]
-          def perform_autocorrect(corrector:, loc:, gda:)
+          # @param node [RuboCop::AST::Node]
+          def perform_autocorrect(corrector:, loc:, gda:, node:)
             return unless enabled_database?
 
             return unless gda.table_names.length == 1
 
-            select_columns = columns_in_select_clause(gda.table_names[0])
+            replace_asterisk(corrector: corrector, loc: loc, table_name: gda.table_names[0])
+            insert_todo_comment(corrector: corrector, node: node)
+          end
 
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param loc [Parser::Source::Range]
+          # @param table_name [String]
+          def replace_asterisk(corrector:, loc:, table_name:)
+            select_columns = columns_in_select_clause(table_name)
             corrector.replace(loc, select_columns)
           end
 
@@ -87,6 +97,26 @@ module RuboCop
           def columns_in_select_clause(table_name)
             column_names = connection.column_names(table_name)
             column_names.map { |column| "`#{column}`" }.join(", ")
+          end
+
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param node [RuboCop::AST::Node]
+          def insert_todo_comment(corrector:, node:)
+            current_line = node.loc.expression.line
+            current_line_range = node.loc.expression.source_buffer.line_range(current_line)
+
+            indent = node_indent_level(node)
+            comment_line = (" " * indent) + TODO
+            corrector.insert_before(current_line_range, comment_line)
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Integer]
+          def node_indent_level(node)
+            node.loc.expression.source_line =~ /^(\s+)/
+            return 0 unless Regexp.last_match(1)
+
+            Regexp.last_match(1).length
           end
         end
       end
