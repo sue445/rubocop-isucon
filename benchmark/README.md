@@ -36,3 +36,21 @@ DefineMethodWithHashMemorizer
                           1.391M (±19.3%) i/s -      6.296M in   5.003688s
   ClassEvalMemorizer      5.003M (± 2.4%) i/s -     25.122M in   5.024651s
 ```
+
+## [shell.rb](shell.rb)
+```bash
+$ ruby -v
+ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [x86_64-darwin21]
+
+$ bundle exec ruby benchmark/shell.rb
+Warming up --------------------------------------
+digest_with_shell_openssl
+                        10.000  i/100ms
+digest_with_ruby_openssl
+                        49.883k i/100ms
+Calculating -------------------------------------
+digest_with_shell_openssl
+                        105.553  (± 4.7%) i/s -    530.000  in   5.033005s
+digest_with_ruby_openssl
+                        503.360k (± 6.7%) i/s -      2.544M in   5.081983s
+```
