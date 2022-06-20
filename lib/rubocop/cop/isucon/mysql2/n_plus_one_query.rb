@@ -10,6 +10,8 @@ module RuboCop
         #
         # @note If `Database` isn't configured, auto-correct will not be available. (Only offense detection can be used)
         #
+        # @note For the number of N+1 queries that can be detected by this cop, there are too few that can be corrected automatically
+        #
         # @example
         #   # bad
         #   reservations = db.xquery('SELECT * FROM `reservations` WHERE `schedule_id` = ?', schedule_id).map do |reservation|
@@ -40,6 +42,8 @@ module RuboCop
         #   end
         #
         #   # good
+        #   # This is similar to ActiveRecord's preload
+        #   # c.f. https://guides.rubyonrails.org/active_record_querying.html#preload
         #   courses.map do |course|
         #     @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
         #     teacher = @users_by_id[course[:teacher_id]]
