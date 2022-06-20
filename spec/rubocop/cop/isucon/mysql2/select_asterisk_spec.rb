@@ -32,6 +32,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
             RUBY
 
             expect_correction(<<~RUBY)
+              # TODO: Remove needless columns if necessary
               db.xquery('SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
             RUBY
           end
@@ -49,6 +50,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
             RUBY
 
             expect_correction(<<~RUBY)
+              # TODO: Remove needless columns if necessary
               db.xquery(<<~SQL, jia_user_id)
                 SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu`
                 WHERE `jia_user_id` = ?
@@ -77,6 +79,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
             RUBY
 
             expect_correction(<<~RUBY)
+              # TODO: Remove needless columns if necessary
               classes = db.xquery(
                 "SELECT `id`, `course_id`, `part`, `title`, `description`, `submission_closed`" \\
                 " FROM `classes`" \\
@@ -112,6 +115,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
           RUBY
 
           expect_correction(<<~RUBY)
+            # TODO: Remove needless columns if necessary
             event_ids = db.query('SELECT `id`, `title`, `public_fg`, `closed_fg`, `price`, `created_at`, `updated_at` FROM events ORDER BY id ASC').select(&where).map { |e| e['id'] }
           RUBY
         end
@@ -153,6 +157,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
           RUBY
 
           expect_correction(<<~RUBY)
+            # TODO: Remove needless columns if necessary
             isu = db.xquery('SELECT `id`, `jia_isu_uuid`, `name`, `image`, `character`, `jia_user_id`, `created_at`, `updated_at` FROM `isu` WHERE `jia_user_id` = ? AND `jia_isu_uuid` = ?', jia_user_id, jia_isu_uuid).first
           RUBY
         end
@@ -194,6 +199,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
             def last_login
               return nil unless current_user
 
+              # TODO: Remove needless columns if necessary
               db.xquery('SELECT `id`, `created_at`, `user_id`, `login`, `ip`, `succeeded` FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
             end
           RUBY
