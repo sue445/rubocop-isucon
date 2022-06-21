@@ -1,4 +1,4 @@
-# RuboCop Isucon
+# RuboCop ISUCON
 RuboCop plugin for ruby reference implementation of [ISUCON](https://github.com/isucon)
 
 [![Build Status](https://github.com/sue445/rubocop-isucon/workflows/test/badge.svg?branch=main)](https://github.com/sue445/rubocop-isucon/actions?query=workflow%3Atest)
