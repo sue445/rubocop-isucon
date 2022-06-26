@@ -7,14 +7,18 @@ ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [x86_64-darwin21]
 $ bundle exec ruby benchmark/parse_table.rb
 Warming up --------------------------------------
 SqlParser.parse_tables
-                         2.758k i/100ms
+                         3.315k i/100ms
 RuboCop::Isucon::GDA::Client#table_names
-                        18.000  i/100ms
+                        31.000  i/100ms
 Calculating -------------------------------------
 SqlParser.parse_tables
-                         31.022k (± 7.5%) i/s -    154.448k in   5.008336s
+                         31.672k (± 7.5%) i/s -    159.120k in   5.056991s
 RuboCop::Isucon::GDA::Client#table_names
-                        410.141  (±10.0%) i/s -      2.034k in   5.026695s
+                        418.846  (± 9.8%) i/s -      2.077k in   5.023313s
+
+Comparison:
+SqlParser.parse_tables:    31671.6 i/s
+RuboCop::Isucon::GDA::Client#table_names:      418.8 i/s - 75.62x  (± 0.00) slower
 ```
 
 ## [memorize.rb](memorize.rb)
@@ -25,16 +29,21 @@ ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [x86_64-darwin21]
 $ bundle exec ruby benchmark/memorize.rb
 Warming up --------------------------------------
 DefineMethodWithInstanceVariableMemorizer
-                        79.803k i/100ms
+                        79.346k i/100ms
 DefineMethodWithHashMemorizer
-                        96.856k i/100ms
-  ClassEvalMemorizer   398.761k i/100ms
+                       158.601k i/100ms
+  ClassEvalMemorizer   497.389k i/100ms
 Calculating -------------------------------------
 DefineMethodWithInstanceVariableMemorizer
-                        731.070k (± 6.4%) i/s -      3.671M in   5.042419s
+                        701.502k (±13.8%) i/s -      3.491M in   5.087557s
 DefineMethodWithHashMemorizer
-                          1.391M (±19.3%) i/s -      6.296M in   5.003688s
-  ClassEvalMemorizer      5.003M (± 2.4%) i/s -     25.122M in   5.024651s
+                          1.549M (± 2.3%) i/s -      7.771M in   5.018555s
+  ClassEvalMemorizer      4.866M (± 8.1%) i/s -     24.372M in   5.061882s
+
+Comparison:
+  ClassEvalMemorizer:  4865569.7 i/s
+DefineMethodWithHashMemorizer:  1549386.5 i/s - 3.14x  (± 0.00) slower
+DefineMethodWithInstanceVariableMemorizer:   701502.0 i/s - 6.94x  (± 0.00) slower
 ```
 
 ## [shell.rb](shell.rb)
@@ -45,12 +54,16 @@ ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [x86_64-darwin21]
 $ bundle exec ruby benchmark/shell.rb
 Warming up --------------------------------------
 digest_with_shell_openssl
-                        10.000  i/100ms
+                         4.000  i/100ms
 digest_with_ruby_openssl
-                        49.883k i/100ms
+                        36.540k i/100ms
 Calculating -------------------------------------
 digest_with_shell_openssl
-                        105.553  (± 4.7%) i/s -    530.000  in   5.033005s
+                         92.458  (±22.7%) i/s -    424.000  in   4.985251s
 digest_with_ruby_openssl
-                        503.360k (± 6.7%) i/s -      2.544M in   5.081983s
+                        453.025k (±10.1%) i/s -      2.265M in   5.057335s
+
+Comparison:
+digest_with_ruby_openssl:   453024.6 i/s
+digest_with_shell_openssl:       92.5 i/s - 4899.78x  (± 0.00) slower
 ```
