@@ -98,4 +98,6 @@ SQL
 Benchmark.ips do |x|
   x.report("SqlParser.parse_tables") { SqlParser.parse_tables(sql) }
   x.report("RuboCop::Isucon::GDA::Client#table_names") { RuboCop::Isucon::GDA::Client.new(sql).table_names }
+
+  x.compare!
 end

@@ -21,4 +21,6 @@ Benchmark.ips do |x|
   x.report("digest_with_ruby_openssl") do
     digest_with_ruby_openssl(SOURCE_TEXT)
   end
+
+  x.compare!
 end
