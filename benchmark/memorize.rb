@@ -81,4 +81,6 @@ Benchmark.ips do |x|
     m.value
     m.value
   end
+
+  x.compare!
 end
