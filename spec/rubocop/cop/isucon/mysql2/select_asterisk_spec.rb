@@ -208,6 +208,40 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
     end
   end
 
+  context "With using `SELECT table_name.*`" do
+    include_context :database_cop do
+      let(:schema) do
+        %w[
+          schemas/create_users.rb
+          schemas/create_registrations.rb
+        ]
+      end
+    end
+
+    it "registers an offense and correct" do
+      # c.f. https://github.com/isucon/isucon11-final/blob/a4ca72f2b4c470d93afe9edd572a2dbd563308fe/webapp/ruby/app.rb#L869-L874
+      expect_offense(<<~RUBY)
+        targets = db.xquery(
+          "SELECT `users`.* FROM `users`" \\
+                  ^^^^^^^^^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+          " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \\
+          " WHERE `registrations`.`course_id` = ?",
+          json_params[:course_id],
+        )
+      RUBY
+
+      expect_correction(<<~RUBY)
+        # TODO: Remove needless columns if necessary
+        targets = db.xquery(
+          "SELECT `users`.`id`, `users`.`name`, `users`.`created_at`, `users`.`updated_at` FROM `users`" \\
+          " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \\
+          " WHERE `registrations`.`course_id` = ?",
+          json_params[:course_id],
+        )
+      RUBY
+    end
+  end
+
   context "When using `SELECT` with column names" do
     it "does not register an offense" do
       expect_no_offenses(<<~RUBY)
