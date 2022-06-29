@@ -17,7 +17,7 @@ module RuboCop
         #   db.xquery('SELECT * FROM users')
         #
         #   # bad
-        #   db.xquery('SELECT `users`.* FROM users')
+        #   db.xquery('SELECT users.* FROM users')
         #
         #   # good
         #   db.xquery('SELECT id, name FROM users')
