@@ -16,8 +16,14 @@ module RuboCop
         #   # bad
         #   db.xquery('SELECT * FROM users')
         #
+        #   # bad
+        #   db.xquery('SELECT `users`.* FROM users')
+        #
         #   # good
         #   db.xquery('SELECT id, name FROM users')
+        #
+        #   # good
+        #   db.xquery('SELECT users.id, users.name FROM users')
         #
         class SelectAsterisk < Base
           include Mixin::DatabaseMethods
@@ -61,42 +67,78 @@ module RuboCop
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param select_field_node [GDA::Nodes::SelectField]
           def check_and_register_offence_for_select_field_node(type:, node:, gda:, select_field_node:)
-            return if !select_field_node.respond_to?(:expr) || select_field_node.expr.value != "*"
+            return unless select_field_node.respond_to?(:expr)
+
+            select_field = parse_select_field_node(select_field_node)
+
+            return unless select_field[:column_name] == "*"
 
             loc = offense_location(type: type, node: node, gda_location: select_field_node.expr.location)
             return unless loc
 
             add_offense(loc) do |corrector|
-              perform_autocorrect(corrector: corrector, loc: loc, gda: gda, node: node)
+              perform_autocorrect(corrector: corrector, loc: loc, gda: gda, node: node, select_table: select_field[:table_name])
             end
+          end
+
+          # @param select_field_node [GDA::Nodes::SelectField]
+          # @return [Hash<Symbol, String>] table_name, column_name
+          def parse_select_field_node(select_field_node)
+            column_elements = select_field_node.expr.value.split(".", 2)
+
+            case column_elements.count
+            when 1
+              return { column_name: column_elements.first }
+            when 2
+              return { table_name: column_elements[0], column_name: column_elements[1] }
+            end
+
+            {}
           end
 
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param node [RuboCop::AST::Node]
-          def perform_autocorrect(corrector:, loc:, gda:, node:)
+          # @param select_table [String,nil]
+          def perform_autocorrect(corrector:, loc:, gda:, node:, select_table:)
             return unless enabled_database?
+            return if gda.table_names.empty?
 
-            return unless gda.table_names.length == 1
+            if select_table
+              return unless gda.table_names.include?(select_table)
 
-            replace_asterisk(corrector: corrector, loc: loc, table_name: gda.table_names[0])
+              replace_asterisk(corrector: corrector, loc: loc, table_name: select_table, append_table: true)
+            else
+              return unless gda.table_names.length == 1
+
+              replace_asterisk(corrector: corrector, loc: loc, table_name: gda.table_names[0], append_table: false)
+            end
+
             insert_todo_comment(corrector: corrector, node: node)
           end
 
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
           # @param table_name [String]
-          def replace_asterisk(corrector:, loc:, table_name:)
-            select_columns = columns_in_select_clause(table_name)
+          # @param append_table [Boolean]
+          def replace_asterisk(corrector:, loc:, table_name:, append_table:)
+            select_columns = columns_in_select_clause(table_name: table_name, append_table: append_table)
             corrector.replace(loc, select_columns)
           end
 
           # @param table_name [String]
           # @return [String]
-          def columns_in_select_clause(table_name)
+          def columns_in_select_clause(table_name:, append_table:)
             column_names = connection.column_names(table_name)
-            column_names.map { |column| "`#{column}`" }.join(", ")
+
+            column_names.map do |column|
+              if append_table
+                "`#{table_name}`.`#{column}`"
+              else
+                "`#{column}`"
+              end
+            end.join(", ")
           end
 
           # @param corrector [RuboCop::Cop::Corrector]
