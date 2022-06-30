@@ -77,7 +77,8 @@ module RuboCop
             return unless loc
 
             add_offense(loc) do |corrector|
-              perform_autocorrect(corrector: corrector, loc: loc, gda: gda, node: node, select_table: select_field[:table_name])
+              perform_autocorrect(corrector: corrector, loc: loc, gda: gda, node: node,
+                                  select_table_name: select_field[:table_name])
             end
           end
 
@@ -100,19 +101,19 @@ module RuboCop
           # @param loc [Parser::Source::Range]
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param node [RuboCop::AST::Node]
-          # @param select_table [String,nil]
-          def perform_autocorrect(corrector:, loc:, gda:, node:, select_table:)
+          # @param select_table_name [String,nil] table names included in the SELECT clause
+          def perform_autocorrect(corrector:, loc:, gda:, node:, select_table_name:)
             return unless enabled_database?
             return if gda.table_names.empty?
 
-            if select_table
-              return unless gda.table_names.include?(select_table)
+            if select_table_name
+              return unless gda.table_names.include?(select_table_name)
 
-              replace_asterisk(corrector: corrector, loc: loc, table_name: select_table, append_table: true)
+              replace_asterisk(corrector: corrector, loc: loc, table_name: select_table_name, table_prefix: true)
             else
               return unless gda.table_names.length == 1
 
-              replace_asterisk(corrector: corrector, loc: loc, table_name: gda.table_names[0], append_table: false)
+              replace_asterisk(corrector: corrector, loc: loc, table_name: gda.table_names[0], table_prefix: false)
             end
 
             insert_todo_comment(corrector: corrector, node: node)
@@ -121,19 +122,20 @@ module RuboCop
           # @param corrector [RuboCop::Cop::Corrector]
           # @param loc [Parser::Source::Range]
           # @param table_name [String]
-          # @param append_table [Boolean]
-          def replace_asterisk(corrector:, loc:, table_name:, append_table:)
-            select_columns = columns_in_select_clause(table_name: table_name, append_table: append_table)
+          # @param table_prefix [Boolean] Whether add table name to prefix (e.g. `users`.`name`)
+          def replace_asterisk(corrector:, loc:, table_name:, table_prefix:)
+            select_columns = columns_in_select_clause(table_name: table_name, table_prefix: table_prefix)
             corrector.replace(loc, select_columns)
           end
 
           # @param table_name [String]
+          # @param table_prefix [Boolean] Whether add table name to prefix (e.g. `users`.`name`)
           # @return [String]
-          def columns_in_select_clause(table_name:, append_table:)
+          def columns_in_select_clause(table_name:, table_prefix:)
             column_names = connection.column_names(table_name)
 
             column_names.map do |column|
-              if append_table
+              if table_prefix
                 "`#{table_name}`.`#{column}`"
               else
                 "`#{column}`"
