@@ -89,7 +89,7 @@ module RuboCop
 
             case column_elements.count
             when 1
-              return { column_name: column_elements.first }
+              return { column_name: column_elements[0] }
             when 2
               return { table_name: column_elements[0], column_name: column_elements[1] }
             end
