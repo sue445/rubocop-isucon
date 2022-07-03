@@ -20,7 +20,7 @@ module RuboCop
           include Mixin::Mysql2XqueryMethods
 
           MSG = "This join clause doesn't seem to have an index. " \
-                "(e.g. 'ALTER TABLE `%<table_name>s` ADD INDEX `index_%<column_name>s` (%<column_name>s)')"
+                "(e.g. `ALTER TABLE %<table_name>s ADD INDEX index_%<column_name>s (%<column_name>s)`)"
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
