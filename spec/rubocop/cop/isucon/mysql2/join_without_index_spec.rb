@@ -22,7 +22,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex, :config do
           "SELECT `courses`.*" \\
           " FROM `courses`" \\
           " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
-                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This join clause doesn't seem to have an index. (e.g. 'ALTER TABLE `registrations` ADD INDEX `index_course_id` (course_id)')
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This join clause doesn't seem to have an index. (e.g. `ALTER TABLE registrations ADD INDEX index_course_id (course_id)`)
           " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
           STATUS_CLOSED, user_id,
         )
