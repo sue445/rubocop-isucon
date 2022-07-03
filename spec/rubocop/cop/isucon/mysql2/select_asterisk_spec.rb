@@ -181,28 +181,46 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
       end
 
       context "with Database config" do
-        include_context :database_cop do
-          let(:schema) { "schemas/create_login_log.rb" }
+        context "table is found" do
+          include_context :database_cop do
+            let(:schema) { "schemas/create_login_log.rb" }
+          end
+
+          it "registers an offense and correct" do
+            expect_offense(<<~RUBY)
+              def last_login
+                return nil unless current_user
+
+                db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+                                  ^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
+              end
+            RUBY
+
+            expect_correction(<<~RUBY)
+              def last_login
+                return nil unless current_user
+
+                # TODO: Remove needless columns if necessary
+                db.xquery('SELECT `id`, `created_at`, `user_id`, `login`, `ip`, `succeeded` FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+              end
+            RUBY
+          end
         end
 
-        it "registers an offense and correct" do
-          expect_offense(<<~RUBY)
-            def last_login
-              return nil unless current_user
+        context "table isn't found" do
+          include_context :database_cop do
+            let(:schema) { [] }
+          end
 
-              db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
-                                ^ Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)
-            end
-          RUBY
+          it "registers an offense and correct" do
+            expect_no_offenses(<<~RUBY)
+              def last_login
+                return nil unless current_user
 
-          expect_correction(<<~RUBY)
-            def last_login
-              return nil unless current_user
-
-              # TODO: Remove needless columns if necessary
-              db.xquery('SELECT `id`, `created_at`, `user_id`, `login`, `ip`, `succeeded` FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
-            end
-          RUBY
+                db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+              end
+            RUBY
+          end
         end
       end
     end

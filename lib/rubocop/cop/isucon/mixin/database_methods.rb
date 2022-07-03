@@ -33,6 +33,12 @@ module RuboCop
             end
             nil
           end
+
+          # @param cop_name [String]
+          # @param error [StandardError]
+          def print_warning(cop_name:, error:)
+            warn "[#{cop_name}] Warning: #{error.message}"
+          end
         end
       end
     end

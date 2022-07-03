@@ -7,26 +7,46 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex, :config do
   include_examples :mysql2_cop_common_examples
 
   context "without index" do
-    include_context :database_cop do
-      let(:schema) do
-        %w[
-          schemas/create_courses.rb
-          schemas/create_registrations.rb
-        ]
+    context "table is found" do
+      include_context :database_cop do
+        let(:schema) do
+          %w[
+            schemas/create_courses.rb
+            schemas/create_registrations.rb
+          ]
+        end
+      end
+
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This join clause doesn't seem to have an index. (e.g. `ALTER TABLE registrations ADD INDEX index_course_id (course_id)`)
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+        RUBY
       end
     end
 
-    it "registers an offense" do
-      expect_offense(<<~RUBY)
-        courses = db.xquery(
-          "SELECT `courses`.*" \\
-          " FROM `courses`" \\
-          " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
-                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This join clause doesn't seem to have an index. (e.g. `ALTER TABLE registrations ADD INDEX index_course_id (course_id)`)
-          " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-          STATUS_CLOSED, user_id,
-        )
-      RUBY
+    context "table isn't found" do
+      include_context :database_cop do
+        let(:schema) { [] }
+      end
+
+      it "registers an offense" do
+        expect_no_offenses(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+        RUBY
+      end
     end
   end
 

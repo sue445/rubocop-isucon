@@ -42,6 +42,8 @@ module RuboCop
 
               check_and_register_offence(type: type, root_gda: root_gda, node: node)
             end
+          rescue ActiveRecord::StatementInvalid => e
+            print_warning(cop_name: "Isucon/Mysql2/SelectAsterisk", error: e)
           end
 
           private
