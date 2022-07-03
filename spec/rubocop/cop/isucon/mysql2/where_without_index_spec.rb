@@ -84,6 +84,18 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
         RUBY
       end
     end
+
+    context "table isn't found" do
+      include_context :database_cop do
+        let(:schema) { [] }
+      end
+
+      it "does not register an offense" do
+        expect_no_offenses(<<~RUBY)
+          db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
+        RUBY
+      end
+    end
   end
 
   context "SELECT ~ FROM table1 JOIN table2" do

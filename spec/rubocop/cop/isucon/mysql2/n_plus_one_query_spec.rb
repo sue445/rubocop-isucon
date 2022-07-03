@@ -687,6 +687,37 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
         RUBY
       end
     end
+
+    context "table isn't found" do
+      include_context :database_cop do
+        let(:schema) { [] }
+      end
+
+      it "registers an offense and correct" do
+        expect_no_offenses(<<~RUBY)
+          courses = db.xquery(
+            "SELECT `courses`.*" \\
+            " FROM `courses`" \\
+            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+            STATUS_CLOSED, user_id,
+          )
+
+          courses.map do |course|
+            teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
+            raise unless teacher
+
+            {
+              id: course[:id],
+              name: course[:name],
+              teacher: teacher[:name],
+              period: course[:period],
+              day_of_week: course[:day_of_week],
+            }
+          end
+        RUBY
+      end
+    end
   end
 
   context "with node type: 505" do

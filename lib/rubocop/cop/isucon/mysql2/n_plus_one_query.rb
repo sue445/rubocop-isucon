@@ -88,7 +88,7 @@ module RuboCop
           PATTERN
 
           # @param node [RuboCop::AST::Node]
-          def on_send(node)
+          def on_send(node) # rubocop:disable Metrics/MethodLength
             with_xquery(node) do |type, root_gda|
               receiver, = *node.children
 
@@ -103,6 +103,8 @@ module RuboCop
                 perform_autocorrect(corrector: corrector, current_node: receiver, parent_node: parent, type: type, gda: root_gda)
               end
             end
+          rescue ActiveRecord::StatementInvalid => e
+            print_warning(cop_name: "Isucon/Mysql2/NPlusOneQuery", error: e)
           end
 
           private

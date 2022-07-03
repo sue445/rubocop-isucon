@@ -35,6 +35,8 @@ module RuboCop
 
               register_offense(type: type, node: node, root_gda: root_gda)
             end
+          rescue ActiveRecord::StatementInvalid => e
+            print_warning(cop_name: "Isucon/Mysql2/WhereWithoutIndex", error: e)
           end
 
           private

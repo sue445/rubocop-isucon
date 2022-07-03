@@ -29,6 +29,8 @@ module RuboCop
             with_xquery(node) do |type, root_gda|
               check_and_register_offence(type: type, root_gda: root_gda, node: node)
             end
+          rescue ActiveRecord::StatementInvalid => e
+            print_warning(cop_name: "Isucon/Mysql2/JoinWithoutIndex", error: e)
           end
 
           private
