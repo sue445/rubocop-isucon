@@ -34,6 +34,15 @@ module RuboCop
             nil
           end
 
+          private
+
+          # @param cop_name [String]
+          def with_error_handling(cop_name)
+            yield
+          rescue ActiveRecord::StatementInvalid => e
+            print_warning(cop_name: cop_name, error: e)
+          end
+
           # @param cop_name [String]
           # @param error [StandardError]
           def print_warning(cop_name:, error:)

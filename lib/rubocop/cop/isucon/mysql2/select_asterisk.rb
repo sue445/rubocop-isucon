@@ -37,13 +37,13 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_xquery(node) do |type, root_gda|
-              next unless root_gda
+            with_error_handling("Isucon/Mysql2/SelectAsterisk") do
+              with_xquery(node) do |type, root_gda|
+                next unless root_gda
 
-              check_and_register_offence(type: type, root_gda: root_gda, node: node)
+                check_and_register_offence(type: type, root_gda: root_gda, node: node)
+              end
             end
-          rescue ActiveRecord::StatementInvalid => e
-            print_warning(cop_name: "Isucon/Mysql2/SelectAsterisk", error: e)
           end
 
           private
