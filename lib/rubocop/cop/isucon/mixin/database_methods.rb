@@ -40,6 +40,7 @@ module RuboCop
           def with_error_handling(cop_name)
             yield
           rescue ActiveRecord::StatementInvalid => e
+            # NOTE: suppress error (e.g. table isn't found in database)
             print_warning(cop_name: cop_name, error: e)
           end
 
