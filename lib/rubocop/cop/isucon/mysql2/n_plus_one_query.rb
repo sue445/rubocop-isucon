@@ -89,22 +89,25 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node) # rubocop:disable Metrics/MethodLength
-            with_xquery(node) do |type, root_gda|
-              receiver, = *node.children
+            with_error_handling("Isucon/Mysql2/NPlusOneQuery") do
+              with_xquery(node) do |type, root_gda|
+                receiver, = *node.children
 
-              next unless receiver.send_type?
+                next unless receiver.send_type?
 
-              parent = parent_loop_node(receiver)
-              next unless parent
+                parent = parent_loop_node(receiver)
+                next unless parent
 
-              next if or_assignment_to_instance_variable?(node)
+                next if or_assignment_to_instance_variable?(node)
 
-              add_offense(receiver) do |corrector|
-                perform_autocorrect(corrector: corrector, current_node: receiver, parent_node: parent, type: type, gda: root_gda)
+                add_offense(receiver) do |corrector|
+                  perform_autocorrect(
+                    corrector: corrector, current_node: receiver,
+                    parent_node: parent, type: type, gda: root_gda
+                  )
+                end
               end
             end
-          rescue ActiveRecord::StatementInvalid => e
-            print_warning(cop_name: "Isucon/Mysql2/NPlusOneQuery", error: e)
           end
 
           private
