@@ -44,23 +44,32 @@ module RuboCop
         #   good_foo_method(args)
         #
         class ManyJoinTable < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = "Use `#good_method` instead of `#bad_method`."
+          include Mixin::Mysql2XqueryMethods
 
-          # @!method bad_method?(node)
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
-          PATTERN
+          MSG = "Avoid SQL with lots of JOINs"
 
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
-            return unless bad_method?(node)
+            with_xquery(node) do |_, root_gda|
+              check_and_register_offence(root_gda: root_gda, node: node)
+            end
+          end
 
-            add_offense(node)
+          private
+
+          # @param root_gda [RuboCop::Isucon::GDA::Client]
+          # @param node [RuboCop::AST::Node]
+          def check_and_register_offence(root_gda:, node:)
+            return unless root_gda
+
+            root_gda.visit_all do |gda|
+              add_offense(node) if gda.table_names.count >= count_joins
+            end
+          end
+
+          # @return [Integer]
+          def count_joins
+            cop_config["CountJoins"]
           end
         end
       end
