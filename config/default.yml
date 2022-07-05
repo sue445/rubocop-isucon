@@ -23,6 +23,13 @@ Isucon/Mysql2/JoinWithoutIndex:
   #   encoding: utf8
   #   port: 3306
 
+Isucon/Mysql2/ManyJoinTable:
+  Description: 'Check if SQL contains many JOINs'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: ManyJoinTable.html
+  CountJoins: 3
+
 Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
   Enabled: true
