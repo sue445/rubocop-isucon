@@ -1,3 +1,8 @@
+Isucon/Mysql2/ManyJoinTable:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
+
 Isucon/Mysql2:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2/
   # Database:
