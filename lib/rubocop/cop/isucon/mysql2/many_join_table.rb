@@ -4,44 +4,52 @@ module RuboCop
   module Cop
     module Isucon
       module Mysql2
-        # TODO: Write cop description and example of bad / good code. For every
-        # `SupportedStyle` and unique configuration, there needs to be examples.
-        # Examples must have valid Ruby syntax. Do not use upticks.
+        # Check if SQL contains many JOINs
         #
-        # @safety
-        #   Delete this section if the cop is not unsafe (`Safe: false` or
-        #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-        #   unsafe.
-        #
-        # @example EnforcedStyle: bar (default)
-        #   # Description of the `bar` style.
-        #
+        # @example CountJoins: 3 (default)
         #   # bad
-        #   bad_bar_method
-        #
-        #   # bad
-        #   bad_bar_method(args)
+        #   totals = db.xquery(
+        #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
+        #     " FROM `users`" \
+        #     " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \
+        #     " JOIN `courses` ON `registrations`.`course_id` = `courses`.`id`" \
+        #     " LEFT JOIN `classes` ON `courses`.`id` = `classes`.`course_id`" \
+        #     " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \
+        #     " WHERE `courses`.`id` = ?" \
+        #     " GROUP BY `users`.`id`",
+        #     course[:id]
+        #   ).map { |_| _[:total_score] }
         #
         #   # good
-        #   good_bar_method
+        #   registration_users_count =
+        #     db.xquery("SELECT COUNT(`user_id`) AS cnt FROM `registrations` WHERE `course_id` = ?", course[:id]).first[:cnt]
         #
+        #   totals = db.xquery(<<~SQL, course[:id]).map { |_| _[:total_score] }
+        #     SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`
+        #     FROM `submissions`
+        #     JOIN `classes` ON `classes`.`id` = `submissions`.`class_id`
+        #     WHERE `classes`.`course_id` = ?
+        #     GROUP BY `submissions`.`user_id`
+        #   SQL
+        #
+        #   if totals.count < registration_users_count
+        #     no_submissions_count = registration_users_count - totals.count
+        #     totals += [0] * no_submissions_count
+        #   end
+        #
+        # @example CountJoins: 6
         #   # good
-        #   good_bar_method(args)
-        #
-        # @example EnforcedStyle: foo
-        #   # Description of the `foo` style.
-        #
-        #   # bad
-        #   bad_foo_method
-        #
-        #   # bad
-        #   bad_foo_method(args)
-        #
-        #   # good
-        #   good_foo_method
-        #
-        #   # good
-        #   good_foo_method(args)
+        #   totals = db.xquery(
+        #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
+        #     " FROM `users`" \
+        #     " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \
+        #     " JOIN `courses` ON `registrations`.`course_id` = `courses`.`id`" \
+        #     " LEFT JOIN `classes` ON `courses`.`id` = `classes`.`course_id`" \
+        #     " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \
+        #     " WHERE `courses`.`id` = ?" \
+        #     " GROUP BY `users`.`id`",
+        #     course[:id]
+        #   ).map { |_| _[:total_score] }
         #
         class ManyJoinTable < Base
           include Mixin::Mysql2XqueryMethods

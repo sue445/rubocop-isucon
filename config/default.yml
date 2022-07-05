@@ -28,6 +28,7 @@ Isucon/Mysql2/ManyJoinTable:
   Enabled: true
   VersionAdded: '0.1.0'
   StyleGuide: ManyJoinTable.html
+  CountJoins: 3
 
 Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
