@@ -1,8 +1,3 @@
-Isucon/Mysql2/ManyJoinTable:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
-
 Isucon/Mysql2:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2/
   # Database:
@@ -27,6 +22,12 @@ Isucon/Mysql2/JoinWithoutIndex:
   #   password: isucon
   #   encoding: utf8
   #   port: 3306
+
+Isucon/Mysql2/ManyJoinTable:
+  Description: 'Check if SQL contains many JOINs'
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: ManyJoinTable.html
 
 Isucon/Mysql2/NPlusOneQuery:
   Description: 'Checks that N+1 query is not used'
