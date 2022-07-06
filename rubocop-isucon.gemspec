@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = "RuboCop plugin for ruby reference implementation of ISUCON"
   spec.homepage      = "https://github.com/sue445/rubocop-isucon"
   spec.license       = "MIT"
-  spec.required_ruby_version = ">= 2.5.0"
+  spec.required_ruby_version = ">= 2.6.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/sue445/rubocop-isucon"
@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "activerecord", ">= 6.1.0"
   spec.add_runtime_dependency "gda", "!= 1.1.2"
-  spec.add_runtime_dependency "rubocop", ">= 1.25.0"
+  spec.add_runtime_dependency "rubocop", ">= 1.29.0"
   spec.add_runtime_dependency "rubocop-performance"
 
   spec.add_development_dependency "benchmark-ips"
