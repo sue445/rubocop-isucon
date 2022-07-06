@@ -6,7 +6,7 @@ module RuboCop
       module Mysql2
         # Check if SQL contains many JOINs
         #
-        # @example CountJoins: 3 (default)
+        # @example CountTables: 3 (default)
         #   # bad
         #   totals = db.xquery(
         #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
@@ -37,7 +37,7 @@ module RuboCop
         #     totals += [0] * no_submissions_count
         #   end
         #
-        # @example CountJoins: 6
+        # @example CountTables: 6
         #   # good
         #   totals = db.xquery(
         #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
@@ -71,13 +71,13 @@ module RuboCop
             return unless root_gda
 
             root_gda.visit_all do |gda|
-              add_offense(node) if gda.table_names.count >= count_joins
+              add_offense(node) if gda.table_names.count >= count_tables
             end
           end
 
           # @return [Integer]
-          def count_joins
-            cop_config["CountJoins"]
+          def count_tables
+            cop_config["CountTables"]
           end
         end
       end
