@@ -71,7 +71,7 @@ module RuboCop
             return unless root_gda
 
             root_gda.visit_all do |gda|
-              add_offense(node) if gda.table_names.count >= count_tables
+              add_offense(node) if gda.table_names.count > count_tables
             end
           end
 
