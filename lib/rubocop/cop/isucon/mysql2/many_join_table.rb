@@ -37,7 +37,7 @@ module RuboCop
         #     totals += [0] * no_submissions_count
         #   end
         #
-        # @example CountTables: 6
+        # @example CountTables: 5
         #   # good
         #   totals = db.xquery(
         #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
