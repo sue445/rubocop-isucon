@@ -2,10 +2,10 @@
 
 RSpec.describe RuboCop::Cop::Isucon::Mysql2::ManyJoinTable, :config do
   let(:config) { RuboCop::Config.new("Isucon/Mysql2/ManyJoinTable" => cop_config) }
-  let(:cop_config) { { "CountJoins" => count_joins } }
+  let(:cop_config) { { "CountTables" => count_tables } }
 
-  context "joined tables >= CountJoins" do
-    let(:count_joins) { 5 }
+  context "total tables >= CountTables" do
+    let(:count_tables) { 5 }
 
     it "registers an offense" do
       # FIXME: duplicate offense messages
@@ -28,8 +28,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::ManyJoinTable, :config do
     end
   end
 
-  context "joined tables < CountJoins" do
-    let(:count_joins) { 6 }
+  context "total tables < CountTables" do
+    let(:count_tables) { 6 }
 
     it "registers an offense" do
       # c.f. https://github.com/isucon/isucon11-final/blob/a4ca72f2b4c470d93afe9edd572a2dbd563308fe/webapp/ruby/app.rb#L323-L333
