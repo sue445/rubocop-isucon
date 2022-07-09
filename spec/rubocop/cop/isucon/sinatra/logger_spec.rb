@@ -3,19 +3,17 @@
 RSpec.describe RuboCop::Cop::Isucon::Sinatra::Logger, :config do
   let(:config) { RuboCop::Config.new }
 
-  # TODO: Write test code
-  #
-  # For example
-  it "registers an offense when using `#bad_method`" do
-    expect_offense(<<~RUBY)
-      bad_method
-      ^^^^^^^^^^ Use `#good_method` instead of `#bad_method`.
-    RUBY
-  end
+  context "Exists logger.error" do
+    it "registers an offense" do
+      # c.f. https://github.com/isucon/isucon10-qualify/blob/7e6b6cfb672cde2c57d7b594d0352dc48ce317df/webapp/ruby/app.rb#L217
+      expect_offense(<<~RUBY)
+        logger.error "Search condition not found"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Don't use `logger`
+      RUBY
 
-  it "does not register an offense when using `#good_method`" do
-    expect_no_offenses(<<~RUBY)
-      good_method
-    RUBY
+      expect_correction(<<~RUBY)
+
+      RUBY
+    end
   end
 end
