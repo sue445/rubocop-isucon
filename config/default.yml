@@ -94,6 +94,11 @@ Isucon/Shell/System:
   VersionAdded: '0.1.0'
   StyleGuide: System.html
 
+Isucon/Sinatra/Logger:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
+
 Isucon/Sinatra:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra/
 
