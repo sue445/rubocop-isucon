@@ -103,6 +103,12 @@ Isucon/Sinatra/DisableLogging:
   VersionAdded: '0.1.0'
   StyleGuide: DisableLogging.html
 
+Isucon/Sinatra/Logger:
+  Description: "Disable sinatra logger"
+  Enabled: true
+  VersionAdded: '0.1.0'
+  StyleGuide: Logger.html
+
 Isucon/Sinatra/RackLogger:
   Description: "Don't use `request.env['rack.logger']`"
   Enabled: true
