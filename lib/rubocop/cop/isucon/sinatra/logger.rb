@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Sinatra
-        # Disable sinatra logger
+        # Disable sinatra logger logging
         #
         # @example
         #   # bad
