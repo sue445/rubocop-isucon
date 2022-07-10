@@ -25,10 +25,16 @@ module RuboCop
 
           MSG = "Serve static files on front server (e.g. nginx) instead of sinatra app"
 
+          # @!method file_read_method?(node)
+          #   @param node [RuboCop::AST::Node]
+          #   @return [Boolean]
           def_node_matcher :file_read_method?, <<~PATTERN
             (send (const nil? :File) :read ...)
           PATTERN
 
+          # @!method get_block?(node)
+          #   @param node [RuboCop::AST::Node]
+          #   @return [Boolean]
           def_node_matcher :get_block?, <<~PATTERN
             (block (send nil? :get ...) ...)
           PATTERN

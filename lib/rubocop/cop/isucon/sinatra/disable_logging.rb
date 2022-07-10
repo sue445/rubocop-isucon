@@ -28,6 +28,9 @@ module RuboCop
 
           MSG = "Disable sinatra logging."
 
+          # @!method logging_enabled?(node)
+          #   @param node [RuboCop::AST::Node]
+          #   @return [Boolean]
           def_node_matcher :logging_enabled?, <<~PATTERN
             (send nil? :enable (sym :logging))
           PATTERN

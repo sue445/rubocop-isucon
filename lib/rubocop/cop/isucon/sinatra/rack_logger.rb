@@ -18,6 +18,8 @@ module RuboCop
           extend AutoCorrector
 
           # @!method rack_logger?(node)
+          #   @param node [RuboCop::AST::Node]
+          #   @return [Boolean]
           def_node_matcher :rack_logger?, <<~PATTERN
             (send
               (send

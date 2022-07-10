@@ -23,6 +23,7 @@ module RuboCop
             (send nil? :system ...)
           PATTERN
 
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
             return unless system?(node)
 

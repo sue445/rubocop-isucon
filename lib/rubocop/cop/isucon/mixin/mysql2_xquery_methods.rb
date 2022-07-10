@@ -8,6 +8,8 @@ module RuboCop
         module Mysql2XqueryMethods
           extend NodePattern::Macros
 
+          # @!method find_xquery(node)
+          #   @param node [RuboCop::AST::Node]
           def_node_search :find_xquery, <<~PATTERN
             (send (send nil? _) {:xquery | :query} (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
