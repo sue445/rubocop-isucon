@@ -44,6 +44,8 @@ module RuboCop
 
           private
 
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param node [RuboCop::AST::Node]
           def perform_autocorrect(corrector:, node:)
             corrector.replace(node, "")
           end

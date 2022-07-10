@@ -54,10 +54,14 @@ module RuboCop
 
           private
 
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param node [RuboCop::AST::Node]
           def perform_autocorrect_for_on_send(corrector:, node:)
             corrector.replace(node, "disable :logging")
           end
 
+          # @param corrector [RuboCop::Cop::Corrector]
+          # @param node [RuboCop::AST::Node]
           def perform_autocorrect_for_on_class(corrector:, node:)
             sinatra_base_node = node.child_nodes[1]
 
