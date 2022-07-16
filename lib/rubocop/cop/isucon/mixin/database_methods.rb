@@ -20,7 +20,8 @@ module RuboCop
 
           # @return [Boolean]
           def enabled_database?
-            !!cop_config["Database"]
+            adapter = cop_config.dig("Database", "adapter")
+            adapter && !adapter.empty?
           end
 
           # @param table_names [Array<String>]
