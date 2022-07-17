@@ -89,7 +89,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node) # rubocop:disable Metrics/MethodLength
-            with_error_handling("Isucon/Mysql2/NPlusOneQuery") do
+            with_error_handling(node) do
               with_xquery(node) do |type, root_gda|
                 receiver, = *node.children
 

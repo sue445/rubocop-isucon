@@ -92,11 +92,11 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
 
       it "does not register an offense and print warning" do
         expect do
-          expect_no_offenses(<<~RUBY)
+          expect_no_offenses(<<~RUBY, "file.rb")
             db.xquery('SELECT * FROM `isu` WHERE `jia_user_id` = ? ORDER BY `id` DESC', jia_user_id)
           RUBY
         end.to output(<<~MSG).to_stderr
-          [Isucon/Mysql2/WhereWithoutIndex] Warning: Could not find table 'isu'
+          Warning: Could not find table 'isu' (file.rb:1)
         MSG
       end
     end

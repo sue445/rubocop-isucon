@@ -37,7 +37,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_error_handling("Isucon/Mysql2/SelectAsterisk") do
+            with_error_handling(node) do
               with_xquery(node) do |type, root_gda|
                 next unless root_gda
 
