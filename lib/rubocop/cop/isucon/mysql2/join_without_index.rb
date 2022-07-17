@@ -24,7 +24,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_error_handling("Isucon/Mysql2/JoinWithoutIndex") do
+            with_error_handling(node) do
               return unless enabled_database?
 
               with_xquery(node) do |type, root_gda|

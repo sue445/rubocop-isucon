@@ -695,7 +695,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
 
       it "does not register an offense and print warning" do
         expect do
-          expect_no_offenses(<<~RUBY)
+          expect_no_offenses(<<~RUBY, "file.rb")
             courses = db.xquery(
               "SELECT `courses`.*" \\
               " FROM `courses`" \\
@@ -718,8 +718,8 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
             end
           RUBY
         end.to output(<<~MSG).to_stderr
-          [Isucon/Mysql2/NPlusOneQuery] Warning: Could not find table 'users'
-          [Isucon/Mysql2/NPlusOneQuery] Warning: Could not find table 'users'
+          Warning: Could not find table 'users' (file.rb:10)
+          Warning: Could not find table 'users' (file.rb:10)
         MSG
       end
     end

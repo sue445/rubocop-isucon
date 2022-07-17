@@ -214,7 +214,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
 
           it "does not register an offense and print warning" do
             expect do
-              expect_no_offenses(<<~RUBY)
+              expect_no_offenses(<<~RUBY, "file.rb")
                 def last_login
                   return nil unless current_user
 
@@ -222,7 +222,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
                 end
               RUBY
             end.to output(<<~MSG).to_stderr
-              [Isucon/Mysql2/SelectAsterisk] Warning: Could not find table 'login_log'
+              Warning: Could not find table 'login_log' (file.rb:4)
             MSG
           end
         end

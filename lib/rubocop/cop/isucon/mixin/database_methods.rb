@@ -37,18 +37,20 @@ module RuboCop
 
           private
 
-          # @param cop_name [String]
-          def with_error_handling(cop_name)
+          # @param node [RuboCop::AST::Node]
+          def with_error_handling(node)
             yield
           rescue ActiveRecord::StatementInvalid => e
             # NOTE: suppress error (e.g. table isn't found in database)
-            print_warning(cop_name: cop_name, error: e)
+            print_warning(node: node, error: e)
           end
 
-          # @param cop_name [String]
+          # @param node [RuboCop::AST::Node]
           # @param error [StandardError]
-          def print_warning(cop_name:, error:)
-            warn "[#{cop_name}] Warning: #{error.message}"
+          def print_warning(node:, error:)
+            file_path = processed_source.file_path
+            line_num = node.loc.expression.line
+            warn "Warning: #{error.message} (#{file_path}:#{line_num})"
           end
         end
       end
