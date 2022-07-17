@@ -693,29 +693,34 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery, :config do
         let(:schema) { [] }
       end
 
-      it "registers an offense and correct" do
-        expect_no_offenses(<<~RUBY)
-          courses = db.xquery(
-            "SELECT `courses`.*" \\
-            " FROM `courses`" \\
-            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
-            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-            STATUS_CLOSED, user_id,
-          )
+      it "does not register an offense and print warning" do
+        expect do
+          expect_no_offenses(<<~RUBY)
+            courses = db.xquery(
+              "SELECT `courses`.*" \\
+              " FROM `courses`" \\
+              " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+              " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+              STATUS_CLOSED, user_id,
+            )
 
-          courses.map do |course|
-            teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
-            raise unless teacher
+            courses.map do |course|
+              teacher = db.xquery('SELECT * FROM `users` WHERE `id` = ?', course[:teacher_id]).first
+              raise unless teacher
 
-            {
-              id: course[:id],
-              name: course[:name],
-              teacher: teacher[:name],
-              period: course[:period],
-              day_of_week: course[:day_of_week],
-            }
-          end
-        RUBY
+              {
+                id: course[:id],
+                name: course[:name],
+                teacher: teacher[:name],
+                period: course[:period],
+                day_of_week: course[:day_of_week],
+              }
+            end
+          RUBY
+        end.to output(<<~MSG).to_stderr
+          [Isucon/Mysql2/NPlusOneQuery] Warning: Could not find table 'users'
+          [Isucon/Mysql2/NPlusOneQuery] Warning: Could not find table 'users'
+        MSG
       end
     end
   end
