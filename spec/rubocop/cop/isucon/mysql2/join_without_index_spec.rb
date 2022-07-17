@@ -36,16 +36,20 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex, :config do
         let(:schema) { [] }
       end
 
-      it "registers an offense" do
-        expect_no_offenses(<<~RUBY)
-          courses = db.xquery(
-            "SELECT `courses`.*" \\
-            " FROM `courses`" \\
-            " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
-            " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-            STATUS_CLOSED, user_id,
-          )
-        RUBY
+      it "does not register an offense and print warning" do
+        expect do
+          expect_no_offenses(<<~RUBY)
+            courses = db.xquery(
+              "SELECT `courses`.*" \\
+              " FROM `courses`" \\
+              " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
+              " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
+              STATUS_CLOSED, user_id,
+            )
+          RUBY
+        end.to output(<<~MSG).to_stderr
+          [Isucon/Mysql2/JoinWithoutIndex] Warning: Could not find table 'courses'
+        MSG
       end
     end
   end

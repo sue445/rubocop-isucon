@@ -212,14 +212,18 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
             let(:schema) { [] }
           end
 
-          it "registers an offense and correct" do
-            expect_no_offenses(<<~RUBY)
-              def last_login
-                return nil unless current_user
+          it "does not register an offense and print warning" do
+            expect do
+              expect_no_offenses(<<~RUBY)
+                def last_login
+                  return nil unless current_user
 
-                db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
-              end
-            RUBY
+                  db.xquery('SELECT * FROM login_log WHERE succeeded = 1 AND user_id = ? ORDER BY id DESC LIMIT 2', current_user['id']).each.last
+                end
+              RUBY
+            end.to output(<<~MSG).to_stderr
+              [Isucon/Mysql2/SelectAsterisk] Warning: Could not find table 'login_log'
+            MSG
           end
         end
       end
