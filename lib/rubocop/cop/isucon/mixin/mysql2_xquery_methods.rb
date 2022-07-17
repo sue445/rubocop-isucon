@@ -14,6 +14,9 @@ module RuboCop
             (send (send nil? _) {:xquery | :query} (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
 
+          NON_STRING_WARNING_MSG = "Warning: non-string was passed to `query` or `xquery` 1st argument. " \
+                                   "So argument doesn't parsed as SQL (%<file_path>s:%<line_num>d)"
+
           # @param node [RuboCop::AST::Node]
           # @yieldparam type [Symbol] Node type. one of `:str`, `:dstr`
           # @yieldparam root_gda [RuboCop::Isucon::GDA::Client,nil]
@@ -22,6 +25,10 @@ module RuboCop
           def with_xquery(node)
             find_xquery(node) do |type, params|
               sql = xquery_param(type: type, params: params)
+
+              unless sql
+                warn format(NON_STRING_WARNING_MSG, file_path: processed_source.file_path, line_num: node.loc.expression.line)
+              end
 
               root_gda = sql ? RuboCop::Isucon::GDA::Client.new(sql) : nil
 

@@ -279,4 +279,21 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::SelectAsterisk, :config do
       RUBY
     end
   end
+
+  context "sql contains non-string" do
+    include_context :database_cop do
+      let(:schema) { "schemas/create_items.rb" }
+    end
+
+    it "does not register an offense and print warning" do
+      expect do
+        # c.f. https://github.com/isucon/isucon9-qualify/blob/34b3e785ebdd97d5c39a1263cbf56d1ae5e3ef91/webapp/ruby/lib/isucari/web.rb#L176
+        expect_no_offenses(<<~RUBY, "file.rb")
+          db.xquery("SELECT * FROM `items` WHERE `status` IN (?, ?) AND (`created_at` < ?  OR (`created_at` <= ? AND `id` < ?)) ORDER BY `created_at` DESC, `id` DESC LIMIT \#{ITEMS_PER_PAGE + 1}", ITEM_STATUS_ON_SALE, ITEM_STATUS_SOLD_OUT, Time.at(created_at), Time.at(created_at), item_id)
+        RUBY
+      end.to output(<<~MSG).to_stderr
+        Warning: non-string was passed to `query` or `xquery` 1st argument. So argument doesn't parsed as SQL (file.rb:1)
+      MSG
+    end
+  end
 end
