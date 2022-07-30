@@ -4,67 +4,49 @@ module RuboCop
   module Cop
     module Isucon
       module Sqlite3
-        # TODO: Write cop description and example of bad / good code. For every
-        # `SupportedStyle` and unique configuration, there needs to be examples.
-        # Examples must have valid Ruby syntax. Do not use upticks.
+        # Check for `WHERE` without index
         #
-        # @safety
-        #   Delete this section if the cop is not unsafe (`Safe: false` or
-        #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-        #   unsafe.
+        # @note If `Database` isn't configured, this cop's feature (offense detection and auto-correct) will not be available.
         #
-        # @example EnforcedStyle: bar (default)
-        #   # Description of the `bar` style.
+        # @example
+        #   # bad (user_id is not indexed)
+        #   db.execute('SELECT id, title FROM articles WHERE used_id = ?', user_id)
         #
-        #   # bad
-        #   bad_bar_method
+        #   # good (user_id is indexed)
+        #   db.execute('SELECT id, title FROM articles WHERE used_id = ?', user_id)
         #
-        #   # bad
-        #   bad_bar_method(args)
-        #
-        #   # good
-        #   good_bar_method
-        #
-        #   # good
-        #   good_bar_method(args)
-        #
-        # @example EnforcedStyle: foo
-        #   # Description of the `foo` style.
-        #
-        #   # bad
-        #   bad_foo_method
-        #
-        #   # bad
-        #   bad_foo_method(args)
-        #
-        #   # good
-        #   good_foo_method
-        #
-        #   # good
-        #   good_foo_method(args)
+        #   # good (id is primary key)
+        #   db.execute('SELECT id, title FROM articles WHERE id = ?', id)
         #
         class WhereWithoutIndex < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = "Use `#good_method` instead of `#bad_method`."
+          include Mixin::DatabaseMethods
+          include Mixin::Sqlite3ExecuteMethods
+          include Mixin::WhereWithoutIndexMethods
 
-          # TODO: Don't call `on_send` unless the method name is in this list
-          # If you don't need `on_send` in the cop you created, remove it.
-          RESTRICT_ON_SEND = %i[bad_method].freeze
+          MSG = "This where clause doesn't seem to have an index. " \
+                "(e.g. `CREATE INDEX index_%<table_name>s_%<column_name>s ON %<table_name>s (%<column_name>s)`)"
 
-          # @!method bad_method?(node)
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
-          PATTERN
-
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
-            return unless bad_method?(node)
+            with_error_handling(node) do
+              return unless enabled_database?
 
-            add_offense(node)
+              with_db_execute(node) do |type, root_gda|
+                next unless root_gda
+                next if exists_index_in_where_clause_columns?(root_gda)
+
+                register_offense(type: type, node: node, root_gda: root_gda)
+              end
+            end
+          end
+
+          private
+
+          # @param table_name [String]
+          # @param column_name [String]
+          # @return [String]
+          def generate_offense_message(table_name:, column_name:)
+            format(MSG, table_name: table_name, column_name: column_name)
           end
         end
       end
