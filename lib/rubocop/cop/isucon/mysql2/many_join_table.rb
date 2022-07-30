@@ -58,7 +58,7 @@ module RuboCop
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_xquery(node) do |_, root_gda|
+            with_db_xquery(node) do |_, root_gda|
               check_and_register_offence(root_gda: root_gda, node: node)
             end
           end
