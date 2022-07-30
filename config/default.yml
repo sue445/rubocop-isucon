@@ -82,6 +82,11 @@ Isucon/Sinatra/ServeStaticFile:
   VersionAdded: '0.1.0'
   StyleGuide: ServeStaticFile.html
 
+Isucon/Sqlite3/WhereWithoutIndex:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'
+
 Isucon/Sqlite3:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sqlite3/
   Database:
