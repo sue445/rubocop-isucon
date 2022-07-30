@@ -91,3 +91,9 @@ Isucon/Sqlite3/SelectAsterisk:
   Enabled: true
   VersionAdded: '0.2.0'
   StyleGuide: SelectAsterisk.html
+
+Isucon/Sqlite3/WhereWithoutIndex:
+  Description: 'Check for `WHERE` without index'
+  Enabled: true
+  VersionAdded: '0.2.0'
+  StyleGuide: WhereWithoutIndex.html
