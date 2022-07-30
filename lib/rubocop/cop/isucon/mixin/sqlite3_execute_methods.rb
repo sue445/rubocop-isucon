@@ -16,7 +16,7 @@ module RuboCop
             (send (send nil? _) {:execute | :get_first_row} (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
 
-          NON_STRING_WARNING_MSG = "Warning: non-string was passed to `execute` 1st argument. " \
+          NON_STRING_WARNING_MSG = "Warning: non-string was passed to `execute` or `get_first_row` 1st argument. " \
                                    "So argument doesn't parsed as SQL (%<file_path>s:%<line_num>d)"
 
           # @param node [RuboCop::AST::Node]
