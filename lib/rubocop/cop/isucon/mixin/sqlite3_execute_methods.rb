@@ -13,7 +13,7 @@ module RuboCop
           # @!method find_xquery(node)
           #   @param node [RuboCop::AST::Node]
           def_node_search :find_execute, <<~PATTERN
-            (send (send nil? _) {:execute | :get_first_row} (${str dstr lvar ivar cvar} $...) ...)
+            (send _ {:execute | :get_first_row} (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
 
           NON_STRING_WARNING_MSG = "Warning: non-string was passed to `execute` or `get_first_row` 1st argument. " \
