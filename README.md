@@ -73,6 +73,11 @@ Isucon/Mysql2:
     password: isucon
     encoding: utf8
     port: 3306
+
+Isucon/Sqlite3:
+  Database:
+    adapter: sqlite3
+    database: # TODO: Fix this
 ```
 
 `Database` isn't configured in `.rubocop.yml`, some cops doesn't work
@@ -83,6 +88,7 @@ Isucon/Mysql2:
 | `Isucon/Mysql2/NPlusOneQuery`     | `Database` is optional     | `Database` is **required** |
 | `Isucon/Mysql2/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
 | `Isucon/Mysql2/WhereWithoutIndex` | `Database` is **required** | Not supported              |
+| `Isucon/Sqlite3/SelectAsterisk`   | `Database` is optional     | `Database` is **required** |
 
 ## Documentation
 See. https://sue445.github.io/rubocop-isucon/
@@ -90,6 +96,7 @@ See. https://sue445.github.io/rubocop-isucon/
 * `Isucon/Mysql2` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Mysql2.html
 * `Isucon/Shell` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Shell.html
 * `Isucon/Sinatra` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sinatra.html
+* `Isucon/Sqlite3` department docs : https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sqlite3.html
 
 ## Benchmark
 See [benchmark/](benchmark/)
