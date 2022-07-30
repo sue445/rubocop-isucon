@@ -81,3 +81,8 @@ Isucon/Sinatra/ServeStaticFile:
   Enabled: true
   VersionAdded: '0.1.0'
   StyleGuide: ServeStaticFile.html
+
+Isucon/Sqlite3/SelectAsterisk:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: pending
+  VersionAdded: '<<next>>'

@@ -18,3 +18,4 @@ require_relative "isucon/sinatra/rack_logger"
 require_relative "isucon/sinatra/serve_static_file"
 require_relative "isucon/shell/backtick"
 require_relative "isucon/shell/system"
+require_relative 'isucon/sqlite3/select_asterisk'
