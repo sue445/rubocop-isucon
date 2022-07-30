@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require_relative "isucon/mixin/database_methods"
+require_relative "isucon/mixin/offense_location_methods"
 require_relative "isucon/mixin/mysql2_xquery_methods"
+require_relative "isucon/mixin/select_asterisk_methods"
 require_relative "isucon/mixin/sinatra_methods"
+require_relative "isucon/mixin/sqlite3_execute_methods"
 
 require_relative "isucon/correctors/mysql2_n_plus_one_query_corrector"
 
@@ -18,3 +21,4 @@ require_relative "isucon/sinatra/rack_logger"
 require_relative "isucon/sinatra/serve_static_file"
 require_relative "isucon/shell/backtick"
 require_relative "isucon/shell/system"
+require_relative "isucon/sqlite3/select_asterisk"

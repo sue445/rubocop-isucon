@@ -3,8 +3,8 @@
 module RuboCop
   module Cop
     module Isucon
-      module Mysql2
-        # Avoid `SELECT *` in `db.xquery`
+      module Sqlite3
+        # Avoid `SELECT *` in `db.execute`
         #
         # @note If `Database` isn't configured, auto-correct will not be available. (Only offense detection can be used)
         #
@@ -14,20 +14,20 @@ module RuboCop
         #
         # @example
         #   # bad
-        #   db.xquery('SELECT * FROM users')
+        #   db.execute('SELECT * FROM users')
         #
         #   # bad
-        #   db.xquery('SELECT users.* FROM users')
+        #   db.execute('SELECT users.* FROM users')
         #
         #   # good
-        #   db.xquery('SELECT id, name FROM users')
+        #   db.execute('SELECT id, name FROM users')
         #
         #   # good
-        #   db.xquery('SELECT users.id, users.name FROM users')
+        #   db.execute('SELECT users.id, users.name FROM users')
         #
         class SelectAsterisk < Base
           include Mixin::DatabaseMethods
-          include Mixin::Mysql2XqueryMethods
+          include Mixin::Sqlite3ExecuteMethods
           include Mixin::SelectAsteriskMethods
 
           extend AutoCorrector
@@ -35,7 +35,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_error_handling(node) do
-              with_xquery(node) do |type, root_gda|
+              with_execute(node) do |type, root_gda|
                 next unless root_gda
 
                 check_and_register_offence(type: type, root_gda: root_gda, node: node)

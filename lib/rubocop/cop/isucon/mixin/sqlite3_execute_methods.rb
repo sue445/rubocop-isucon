@@ -4,19 +4,19 @@ module RuboCop
   module Cop
     module Isucon
       module Mixin
-        # Helper methods for `db.xquery` or `db.query` in AST
-        module Mysql2XqueryMethods
+        # Helper methods for `db.execute` in AST
+        module Sqlite3ExecuteMethods
           extend NodePattern::Macros
 
           include OffenceLocationMethods
 
           # @!method find_xquery(node)
           #   @param node [RuboCop::AST::Node]
-          def_node_search :find_xquery, <<~PATTERN
-            (send (send nil? _) {:xquery | :query} (${str dstr lvar ivar cvar} $...) ...)
+          def_node_search :find_execute, <<~PATTERN
+            (send (send nil? _) :execute (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
 
-          NON_STRING_WARNING_MSG = "Warning: non-string was passed to `query` or `xquery` 1st argument. " \
+          NON_STRING_WARNING_MSG = "Warning: non-string was passed to `execute` 1st argument. " \
                                    "So argument doesn't parsed as SQL (%<file_path>s:%<line_num>d)"
 
           # @param node [RuboCop::AST::Node]
@@ -24,9 +24,9 @@ module RuboCop
           # @yieldparam root_gda [RuboCop::Isucon::GDA::Client,nil]
           #
           # @note If arguments of `db.xquery` isn't string, `root_gda` is `nil`
-          def with_xquery(node)
-            find_xquery(node) do |type, params|
-              sql = xquery_param(type: type, params: params)
+          def with_execute(node)
+            find_execute(node) do |type, params|
+              sql = execute_param(type: type, params: params)
 
               unless sql
                 warn format(NON_STRING_WARNING_MSG, file_path: processed_source.file_path, line_num: node.loc.expression.line)
@@ -43,7 +43,7 @@ module RuboCop
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param params [Array<RuboCop::AST::Node>]
           # @return [String,nil]
-          def xquery_param(type:, params:)
+          def execute_param(type:, params:)
             case type
             when :str
               return params[0]
