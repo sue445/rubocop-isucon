@@ -4,67 +4,43 @@ module RuboCop
   module Cop
     module Isucon
       module Sqlite3
-        # TODO: Write cop description and example of bad / good code. For every
-        # `SupportedStyle` and unique configuration, there needs to be examples.
-        # Examples must have valid Ruby syntax. Do not use upticks.
+        # Avoid `SELECT *` in `db.execute`
         #
-        # @safety
-        #   Delete this section if the cop is not unsafe (`Safe: false` or
-        #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-        #   unsafe.
+        # @note If `Database` isn't configured, auto-correct will not be available. (Only offense detection can be used)
         #
-        # @example EnforcedStyle: bar (default)
-        #   # Description of the `bar` style.
+        # @note This cop replaces `SELECT *` with a `SELECT` by the columns present in the table (e.g. `SELECT id, name`),
+        #       but does not check whether the columns are actually used.
+        #       Please manually delete unused columns after auto corrected
+        #
+        # @example
+        #   # bad
+        #   db.execute('SELECT * FROM users')
         #
         #   # bad
-        #   bad_bar_method
-        #
-        #   # bad
-        #   bad_bar_method(args)
+        #   db.execute('SELECT users.* FROM users')
         #
         #   # good
-        #   good_bar_method
+        #   db.execute('SELECT id, name FROM users')
         #
         #   # good
-        #   good_bar_method(args)
-        #
-        # @example EnforcedStyle: foo
-        #   # Description of the `foo` style.
-        #
-        #   # bad
-        #   bad_foo_method
-        #
-        #   # bad
-        #   bad_foo_method(args)
-        #
-        #   # good
-        #   good_foo_method
-        #
-        #   # good
-        #   good_foo_method(args)
+        #   db.execute('SELECT users.id, users.name FROM users')
         #
         class SelectAsterisk < Base
-          # TODO: Implement the cop in here.
-          #
-          # In many cases, you can use a node matcher for matching node pattern.
-          # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-          #
-          # For example
-          MSG = "Use `#good_method` instead of `#bad_method`."
+          include Mixin::DatabaseMethods
+          include Mixin::Sqlite3ExecuteMethods
+          include Mixin::SelectAsteriskMethods
 
-          # TODO: Don't call `on_send` unless the method name is in this list
-          # If you don't need `on_send` in the cop you created, remove it.
-          RESTRICT_ON_SEND = %i[bad_method].freeze
+          extend AutoCorrector
 
-          # @!method bad_method?(node)
-          def_node_matcher :bad_method?, <<~PATTERN
-            (send nil? :bad_method ...)
-          PATTERN
-
+          # @param node [RuboCop::AST::Node]
           def on_send(node)
-            return unless bad_method?(node)
+            with_error_handling(node) do
+              with_execute(node) do |type, root_gda|
+                next unless root_gda
 
-            add_offense(node)
+                check_and_register_offence(type: type, root_gda: root_gda, node: node)
+              end
+            end
           end
         end
       end

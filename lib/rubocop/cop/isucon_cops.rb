@@ -4,6 +4,7 @@ require_relative "isucon/mixin/database_methods"
 require_relative "isucon/mixin/mysql2_xquery_methods"
 require_relative "isucon/mixin/select_asterisk_methods"
 require_relative "isucon/mixin/sinatra_methods"
+require_relative "isucon/mixin/sqlite3_execute_methods"
 
 require_relative "isucon/correctors/mysql2_n_plus_one_query_corrector"
 

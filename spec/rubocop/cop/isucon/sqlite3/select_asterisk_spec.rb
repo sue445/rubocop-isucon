@@ -37,6 +37,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sqlite3::SelectAsterisk, :config do
         RUBY
 
         expect_correction(<<~RUBY)
+          # TODO: Remove needless columns if necessary
           tenant_db.execute('SELECT `id`, `tenant_id`, `title`, `finished_at`, `created_at`, `updated_at` FROM competition WHERE tenant_id=?', [t.id]) do |row|
             comp = CompetitionRow.new(row)
             report = billing_report_by_competition(tenant_db, t.id, comp.id)
