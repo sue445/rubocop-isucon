@@ -82,11 +82,6 @@ Isucon/Sinatra/ServeStaticFile:
   VersionAdded: '0.1.0'
   StyleGuide: ServeStaticFile.html
 
-Isucon/Sqlite3/WhereWithoutIndex:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
-
 Isucon/Sqlite3:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sqlite3/
   Database:
@@ -96,3 +91,9 @@ Isucon/Sqlite3/SelectAsterisk:
   Enabled: true
   VersionAdded: '0.2.0'
   StyleGuide: SelectAsterisk.html
+
+Isucon/Sqlite3/WhereWithoutIndex:
+  Description: 'Check for `WHERE` without index'
+  Enabled: true
+  VersionAdded: '0.2.0'
+  StyleGuide: WhereWithoutIndex.html
