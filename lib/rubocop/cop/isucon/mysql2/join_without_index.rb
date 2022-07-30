@@ -27,7 +27,7 @@ module RuboCop
             with_error_handling(node) do
               return unless enabled_database?
 
-              with_xquery(node) do |type, root_gda|
+              with_db_xquery(node) do |type, root_gda|
                 check_and_register_offence(type: type, root_gda: root_gda, node: node)
               end
             end

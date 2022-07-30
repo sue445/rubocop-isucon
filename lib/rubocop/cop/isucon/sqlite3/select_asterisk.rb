@@ -35,7 +35,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_error_handling(node) do
-              with_execute(node) do |type, root_gda|
+              with_db_execute(node) do |type, root_gda|
                 next unless root_gda
 
                 check_and_register_offence(type: type, root_gda: root_gda, node: node)

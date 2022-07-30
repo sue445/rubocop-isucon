@@ -90,7 +90,7 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           def on_send(node) # rubocop:disable Metrics/MethodLength
             with_error_handling(node) do
-              with_xquery(node) do |type, root_gda|
+              with_db_xquery(node) do |type, root_gda|
                 receiver, = *node.children
 
                 next unless receiver.send_type?

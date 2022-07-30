@@ -30,7 +30,7 @@ module RuboCop
             with_error_handling(node) do
               return unless enabled_database?
 
-              with_xquery(node) do |type, root_gda|
+              with_db_xquery(node) do |type, root_gda|
                 next unless root_gda
                 next if exists_index_in_where_clause_columns?(root_gda)
 
