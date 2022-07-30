@@ -82,13 +82,14 @@ Isucon/Sqlite3:
 
 `Database` isn't configured in `.rubocop.yml`, some cops doesn't work
 
-| cop                               | offense detection          | auto-correct               |
-|-----------------------------------|----------------------------|----------------------------|
-| `Isucon/Mysql2/JoinWithoutIndex`  | `Database` is **required** | Not supported              |
-| `Isucon/Mysql2/NPlusOneQuery`     | `Database` is optional     | `Database` is **required** |
-| `Isucon/Mysql2/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
-| `Isucon/Mysql2/WhereWithoutIndex` | `Database` is **required** | Not supported              |
-| `Isucon/Sqlite3/SelectAsterisk`   | `Database` is optional     | `Database` is **required** |
+| cop                                | offense detection          | auto-correct               |
+|------------------------------------|----------------------------|----------------------------|
+| `Isucon/Mysql2/JoinWithoutIndex`   | `Database` is **required** | Not supported              |
+| `Isucon/Mysql2/NPlusOneQuery`      | `Database` is optional     | `Database` is **required** |
+| `Isucon/Mysql2/SelectAsterisk`     | `Database` is optional     | `Database` is **required** |
+| `Isucon/Mysql2/WhereWithoutIndex`  | `Database` is **required** | Not supported              |
+| `Isucon/Sqlite3/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
+| `Isucon/Sqlite3/WhereWithoutIndex` | `Database` is **required** | Not supported              |
 
 ## Documentation
 See. https://sue445.github.io/rubocop-isucon/
