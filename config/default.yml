@@ -92,6 +92,13 @@ Isucon/Sqlite3/JoinWithoutIndex:
   VersionAdded: '0.2.0'
   StyleGuide: JoinWithoutIndex.html
 
+Isucon/Sqlite3/ManyJoinTable:
+  Description: 'Check if SQL contains many JOINs'
+  Enabled: true
+  VersionAdded: '0.2.0'
+  StyleGuide: ManyJoinTable.html
+  CountTables: 3
+
 Isucon/Sqlite3/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.execute`'
   Enabled: true

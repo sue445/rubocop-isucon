@@ -3,12 +3,12 @@
 module RuboCop
   module Cop
     module Isucon
-      module Mysql2
+      module Sqlite3
         # Check if SQL contains many JOINs
         #
         # @example CountTables: 3 (default)
         #   # bad
-        #   totals = db.xquery(
+        #   totals = db.execute(
         #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
         #     " FROM `users`" \
         #     " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \
@@ -22,9 +22,9 @@ module RuboCop
         #
         #   # good
         #   registration_users_count =
-        #     db.xquery("SELECT COUNT(`user_id`) AS cnt FROM `registrations` WHERE `course_id` = ?", course[:id]).first[:cnt]
+        #     db.execute("SELECT COUNT(`user_id`) AS cnt FROM `registrations` WHERE `course_id` = ?", course[:id]).first[:cnt]
         #
-        #   totals = db.xquery(<<~SQL, course[:id]).map { |_| _[:total_score] }
+        #   totals = db.execute(<<~SQL, course[:id]).map { |_| _[:total_score] }
         #     SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`
         #     FROM `submissions`
         #     JOIN `classes` ON `classes`.`id` = `submissions`.`class_id`
@@ -39,7 +39,7 @@ module RuboCop
         #
         # @example CountTables: 5
         #   # good
-        #   totals = db.xquery(
+        #   totals = db.execute(
         #     "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \
         #     " FROM `users`" \
         #     " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \
@@ -52,12 +52,12 @@ module RuboCop
         #   ).map { |_| _[:total_score] }
         #
         class ManyJoinTable < Base
-          include Mixin::Mysql2XqueryMethods
+          include Mixin::Sqlite3ExecuteMethods
           include Mixin::ManyJoinTableMethods
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
-            with_db_xquery(node) do |_, root_gda|
+            with_db_execute(node) do |_, root_gda|
               check_and_register_offence(root_gda: root_gda, node: node)
             end
           end
