@@ -3,6 +3,7 @@
 require_relative "isucon/mixin/database_methods"
 require_relative "isucon/mixin/join_without_index_methods"
 require_relative "isucon/mixin/offense_location_methods"
+require_relative "isucon/mixin/many_join_table_methods"
 require_relative "isucon/mixin/mysql2_xquery_methods"
 require_relative "isucon/mixin/select_asterisk_methods"
 require_relative "isucon/mixin/sinatra_methods"

@@ -53,31 +53,13 @@ module RuboCop
         #
         class ManyJoinTable < Base
           include Mixin::Mysql2XqueryMethods
-
-          MSG = "Avoid SQL with lots of JOINs"
+          include Mixin::ManyJoinTableMethods
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_db_xquery(node) do |_, root_gda|
               check_and_register_offence(root_gda: root_gda, node: node)
             end
-          end
-
-          private
-
-          # @param root_gda [RuboCop::Isucon::GDA::Client]
-          # @param node [RuboCop::AST::Node]
-          def check_and_register_offence(root_gda:, node:)
-            return unless root_gda
-
-            root_gda.visit_all do |gda|
-              add_offense(node) if gda.table_names.count > count_tables
-            end
-          end
-
-          # @return [Integer]
-          def count_tables
-            cop_config["CountTables"]
           end
         end
       end
