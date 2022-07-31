@@ -116,7 +116,7 @@ module RuboCop
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param is_array_arg [Boolean]
-          def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:, is_array_arg:)
+          def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:, is_array_arg:) # rubocop:disable Metrics/ParameterLists
             return unless enabled_database?
 
             corrector = Correctors::NPlusOneQueryCorrector.new(
