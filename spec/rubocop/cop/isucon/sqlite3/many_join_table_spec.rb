@@ -1,21 +1,49 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Isucon::Sqlite3::ManyJoinTable, :config do
-  let(:config) { RuboCop::Config.new }
+  let(:config) { RuboCop::Config.new("Isucon/Sqlite3/ManyJoinTable" => cop_config) }
+  let(:cop_config) { { "CountTables" => count_tables } }
 
-  # TODO: Write test code
-  #
-  # For example
-  it "registers an offense when using `#bad_method`" do
-    expect_offense(<<~RUBY)
-      bad_method
-      ^^^^^^^^^^ Use `#good_method` instead of `#bad_method`.
-    RUBY
+  context "total tables > CountTables" do
+    let(:count_tables) { 4 }
+
+    it "registers an offense" do
+      # FIXME: duplicate offense messages
+      expect_offense(<<~RUBY)
+        db.execute(
+        ^^^^^^^^^^^ Avoid SQL with lots of JOINs
+        ^^^^^^^^^^^ Avoid SQL with lots of JOINs
+          "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \\
+          " FROM `users`" \\
+          " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \\
+          " JOIN `courses` ON `registrations`.`course_id` = `courses`.`id`" \\
+          " LEFT JOIN `classes` ON `courses`.`id` = `classes`.`course_id`" \\
+          " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \\
+          " WHERE `courses`.`id` = ?" \\
+          " GROUP BY `users`.`id`",
+          course[:id]
+        ).map { |_| _[:total_score] }
+      RUBY
+    end
   end
 
-  it "does not register an offense when using `#good_method`" do
-    expect_no_offenses(<<~RUBY)
-      good_method
-    RUBY
+  context "total tables <= CountTables" do
+    let(:count_tables) { 5 }
+
+    it "registers an offense" do
+      expect_no_offenses(<<~RUBY)
+        db.execute(
+          "SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`" \\
+          " FROM `users`" \\
+          " JOIN `registrations` ON `users`.`id` = `registrations`.`user_id`" \\
+          " JOIN `courses` ON `registrations`.`course_id` = `courses`.`id`" \\
+          " LEFT JOIN `classes` ON `courses`.`id` = `classes`.`course_id`" \\
+          " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \\
+          " WHERE `courses`.`id` = ?" \\
+          " GROUP BY `users`.`id`",
+          course[:id]
+        ).map { |_| _[:total_score] }
+      RUBY
+    end
   end
 end
