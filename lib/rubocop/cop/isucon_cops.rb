@@ -24,5 +24,6 @@ require_relative "isucon/sinatra/serve_static_file"
 require_relative "isucon/shell/backtick"
 require_relative "isucon/shell/system"
 require_relative "isucon/sqlite3/join_without_index"
+require_relative 'isucon/sqlite3/many_join_table'
 require_relative "isucon/sqlite3/select_asterisk"
 require_relative "isucon/sqlite3/where_without_index"
