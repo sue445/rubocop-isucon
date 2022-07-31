@@ -22,7 +22,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sqlite3::JoinWithoutIndex, :config do
           " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This join clause doesn't seem to have an index. (e.g. `CREATE INDEX index_registrations_course_id ON registrations (course_id)`)
           " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-          STATUS_CLOSED, user_id,
+          [STATUS_CLOSED, user_id],
         )
       RUBY
     end
@@ -46,7 +46,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sqlite3::JoinWithoutIndex, :config do
           " FROM `courses`" \\
           " JOIN `registrations` ON `courses`.`id` = `registrations`.`course_id`" \\
           " WHERE `courses`.`status` != ? AND `registrations`.`user_id` = ?",
-          STATUS_CLOSED, user_id,
+          [STATUS_CLOSED, user_id],
         )
       RUBY
     end
