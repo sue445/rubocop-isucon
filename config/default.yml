@@ -82,11 +82,6 @@ Isucon/Sinatra/ServeStaticFile:
   VersionAdded: '0.1.0'
   StyleGuide: ServeStaticFile.html
 
-Isucon/Sqlite3/ManyJoinTable:
-  Description: 'TODO: Write a description of the cop.'
-  Enabled: pending
-  VersionAdded: '<<next>>'
-
 Isucon/Sqlite3:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sqlite3/
   Database:
@@ -96,6 +91,13 @@ Isucon/Sqlite3/JoinWithoutIndex:
   Enabled: true
   VersionAdded: '0.2.0'
   StyleGuide: JoinWithoutIndex.html
+
+Isucon/Sqlite3/ManyJoinTable:
+  Description: 'Check if SQL contains many JOINs'
+  Enabled: true
+  VersionAdded: '0.2.0'
+  StyleGuide: ManyJoinTable.html
+  CountTables: 3
 
 Isucon/Sqlite3/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.execute`'
