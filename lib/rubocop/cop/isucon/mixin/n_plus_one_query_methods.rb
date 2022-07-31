@@ -45,7 +45,8 @@ module RuboCop
           # @param node [RuboCop::AST::Node]
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param root_gda [RuboCop::Isucon::GDA::Client]
-          def check_and_register_offence(node:, type:, root_gda:) # rubocop:disable Metrics/MethodLength
+          # @param is_array_arg [Boolean]
+          def check_and_register_offence(node:, type:, root_gda:, is_array_arg:) # rubocop:disable Metrics/MethodLength
             receiver, = *node.children
 
             return unless receiver.send_type?
@@ -58,7 +59,7 @@ module RuboCop
             add_offense(receiver) do |corrector|
               perform_autocorrect(
                 corrector: corrector, current_node: receiver,
-                parent_node: parent, type: type, gda: root_gda
+                parent_node: parent, type: type, gda: root_gda, is_array_arg: is_array_arg
               )
             end
           end
@@ -114,11 +115,12 @@ module RuboCop
           # @param parent_node [RuboCop::AST::Node]
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param gda [RuboCop::Isucon::GDA::Client]
-          def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:)
+          # @param is_array_arg [Boolean]
+          def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:, is_array_arg:)
             return unless enabled_database?
 
             corrector = Correctors::NPlusOneQueryCorrector.new(
-              corrector: corrector, current_node: current_node,
+              corrector: corrector, current_node: current_node, is_array_arg: is_array_arg,
               parent_node: parent_node, type: type, gda: gda, connection: connection
             )
             corrector.correct
