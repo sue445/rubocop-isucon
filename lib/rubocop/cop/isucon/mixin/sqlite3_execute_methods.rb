@@ -40,6 +40,11 @@ module RuboCop
 
           private
 
+          # @return [Array<Symbol>]
+          def db_query_methods
+            %i[execute get_first_row]
+          end
+
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param params [Array<RuboCop::AST::Node>]
           # @return [String,nil]
