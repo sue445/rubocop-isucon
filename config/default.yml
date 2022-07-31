@@ -99,6 +99,13 @@ Isucon/Sqlite3/ManyJoinTable:
   StyleGuide: ManyJoinTable.html
   CountTables: 3
 
+Isucon/Sqlite3/NPlusOneQuery:
+  Description: 'Checks that N+1 query is not used'
+  Enabled: true
+  VersionAdded: '0.2.0'
+  SafeAutoCorrect: false
+  StyleGuide: NPlusOneQuery.html
+
 Isucon/Sqlite3/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.execute`'
   Enabled: true

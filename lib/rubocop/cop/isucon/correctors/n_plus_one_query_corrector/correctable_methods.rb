@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Correctors
-        class Mysql2NPlusOneQueryCorrector
+        class NPlusOneQueryCorrector
           # Check whether can correct
           module CorrectableMethods
             # @return [Boolean]

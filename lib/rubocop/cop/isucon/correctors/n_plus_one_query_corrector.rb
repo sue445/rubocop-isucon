@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "mysql2_n_plus_one_query_corrector/correctable_methods"
-require_relative "mysql2_n_plus_one_query_corrector/replace_methods"
+require_relative "n_plus_one_query_corrector/correctable_methods"
+require_relative "n_plus_one_query_corrector/replace_methods"
 
 module RuboCop
   module Cop
@@ -21,7 +21,7 @@ module RuboCop
         #     @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
         #     teacher = @users_by_id[course[:teacher_id]]
         #   end
-        class Mysql2NPlusOneQueryCorrector
+        class NPlusOneQueryCorrector
           # rubocop:enable Layout/LineLength
 
           include Mixin::Mysql2XqueryMethods
@@ -46,19 +46,24 @@ module RuboCop
           # @return [RuboCop::Isucon::DatabaseConnection]
           attr_reader :connection
 
+          # @return [Boolean]
+          attr_reader :is_array_arg
+
           # @param corrector [RuboCop::Cop::Corrector]
           # @param current_node [RuboCop::AST::Node]
           # @param parent_node [RuboCop::AST::Node]
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param gda [RuboCop::Isucon::GDA::Client]
           # @param connection [RuboCop::Isucon::DatabaseConnection]
-          def initialize(corrector:, current_node:, parent_node:, type:, gda:, connection:) # rubocop:disable Metrics/ParameterLists
+          # @param is_array_arg [Boolean]
+          def initialize(corrector:, current_node:, parent_node:, type:, gda:, connection:, is_array_arg:) # rubocop:disable Metrics/ParameterLists
             @corrector = corrector
             @current_node = current_node
             @parent_node = parent_node
             @type = type
             @gda = gda
             @connection = connection
+            @is_array_arg = is_array_arg
           end
 
           def correct
@@ -66,6 +71,10 @@ module RuboCop
           end
 
           private
+
+          def array_arg?
+            is_array_arg
+          end
 
           # @return [RuboCop::AST::Node,nil]
           def parent_receiver
@@ -88,6 +97,8 @@ module RuboCop
 
           # @return [RuboCop::AST::Node]
           def xquery_arg
+            return current_node.child_nodes[2].child_nodes[0] if array_arg? && current_node.child_nodes[2]&.array_type?
+
             current_node.child_nodes[2]
           end
 
