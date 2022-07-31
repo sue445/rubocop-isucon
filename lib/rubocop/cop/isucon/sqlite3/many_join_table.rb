@@ -17,12 +17,12 @@ module RuboCop
         #     " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \
         #     " WHERE `courses`.`id` = ?" \
         #     " GROUP BY `users`.`id`",
-        #     course[:id]
+        #     [course[:id]]
         #   ).map { |_| _[:total_score] }
         #
         #   # good
         #   registration_users_count =
-        #     db.execute("SELECT COUNT(`user_id`) AS cnt FROM `registrations` WHERE `course_id` = ?", course[:id]).first[:cnt]
+        #     db.execute("SELECT COUNT(`user_id`) AS cnt FROM `registrations` WHERE `course_id` = ?", [course[:id]]).first[:cnt]
         #
         #   totals = db.execute(<<~SQL, course[:id]).map { |_| _[:total_score] }
         #     SELECT IFNULL(SUM(`submissions`.`score`), 0) AS `total_score`
@@ -48,7 +48,7 @@ module RuboCop
         #     " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \
         #     " WHERE `courses`.`id` = ?" \
         #     " GROUP BY `users`.`id`",
-        #     course[:id]
+        #     [course[:id]]
         #   ).map { |_| _[:total_score] }
         #
         class ManyJoinTable < Base

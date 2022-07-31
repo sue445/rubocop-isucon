@@ -21,7 +21,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sqlite3::ManyJoinTable, :config do
           " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \\
           " WHERE `courses`.`id` = ?" \\
           " GROUP BY `users`.`id`",
-          course[:id]
+          [course[:id]]
         ).map { |_| _[:total_score] }
       RUBY
     end
@@ -41,7 +41,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sqlite3::ManyJoinTable, :config do
           " LEFT JOIN `submissions` ON `users`.`id` = `submissions`.`user_id` AND `submissions`.`class_id` = `classes`.`id`" \\
           " WHERE `courses`.`id` = ?" \\
           " GROUP BY `users`.`id`",
-          course[:id]
+          [course[:id]]
         ).map { |_| _[:total_score] }
       RUBY
     end
