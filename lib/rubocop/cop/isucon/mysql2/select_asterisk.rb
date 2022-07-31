@@ -36,8 +36,6 @@ module RuboCop
           def on_send(node)
             with_error_handling(node) do
               with_db_xquery(node) do |type, root_gda|
-                next unless root_gda
-
                 check_and_register_offence(type: type, root_gda: root_gda, node: node)
               end
             end

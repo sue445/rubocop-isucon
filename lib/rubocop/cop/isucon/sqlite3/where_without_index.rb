@@ -32,10 +32,7 @@ module RuboCop
               return unless enabled_database?
 
               with_db_execute(node) do |type, root_gda|
-                next unless root_gda
-                next if exists_index_in_where_clause_columns?(root_gda)
-
-                register_offense(type: type, node: node, root_gda: root_gda)
+                check_and_register_offence(type: type, root_gda: root_gda, node: node)
               end
             end
           end

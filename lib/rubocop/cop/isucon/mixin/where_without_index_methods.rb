@@ -10,6 +10,16 @@ module RuboCop
           private
 
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
+          # @param root_gda [RuboCop::Isucon::GDA::Client]
+          # @param node [RuboCop::AST::Node]
+          def check_and_register_offence(type:, root_gda:, node:)
+            return unless root_gda
+            return if exists_index_in_where_clause_columns?(root_gda)
+
+            register_offense(type: type, node: node, root_gda: root_gda)
+          end
+
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           def register_offense(type:, node:, root_gda:)
