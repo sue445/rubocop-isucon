@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "mysql2_n_plus_one_query_corrector/correctable_methods"
-require_relative "mysql2_n_plus_one_query_corrector/replace_methods"
+require_relative "n_plus_one_query_corrector/correctable_methods"
+require_relative "n_plus_one_query_corrector/replace_methods"
 
 module RuboCop
   module Cop
@@ -21,7 +21,7 @@ module RuboCop
         #     @users_by_id ||= db.xquery('SELECT * FROM `users` WHERE `id` IN (?)', courses.map { |course| course[:teacher_id] }).each_with_object({}) { |v, hash| hash[v[:id]] = v }
         #     teacher = @users_by_id[course[:teacher_id]]
         #   end
-        class Mysql2NPlusOneQueryCorrector
+        class NPlusOneQueryCorrector
           # rubocop:enable Layout/LineLength
 
           include Mixin::Mysql2XqueryMethods

@@ -11,7 +11,7 @@ require_relative "isucon/mixin/sinatra_methods"
 require_relative "isucon/mixin/sqlite3_execute_methods"
 require_relative "isucon/mixin/where_without_index_methods"
 
-require_relative "isucon/correctors/mysql2_n_plus_one_query_corrector"
+require_relative "isucon/correctors/n_plus_one_query_corrector"
 
 require_relative "isucon/mysql2/join_without_index"
 require_relative "isucon/mysql2/many_join_table"

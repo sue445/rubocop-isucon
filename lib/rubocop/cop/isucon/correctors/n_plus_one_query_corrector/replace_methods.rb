@@ -4,7 +4,7 @@ module RuboCop
   module Cop
     module Isucon
       module Correctors
-        class Mysql2NPlusOneQueryCorrector
+        class NPlusOneQueryCorrector
           # replace ast
           module ReplaceMethods
             def replace

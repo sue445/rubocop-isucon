@@ -117,7 +117,7 @@ module RuboCop
           def perform_autocorrect(corrector:, current_node:, parent_node:, type:, gda:)
             return unless enabled_database?
 
-            corrector = Correctors::Mysql2NPlusOneQueryCorrector.new(
+            corrector = Correctors::NPlusOneQueryCorrector.new(
               corrector: corrector, current_node: current_node,
               parent_node: parent_node, type: type, gda: gda, connection: connection
             )
