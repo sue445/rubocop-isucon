@@ -7,7 +7,30 @@ module RuboCop
         # Common methods for {RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex}
         # and {RuboCop::Cop::Isucon::Sqlite3::WhereWithoutIndex}
         module WhereWithoutIndexMethods
+          include Mixin::DatabaseMethods
+
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            with_error_handling(node) do
+              return unless enabled_database?
+
+              with_db_query(node) do |type, root_gda|
+                check_and_register_offence(type: type, root_gda: root_gda, node: node)
+              end
+            end
+          end
+
           private
+
+          # @param type [Symbol] Node type. one of `:str`, `:dstr`
+          # @param root_gda [RuboCop::Isucon::GDA::Client]
+          # @param node [RuboCop::AST::Node]
+          def check_and_register_offence(type:, root_gda:, node:)
+            return unless root_gda
+            return if exists_index_in_where_clause_columns?(root_gda)
+
+            register_offense(type: type, node: node, root_gda: root_gda)
+          end
 
           # @param type [Symbol] Node type. one of `:str`, `:dstr`
           # @param node [RuboCop::AST::Node]

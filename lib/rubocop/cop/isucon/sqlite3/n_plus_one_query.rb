@@ -52,19 +52,16 @@ module RuboCop
         class NPlusOneQuery < Base
           # rubocop:enable Layout/LineLength
 
-          include Mixin::DatabaseMethods
           include Mixin::Sqlite3ExecuteMethods
           include Mixin::NPlusOneQueryMethods
 
           extend AutoCorrector
 
-          # @param node [RuboCop::AST::Node]
-          def on_send(node)
-            with_error_handling(node) do
-              with_db_execute(node) do |type, root_gda|
-                check_and_register_offence(node: node, type: type, root_gda: root_gda, is_array_arg: true)
-              end
-            end
+          private
+
+          # [Boolean]
+          def array_arg?
+            true
           end
         end
       end

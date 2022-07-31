@@ -16,23 +16,11 @@ module RuboCop
         #   db.execute('SELECT id, title FROM articles JOIN users ON users.id = articles.user_id')
         #
         class JoinWithoutIndex < Base
-          include Mixin::DatabaseMethods
           include Mixin::Sqlite3ExecuteMethods
           include Mixin::JoinWithoutIndexMethods
 
           MSG = "This join clause doesn't seem to have an index. " \
                 "(e.g. `CREATE INDEX index_%<table_name>s_%<column_name>s ON %<table_name>s (%<column_name>s)`)"
-
-          # @param node [RuboCop::AST::Node]
-          def on_send(node)
-            with_error_handling(node) do
-              return unless enabled_database?
-
-              with_db_execute(node) do |type, root_gda|
-                check_and_register_offence(type: type, root_gda: root_gda, node: node)
-              end
-            end
-          end
 
           private
 

@@ -19,26 +19,11 @@ module RuboCop
         #   db.xquery('SELECT id, title FROM articles WHERE id = ?', id)
         #
         class WhereWithoutIndex < Base
-          include Mixin::DatabaseMethods
           include Mixin::Mysql2XqueryMethods
           include Mixin::WhereWithoutIndexMethods
 
           MSG = "This where clause doesn't seem to have an index. " \
                 "(e.g. `ALTER TABLE %<table_name>s ADD INDEX index_%<column_name>s (%<column_name>s)`)"
-
-          # @param node [RuboCop::AST::Node]
-          def on_send(node)
-            with_error_handling(node) do
-              return unless enabled_database?
-
-              with_db_xquery(node) do |type, root_gda|
-                next unless root_gda
-                next if exists_index_in_where_clause_columns?(root_gda)
-
-                register_offense(type: type, node: node, root_gda: root_gda)
-              end
-            end
-          end
 
           private
 
