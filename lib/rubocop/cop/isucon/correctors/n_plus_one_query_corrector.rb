@@ -9,7 +9,7 @@ module RuboCop
       module Correctors
         # rubocop:disable Layout/LineLength
 
-        # Corrector for {RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery}
+        # Corrector for {RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery} and {RuboCop::Cop::Isucon::Sqlite3::NPlusOneQuery}
         #
         # @example Before
         #   courses.map do |course|
