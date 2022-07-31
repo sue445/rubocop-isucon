@@ -7,6 +7,19 @@ module RuboCop
         # Common methods for {RuboCop::Cop::Isucon::Mysql2::JoinWithoutIndex}
         # and {RuboCop::Cop::Isucon::Sqlite3::JoinWithoutIndex}
         module JoinWithoutIndexMethods
+          include Mixin::DatabaseMethods
+
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            with_error_handling(node) do
+              return unless enabled_database?
+
+              with_db_query(node) do |type, root_gda|
+                check_and_register_offence(type: type, root_gda: root_gda, node: node)
+              end
+            end
+          end
+
           private
 
           # @param type [Symbol] Node type. one of `:str`, `:dstr`

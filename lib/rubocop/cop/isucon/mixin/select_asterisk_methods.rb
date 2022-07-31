@@ -6,9 +6,20 @@ module RuboCop
       module Mixin
         # Common methods for {RuboCop::Cop::Isucon::Mysql2::SelectAsterisk} and {RuboCop::Cop::Isucon::Sqlite3::SelectAsterisk}
         module SelectAsteriskMethods
+          include Mixin::DatabaseMethods
+
           MSG = "Use SELECT with column names. (e.g. `SELECT id, name FROM table_name`)"
 
           TODO = "# TODO: Remove needless columns if necessary\n"
+
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            with_error_handling(node) do
+              with_db_query(node) do |type, root_gda|
+                check_and_register_offence(type: type, root_gda: root_gda, node: node)
+              end
+            end
+          end
 
           private
 

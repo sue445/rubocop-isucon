@@ -7,6 +7,8 @@ module RuboCop
         # Common methods for {RuboCop::Cop::Isucon::Mysql2::NPlusOneQuery}
         # and {RuboCop::Cop::Isucon::Sqlite3::NPlusOneQuery}
         module NPlusOneQueryMethods
+          include Mixin::DatabaseMethods
+
           extend NodePattern::Macros
 
           MSG = "This looks like N+1 query."
@@ -39,6 +41,15 @@ module RuboCop
               (send $_ #enumerable_method? ...)
               ...)
           PATTERN
+
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            with_error_handling(node) do
+              with_db_query(node) do |type, root_gda|
+                check_and_register_offence(node: node, type: type, root_gda: root_gda, is_array_arg: array_arg?)
+              end
+            end
+          end
 
           private
 

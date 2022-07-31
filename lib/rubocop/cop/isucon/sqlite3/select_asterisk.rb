@@ -26,20 +26,10 @@ module RuboCop
         #   db.execute('SELECT users.id, users.name FROM users')
         #
         class SelectAsterisk < Base
-          include Mixin::DatabaseMethods
           include Mixin::Sqlite3ExecuteMethods
           include Mixin::SelectAsteriskMethods
 
           extend AutoCorrector
-
-          # @param node [RuboCop::AST::Node]
-          def on_send(node)
-            with_error_handling(node) do
-              with_db_execute(node) do |type, root_gda|
-                check_and_register_offence(type: type, root_gda: root_gda, node: node)
-              end
-            end
-          end
         end
       end
     end

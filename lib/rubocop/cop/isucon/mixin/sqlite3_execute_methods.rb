@@ -24,7 +24,7 @@ module RuboCop
           # @yieldparam root_gda [RuboCop::Isucon::GDA::Client,nil]
           #
           # @note If arguments of `db.xquery` isn't string, `root_gda` is `nil`
-          def with_db_execute(node)
+          def with_db_query(node)
             find_execute(node) do |type, params|
               sql = execute_param(type: type, params: params)
 

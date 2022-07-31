@@ -9,6 +9,13 @@ module RuboCop
         module ManyJoinTableMethods
           MSG = "Avoid SQL with lots of JOINs"
 
+          # @param node [RuboCop::AST::Node]
+          def on_send(node)
+            with_db_query(node) do |_, root_gda|
+              check_and_register_offence(root_gda: root_gda, node: node)
+            end
+          end
+
           private
 
           # @param root_gda [RuboCop::Isucon::GDA::Client]
