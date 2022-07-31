@@ -47,9 +47,9 @@ module RuboCop
           # @param root_gda [RuboCop::Isucon::GDA::Client]
           # @param is_array_arg [Boolean]
           def check_and_register_offence(node:, type:, root_gda:, is_array_arg:) # rubocop:disable Metrics/MethodLength
-            receiver, = *node.children
+            return unless db_query_node?(node)
 
-            return unless receiver.send_type?
+            receiver, = *node.children
 
             parent = parent_loop_node(receiver)
             return unless parent
@@ -62,6 +62,16 @@ module RuboCop
                 parent_node: parent, type: type, gda: root_gda, is_array_arg: is_array_arg
               )
             end
+          end
+
+          # @param node [RuboCop::AST::Node]
+          def db_query_node?(node)
+            return db_query_methods.include?(node.children[1]) if node.children.count >= 3
+
+            child = node.children.first
+            return false unless child
+
+            child.children.count >= 3 && db_query_methods.include?(child.children[1])
           end
 
           # Whether match to `@instance_var ||=`

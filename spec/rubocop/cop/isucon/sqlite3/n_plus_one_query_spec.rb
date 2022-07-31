@@ -21,20 +21,53 @@ RSpec.describe RuboCop::Cop::Isucon::Sqlite3::NPlusOneQuery, :config do
   end
 
   context "exists N+1 INSERT query in map" do
-    it "registers an offense" do
-      expect_offense(<<~RUBY)
-        players = display_names.map do |display_name|
-          id = dispense_id
+    context "receiver is send_type" do
+      it "registers an offense" do
+        # c.f. https://github.com/isucon/isucon12-qualify/blob/6e4552eca6e3f4b7b799a0573744734399de4dbb/webapp/ruby/app.rb#L494-L501
+        expect_offense(<<~RUBY)
+          players = display_names.map do |display_name|
+            id = dispense_id
 
-          now = Time.now.to_i
-          tenant_db.execute('INSERT INTO player (id, tenant_id, display_name, is_disqualified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)', [id, v.tenant_id, display_name, 0, now, now])
-          ^^^^^^^^^ This looks like N+1 query.
-          player = retrieve_player(tenant_db, id)
-          player.to_h.slice(:id, :display_name, :is_disqualified)
-        end
-      RUBY
+            now = Time.now.to_i
+            tenant_db.execute('INSERT INTO player (id, tenant_id, display_name, is_disqualified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)', [id, v.tenant_id, display_name, 0, now, now])
+            ^^^^^^^^^ This looks like N+1 query.
+            player = retrieve_player(tenant_db, id)
+            player.to_h.slice(:id, :display_name, :is_disqualified)
+          end
+        RUBY
 
-      expect_no_corrections
+        expect_no_corrections
+      end
+    end
+
+    context "receiver is lvar_type" do
+      it "registers an offense" do
+        # c.f. https://github.com/isucon/isucon12-qualify/blob/6e4552eca6e3f4b7b799a0573744734399de4dbb/webapp/ruby/app.rb#L491-L509
+        expect_offense(<<~RUBY)
+          connect_to_tenant_db(v.tenant_id) do |tenant_db|
+            display_names = params[:display_name]
+
+            players = display_names.map do |display_name|
+              id = dispense_id
+
+              now = Time.now.to_i
+              tenant_db.execute('INSERT INTO player (id, tenant_id, display_name, is_disqualified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)', [id, v.tenant_id, display_name, 0, now, now])
+              ^^^^^^^^^ This looks like N+1 query.
+              player = retrieve_player(tenant_db, id)
+              player.to_h.slice(:id, :display_name, :is_disqualified)
+            end
+
+            json(
+              status: true,
+              data: {
+                players: players,
+              },
+            )
+          end
+        RUBY
+
+        expect_no_corrections
+      end
     end
   end
 
