@@ -86,6 +86,12 @@ Isucon/Sqlite3:
   StyleGuideBaseURL: https://sue445.github.io/rubocop-isucon/RuboCop/Cop/Isucon/Sqlite3/
   Database:
 
+Isucon/Sqlite3/JoinWithoutIndex:
+  Description: 'Check for `JOIN` without index'
+  Enabled: true
+  VersionAdded: '0.2.0'
+  StyleGuide: JoinWithoutIndex.html
+
 Isucon/Sqlite3/SelectAsterisk:
   Description: 'Avoid `SELECT *` in `db.execute`'
   Enabled: true

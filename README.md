@@ -88,6 +88,7 @@ Isucon/Sqlite3:
 | `Isucon/Mysql2/NPlusOneQuery`      | `Database` is optional     | `Database` is **required** |
 | `Isucon/Mysql2/SelectAsterisk`     | `Database` is optional     | `Database` is **required** |
 | `Isucon/Mysql2/WhereWithoutIndex`  | `Database` is **required** | Not supported              |
+| `Isucon/Sqlite3/JoinWithoutIndex`  | `Database` is **required** | Not supported              |
 | `Isucon/Sqlite3/SelectAsterisk`    | `Database` is optional     | `Database` is **required** |
 | `Isucon/Sqlite3/WhereWithoutIndex` | `Database` is **required** | Not supported              |
 

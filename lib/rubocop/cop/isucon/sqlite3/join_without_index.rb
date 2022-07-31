@@ -3,32 +3,32 @@
 module RuboCop
   module Cop
     module Isucon
-      module Mysql2
+      module Sqlite3
         # Check for `JOIN` without index
         #
         # @note If `Database` isn't configured, this cop's feature (offense detection and auto-correct) will not be available.
         #
         # @example
         #   # bad (user_id is not indexed)
-        #   db.xquery('SELECT id, title FROM articles JOIN users ON users.id = articles.user_id')
+        #   db.execute('SELECT id, title FROM articles JOIN users ON users.id = articles.user_id')
         #
         #   # good (user_id is indexed)
-        #   db.xquery('SELECT id, title FROM articles JOIN users ON users.id = articles.user_id')
+        #   db.execute('SELECT id, title FROM articles JOIN users ON users.id = articles.user_id')
         #
         class JoinWithoutIndex < Base
           include Mixin::DatabaseMethods
-          include Mixin::Mysql2XqueryMethods
+          include Mixin::Sqlite3ExecuteMethods
           include Mixin::JoinWithoutIndexMethods
 
           MSG = "This join clause doesn't seem to have an index. " \
-                "(e.g. `ALTER TABLE %<table_name>s ADD INDEX index_%<column_name>s (%<column_name>s)`)"
+                "(e.g. `CREATE INDEX index_%<table_name>s_%<column_name>s ON %<table_name>s (%<column_name>s)`)"
 
           # @param node [RuboCop::AST::Node]
           def on_send(node)
             with_error_handling(node) do
               return unless enabled_database?
 
-              with_db_xquery(node) do |type, root_gda|
+              with_db_execute(node) do |type, root_gda|
                 check_and_register_offence(type: type, root_gda: root_gda, node: node)
               end
             end
