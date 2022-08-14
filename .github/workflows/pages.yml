@@ -55,3 +55,14 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@main
+
+      - name: Slack Notification (not success)
+        uses: lazy-actions/slatify@master
+        if: "! success()"
+        continue-on-error: true
+        with:
+          job_name: "*pages*"
+          type: ${{ job.status }}
+          icon_emoji: ":octocat:"
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          token: ${{ secrets.GITHUB_TOKEN }}
