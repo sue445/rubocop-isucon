@@ -5,7 +5,7 @@ RSpec.describe RuboCop::Isucon::GDA::Client do
 
   let(:placeholder) { RuboCop::Isucon::GDA::PRACEHOLDER }
 
-  def join_operand(table_name: nil, column_name: nil, as: nil) # rubocop:disable Naming/MethodParameterName
+  def join_operand(table_name: nil, column_name: nil, as: nil)
     RuboCop::Isucon::GDA::JoinOperand.new(table_name: table_name, column_name: column_name, as: as)
   end
 
