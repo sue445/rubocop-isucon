@@ -25,7 +25,7 @@ module RuboCop
         # @param column_name [String]
         # @param as [String]
         # @param node [GDA::Nodes::Expr]
-        def initialize(table_name: nil, column_name: nil, as: nil, node: nil) # rubocop:disable Naming/MethodParameterName
+        def initialize(table_name: nil, column_name: nil, as: nil, node: nil)
           @table_name = table_name
           @column_name = column_name
           @as = as
