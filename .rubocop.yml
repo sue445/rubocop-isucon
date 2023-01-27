@@ -15,6 +15,9 @@ AllCops:
     - 'vendor/**/*'
     - '.git/**/*'
 
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
+
 Layout/DotPosition:
   EnforcedStyle: trailing
 
