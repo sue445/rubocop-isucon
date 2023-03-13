@@ -6,3 +6,6 @@ source "https://rubygems.org"
 gemspec
 
 # eval_gemfile "#{__dir__}/gemfiles/common.gemfile"
+
+# c.f. https://github.com/tenderlove/gda/pull/14
+gem "gda", github: "technicalpickles/gda", branch: "gda-6"
