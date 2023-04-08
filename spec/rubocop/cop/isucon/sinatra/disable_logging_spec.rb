@@ -9,7 +9,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
         expect_offense(<<~RUBY)
           class App < Sinatra::Base
             enable :logging
-            ^^^^^^^^^^^^^^^ Disable sinatra logging.
+            ^^^^^^^^^^^^^^^ Isucon/Sinatra/DisableLogging: Disable sinatra logging.
           end
         RUBY
 
@@ -46,7 +46,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
         it "registers an offense and correct" do
           expect_offense(<<~RUBY)
             class App < Sinatra::Base
-            ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Sinatra/DisableLogging: Disable sinatra logging.
             end
           RUBY
 
@@ -62,7 +62,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
         it "registers an offense and correct" do
           expect_offense(<<~RUBY)
             class App < Sinatra::Base
-            ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Sinatra/DisableLogging: Disable sinatra logging.
               configure :development do
                 require 'sinatra/reloader'
                 register Sinatra::Reloader
@@ -88,7 +88,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::DisableLogging, :config do
         expect_offense(<<~RUBY)
           module Isucon
             class App < Sinatra::Base
-            ^^^^^^^^^^^^^^^^^^^^^^^^^ Disable sinatra logging.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Sinatra/DisableLogging: Disable sinatra logging.
             end
           end
         RUBY

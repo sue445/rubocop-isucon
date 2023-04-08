@@ -9,7 +9,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
         # c.f. https://github.com/catatsuy/private-isu/blob/e6e5faf608756a66b7fc135642999f40dfc665e5/webapp/ruby/app.rb#L93-L95
         expect_offense(<<~RUBY)
           db.prepare('SELECT * FROM `users` WHERE `id` = ?').execute(
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `db.xquery` instead of `db.prepare.execute`
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Mysql2/PrepareExecute: Use `db.xquery` instead of `db.prepare.execute`
             session[:user][:id]
           ).first
         RUBY
@@ -27,7 +27,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
         # c.f. https://github.com/catatsuy/private-isu/blob/e6e5faf608756a66b7fc135642999f40dfc665e5/webapp/ruby/app.rb#L326-L331
         expect_offense(<<~RUBY)
           db.prepare(query).execute(
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `db.xquery` instead of `db.prepare.execute`
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Mysql2/PrepareExecute: Use `db.xquery` instead of `db.prepare.execute`
             me[:id],
             mime,
             params["file"][:tempfile].read,
@@ -53,7 +53,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
           expect_offense(<<~RUBY)
             sql.each do |s|
               db.prepare(s).execute
-              ^^^^^^^^^^^^^^^^^^^^^ Use `db.xquery` instead of `db.prepare.execute`
+              ^^^^^^^^^^^^^^^^^^^^^ Isucon/Mysql2/PrepareExecute: Use `db.xquery` instead of `db.prepare.execute`
             end
           RUBY
 
@@ -70,7 +70,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
           expect_offense(<<~RUBY)
             sql.each do |s|
               db.prepare(s).execute()
-              ^^^^^^^^^^^^^^^^^^^^^^^ Use `db.xquery` instead of `db.prepare.execute`
+              ^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Mysql2/PrepareExecute: Use `db.xquery` instead of `db.prepare.execute`
             end
           RUBY
 
@@ -89,7 +89,7 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::PrepareExecute, :config do
       # c.f. https://github.com/isucon/isucon7-qualify/blob/18fd704fdf4a6b58fcd294a848c031c63cba8143/webapp/ruby/app.rb#L88
       expect_offense(<<~RUBY)
         statement = db.prepare('SELECT * FROM user WHERE name = ?')
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `db.xquery` instead of `db.prepare.execute`
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Isucon/Mysql2/PrepareExecute: Use `db.xquery` instead of `db.prepare.execute`
       RUBY
 
       expect_no_corrections
