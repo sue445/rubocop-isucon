@@ -7,7 +7,7 @@ RSpec.describe RuboCop::Cop::Isucon::Shell::System, :config do
     it "registers an offense" do
       expect_offense(<<~RUBY)
         system("sleep 1")
-        ^^^^^^^^^^^^^^^^^ Use pure-ruby code instead of external command execution if possible
+        ^^^^^^^^^^^^^^^^^ Isucon/Shell/System: Use pure-ruby code instead of external command execution if possible
       RUBY
     end
   end

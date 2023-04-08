@@ -10,7 +10,7 @@ RSpec.describe RuboCop::Cop::Isucon::Sinatra::ServeStaticFile, :config do
         expect_offense(<<~RUBY)
           class App < Sinatra::Base
             get '/' do
-            ^^^^^^^^^^ Serve static files on front server (e.g. nginx) instead of sinatra app
+            ^^^^^^^^^^ Isucon/Sinatra/ServeStaticFile: Serve static files on front server (e.g. nginx) instead of sinatra app
               content_type :html
               File.read(File.join(__dir__, '..', 'public', 'index.html'))
             end
