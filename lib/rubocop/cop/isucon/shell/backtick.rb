@@ -22,6 +22,13 @@ module RuboCop
         #     OpenSSL::Digest::SHA512.hexdigest(src)
         #   end
         #
+        #   # bad
+        #   `curl -s https://example.com`
+        #
+        #   # good
+        #   require "open-uri"
+        #   URI.open("https://example.com").read
+        #
         class Backtick < Base
           MSG = "Use pure-ruby code instead of external command execution if possible"
 
