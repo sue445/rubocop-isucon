@@ -16,7 +16,7 @@ Isucon/Mysql2/ManyJoinTable:
   CountTables: 3
 
 Isucon/Mysql2/NPlusOneQuery:
-  Description: 'Checks that N+1 query is not used'
+  Description: 'Checks that there’s no N+1 query'
   Enabled: true
   VersionAdded: '0.1.0'
   SafeAutoCorrect: false
@@ -100,7 +100,7 @@ Isucon/Sqlite3/ManyJoinTable:
   CountTables: 3
 
 Isucon/Sqlite3/NPlusOneQuery:
-  Description: 'Checks that N+1 query is not used'
+  Description: 'Checks that there’s no N+1 query'
   Enabled: true
   VersionAdded: '0.2.0'
   SafeAutoCorrect: false

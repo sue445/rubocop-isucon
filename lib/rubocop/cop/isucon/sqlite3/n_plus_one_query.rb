@@ -6,7 +6,7 @@ module RuboCop
       module Sqlite3
         # rubocop:disable Layout/LineLength
 
-        # Checks that N+1 query is not used
+        # Checks that there’s no N+1 query
         #
         # @note If `Database` isn't configured, auto-correct will not be available. (Only offense detection can be used)
         #
