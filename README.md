@@ -121,3 +121,6 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ISUCON is a trademark or registered trademark of LINE Corporation.
 
 https://isucon.net
+
+## Presentation
+* [Fix SQL N\+1 queries with RuboCop](https://speakerdeck.com/sue445/fix-sql-n-plus-one-queries-with-rubocop) at [RubyKaigi 2023](https://rubykaigi.org/2013/) :gem:
