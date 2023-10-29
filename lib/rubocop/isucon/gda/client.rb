@@ -33,7 +33,7 @@ module RuboCop
 
           @table_names =
             if from_targets?
-              ast.from.targets.map(&:table_name).compact.uniq
+              ast.from.targets.filter_map(&:table_name).uniq
             else
               []
             end
