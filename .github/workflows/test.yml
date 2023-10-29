@@ -27,6 +27,7 @@ jobs:
         gemfile:
           - activerecord_6_1
           - activerecord_7_0
+          - activerecord_7_1
 
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
