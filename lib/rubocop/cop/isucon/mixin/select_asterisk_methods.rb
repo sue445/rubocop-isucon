@@ -62,7 +62,7 @@ module RuboCop
           end
 
           # @param select_field_node [GDA::Nodes::SelectField]
-          # @return [Hash<Symbol, String>] table_name, column_name
+          # @return [Hash{Symbol => String}] table_name, column_name
           def parse_select_field_node(select_field_node)
             column_elements = select_field_node.expr.value.split(".", 2)
 
