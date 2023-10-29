@@ -1,5 +1,11 @@
 ## [Unreleased]
-[full changelog](http://github.com/sue445/rubocop-isucon/compare/v0.2.0...main)
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.0...main)
+
+## [1.0.0] - 2023-10-29
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v0.2.0...v1.0.0)
+
+* Requires Ruby 3.0+
+  * https://github.com/sue445/rubocop-isucon/pull/236
 
 ## [0.2.0] - 2022-07-31
 [full changelog](http://github.com/sue445/rubocop-isucon/compare/v0.1.0...v0.2.0)
