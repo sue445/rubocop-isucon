@@ -1,6 +1,12 @@
 ## [Unreleased]
 [full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.0...main)
 
+## [1.0.1] - 2023-11-28
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.0...v1.0.1)
+
+* Support `xquery` with block and lvar
+  * https://github.com/sue445/rubocop-isucon/pull/239
+
 ## [1.0.0] - 2023-10-29
 [full changelog](http://github.com/sue445/rubocop-isucon/compare/v0.2.0...v1.0.0)
 
