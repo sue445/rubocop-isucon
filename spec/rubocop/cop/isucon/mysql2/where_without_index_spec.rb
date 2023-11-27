@@ -242,29 +242,57 @@ RSpec.describe RuboCop::Cop::Isucon::Mysql2::WhereWithoutIndex, :config do
       end
     end
 
-    it "registers an offense" do
-      # c.f. https://github.com/isucon/isucon13/blob/d33a72acdb4029f1ca53ccbe90ff5f2348c8e5cc/webapp/ruby/app.rb#L105-L121
-      expect_offense(<<~RUBY)
-        def fill_livestream_response(tx, livestream_model)
-          # owner_model = tx.xquery('SELECT * FROM users WHERE id = ?', livestream_model.fetch(:user_id)).first
-          # owner = fill_user_response(tx, owner_model)
+    context "with lvar" do
+      it "registers an offense" do
+        # c.f. https://github.com/isucon/isucon13/blob/d33a72acdb4029f1ca53ccbe90ff5f2348c8e5cc/webapp/ruby/app.rb#L105-L121
+        expect_offense(<<~RUBY)
+          def fill_livestream_response(tx, livestream_model)
+            # owner_model = tx.xquery('SELECT * FROM users WHERE id = ?', livestream_model.fetch(:user_id)).first
+            # owner = fill_user_response(tx, owner_model)
 
-          tags = tx.xquery('SELECT * FROM livestream_tags WHERE livestream_id = ?', livestream_model.fetch(:id)).map do |livestream_tag_model|
-                                                                ^^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. `ALTER TABLE livestream_tags ADD INDEX index_livestream_id (livestream_id)`)
+            tags = tx.xquery('SELECT * FROM livestream_tags WHERE livestream_id = ?', livestream_model.fetch(:id)).map do |livestream_tag_model|
+                                                                  ^^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. `ALTER TABLE livestream_tags ADD INDEX index_livestream_id (livestream_id)`)
 
-            tag_model = tx.xquery('SELECT * FROM tags WHERE id = ?', livestream_tag_model.fetch(:tag_id)).first
-            {
-              id: tag_model.fetch(:id),
-              name: tag_model.fetch(:name),
-            }
+              tag_model = tx.xquery('SELECT * FROM tags WHERE id = ?', livestream_tag_model.fetch(:tag_id)).first
+              {
+                id: tag_model.fetch(:id),
+                name: tag_model.fetch(:name),
+              }
+            end
+
+            livestream_model.slice(:id, :title, :description, :playlist_url, :thumbnail_url, :start_at, :end_at).merge(
+              owner: owner,
+              tags: tags,
+            )
           end
+        RUBY
+      end
+    end
 
-          livestream_model.slice(:id, :title, :description, :playlist_url, :thumbnail_url, :start_at, :end_at).merge(
-            owner: owner,
-            tags: tags,
-          )
-        end
-      RUBY
+    context "without lvar" do
+      it "registers an offense" do
+        expect_offense(<<~RUBY)
+          def fill_livestream_response(tx, livestream_model)
+            # owner_model = tx.xquery('SELECT * FROM users WHERE id = ?', livestream_model.fetch(:user_id)).first
+            # owner = fill_user_response(tx, owner_model)
+
+            tx.xquery('SELECT * FROM livestream_tags WHERE livestream_id = ?', livestream_model.fetch(:id)).map do |livestream_tag_model|
+                                                           ^^^^^^^^^^^^^^^^^ This where clause doesn't seem to have an index. (e.g. `ALTER TABLE livestream_tags ADD INDEX index_livestream_id (livestream_id)`)
+
+              tag_model = tx.xquery('SELECT * FROM tags WHERE id = ?', livestream_tag_model.fetch(:tag_id)).first
+              {
+                id: tag_model.fetch(:id),
+                name: tag_model.fetch(:name),
+              }
+            end
+
+            livestream_model.slice(:id, :title, :description, :playlist_url, :thumbnail_url, :start_at, :end_at).merge(
+              owner: owner,
+              tags: tags,
+            )
+          end
+        RUBY
+      end
     end
   end
 end
