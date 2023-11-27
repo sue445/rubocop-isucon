@@ -13,7 +13,7 @@ module RuboCop
           # @!method find_xquery(node)
           #   @param node [RuboCop::AST::Node]
           def_node_search :find_xquery, <<~PATTERN
-            (send (send nil? _) {:xquery | :query} (${str dstr lvar ivar cvar} $...) ...)
+            (send ({:send | :lvar} ...) {:xquery | :query} (${str dstr lvar ivar cvar} $...) ...)
           PATTERN
 
           NON_STRING_WARNING_MSG = "Warning: non-string was passed to `query` or `xquery` 1st argument. " \
