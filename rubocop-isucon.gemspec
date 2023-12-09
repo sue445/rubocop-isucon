@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rspec-its"
   spec.add_development_dependency "rubocop_auto_corrector"
-  spec.add_development_dependency "rubocop-yard", "< 0.9.1" # FIXME: error in YARD/MeaninglessTag...
+  spec.add_development_dependency "rubocop-yard", ">= 0.9.2"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "yard"
 end
