@@ -54,7 +54,7 @@ jobs:
           path: './doc'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@main
+        uses: actions/deploy-pages@v4
 
       - name: Slack Notification (not success)
         uses: lazy-actions/slatify@master
