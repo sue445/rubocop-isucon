@@ -31,7 +31,7 @@ module RuboCop
         RUBY
 
         alias_method :"#{method_name}_without_cache", method_name
-        alias_method method_name, "#{method_name}_with_cache"
+        alias_method method_name, :"#{method_name}_with_cache"
       end
     end
   end
