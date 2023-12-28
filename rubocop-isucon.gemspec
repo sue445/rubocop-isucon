@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "activerecord", ">= 6.1.0"
   spec.add_runtime_dependency "gda", "!= 1.1.2"
   spec.add_runtime_dependency "rubocop", ">= 1.49.0"
-  spec.add_runtime_dependency "rubocop-performance", ">= 1.20.0"
+  spec.add_runtime_dependency "rubocop-performance", ">= 1.20.1"
 
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "pry-byebug"
