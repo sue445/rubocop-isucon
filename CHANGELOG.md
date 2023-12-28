@@ -1,5 +1,11 @@
 ## [Unreleased]
-[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.2...main)
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.3...main)
+
+## [1.0.3] - 2023-12-28
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.2...v1.0.3)
+
+* Requires rubocop-performance 1.20.1+
+  * https://github.com/sue445/rubocop-isucon/pull/248
 
 ## [1.0.2] - 2023-12-22
 [full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.1...v1.0.2)
