@@ -86,7 +86,7 @@ module RuboCop
         end
 
         # @yieldparam gda [RuboCop::Isucon::GDA::Client]
-        def visit_subquery_recursive(&block)
+        def visit_subquery_recursive(...)
           return unless from_targets?
 
           ast.from.targets.each do |target|
@@ -94,7 +94,7 @@ module RuboCop
 
             gda = Client.new(nil, ast: target.expr.select)
             yield(gda)
-            gda.visit_subquery_recursive(&block)
+            gda.visit_subquery_recursive(...)
           end
         end
 
