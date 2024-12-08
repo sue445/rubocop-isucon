@@ -33,11 +33,11 @@ jobs:
           - activerecord_8_0
 
         exclude:
-          # Rails 7.2+ requires Ruby 3.1+
+          # activerecord 7.2+ requires Ruby 3.1+
           - ruby:    "3.0"
             gemfile: activerecord_7_2
 
-          # Rails 8.0+ requires Ruby 3.2+
+          # activerecord 8.0+ requires Ruby 3.2+
           - ruby:    "3.0"
             gemfile: activerecord_8_0
           - ruby:    "3.1"
