@@ -9,6 +9,11 @@ group :sqlite3 do
   gem "sqlite3", "~> 1.4"
 end
 
+# for Ruby 3.4+
+gem "base64"
+gem "bigdecimal"
+gem "mutex_m"
+
 # eval_gemfile "#{__dir__}/common.gemfile"
 
 gemspec path: "../"
