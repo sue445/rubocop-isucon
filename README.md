@@ -2,7 +2,7 @@
 RuboCop plugin for ruby reference implementation of [ISUCON](https://github.com/isucon)
 
 [![Gem Version](https://badge.fury.io/rb/rubocop-isucon.svg)](https://badge.fury.io/rb/rubocop-isucon)
-[![Build Status](https://github.com/sue445/rubocop-isucon/workflows/test/badge.svg?branch=main)](https://github.com/sue445/rubocop-isucon/actions?query=workflow%3Atest)
+[![test](https://github.com/sue445/rubocop-isucon/actions/workflows/test.yml/badge.svg)](https://github.com/sue445/rubocop-isucon/actions/workflows/test.yml)
 
 ## Installation
 At first, install [libgda](https://gitlab.gnome.org/GNOME/libgda)
