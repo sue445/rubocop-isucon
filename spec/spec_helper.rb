@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# FIXME: NameError: uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger when activesupport < 7.1
+require "logger"
+
 require "rubocop-isucon"
 require "rubocop/rspec/support"
 require "pry"
