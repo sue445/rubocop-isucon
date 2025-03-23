@@ -51,7 +51,7 @@ Or install it yourself as:
 Add this line to your application's `.rubocop.yml`
 
 ```yaml
-require:
+plugins:
   - rubocop-isucon
 
 inherit_gem:
