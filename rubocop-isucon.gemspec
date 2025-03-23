@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "gda", "!= 1.1.2"
   spec.add_dependency "lint_roller"
   spec.add_dependency "rubocop", ">= 1.72.0"
-  spec.add_dependency "rubocop-performance", ">= 1.20.1"
+  spec.add_dependency "rubocop-performance", ">= 1.24.0"
 
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "pry-byebug"
