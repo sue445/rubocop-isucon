@@ -99,9 +99,9 @@ module RuboCop
         end
 
         # @yieldparam gda [RuboCop::Isucon::GDA::Client]
-        def visit_all(&block)
+        def visit_all(&)
           yield(self)
-          visit_subquery_recursive(&block)
+          visit_subquery_recursive(&)
         end
 
         # @return [Boolean]

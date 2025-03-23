@@ -21,28 +21,11 @@ jobs:
 
       matrix:
         ruby:
-          - "3.0"
-          - "3.1"
           - "3.2"
           - "3.3"
           - "3.4"
         gemfile:
-          - activerecord_6_1
-          - activerecord_7_0
-          - activerecord_7_1
-          - activerecord_7_2
           - activerecord_8_0
-
-        exclude:
-          # activerecord 7.2+ requires Ruby 3.1+
-          - ruby:    "3.0"
-            gemfile: activerecord_7_2
-
-          # activerecord 8.0+ requires Ruby 3.2+
-          - ruby:    "3.0"
-            gemfile: activerecord_8_0
-          - ruby:    "3.1"
-            gemfile: activerecord_8_0
 
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile

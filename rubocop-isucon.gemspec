@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = "RuboCop plugin for ruby reference implementation of ISUCON"
   spec.homepage      = "https://github.com/sue445/rubocop-isucon"
   spec.license       = "MIT"
-  spec.required_ruby_version = ">= 3.0.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/sue445/rubocop-isucon"
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 
-  spec.add_dependency "activerecord", ">= 6.1.0"
+  spec.add_dependency "activerecord", ">= 8.0.0"
   spec.add_dependency "gda", "!= 1.1.2"
   spec.add_dependency "lint_roller"
   spec.add_dependency "rubocop", ">= 1.72.0"
