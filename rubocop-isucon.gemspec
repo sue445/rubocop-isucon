@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 
-  spec.add_dependency "activerecord", ">= 6.1.0"
+  spec.add_dependency "activerecord", ">= 8.0.0"
   spec.add_dependency "gda", "!= 1.1.2"
   spec.add_dependency "lint_roller"
   spec.add_dependency "rubocop", ">= 1.72.0"
