@@ -1,5 +1,15 @@
 ## [Unreleased]
-[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.3...main)
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v2.0.0...main)
+
+## [2.0.0](https://github.com/sue445/rubocop-isucon/releases/tag/v2.0.0) - 2025-03-23
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.3...v2.0.0)
+
+* :bomb: **[BREAKING CHANGE]** Requires Ruby 3.2+ and activesupport 8.0+
+  * https://github.com/sue445/rubocop-isucon/pull/262
+* Pluginfy RuboCop ISUCON
+  * https://github.com/sue445/rubocop-isucon/pull/260
+* Requires rubocop-performance 1.24.0+
+  * https://github.com/sue445/rubocop-isucon/pull/263
 
 ## [1.0.3] - 2023-12-28
 [full changelog](http://github.com/sue445/rubocop-isucon/compare/v1.0.2...v1.0.3)
