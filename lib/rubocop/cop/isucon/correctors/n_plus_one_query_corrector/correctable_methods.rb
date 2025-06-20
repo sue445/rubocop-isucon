@@ -16,7 +16,7 @@ module RuboCop
 
             # @return [Boolean]
             def correctable_gda?
-              gda&.select_query? && gda.table_names.count == 1 && !gda.limit_clause? &&
+              gda&.select_query? && gda.table_names.one? && !gda.limit_clause? &&
                 !gda.group_by_clause? && !gda.contains_aggregate_functions? && where_clause_with_only_single_unique_key?
             end
 
@@ -27,20 +27,20 @@ module RuboCop
 
             # @return [Boolean]
             def where_clause_with_only_primary_key?
-              return false unless gda.where_nodes.count == 1
+              return false unless gda.where_nodes.one?
 
               primary_keys = connection.primary_keys(gda.table_names[0])
-              return false unless primary_keys.count == 1
+              return false unless primary_keys.one?
 
               primary_keys.first == where_column_without_quote
             end
 
             # @return [Boolean]
             def where_clause_with_only_single_unique_index_column?
-              return false unless gda.where_nodes.count == 1
+              return false unless gda.where_nodes.one?
 
               unique_index_columns = connection.unique_index_columns(gda.table_names[0])
-              unique_index_columns.any? { |columns| columns.count == 1 && columns.first == where_column_without_quote }
+              unique_index_columns.any? { |columns| columns.one? && columns.first == where_column_without_quote }
             end
 
             # @return [Boolean]
