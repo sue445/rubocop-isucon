@@ -24,7 +24,7 @@ module RuboCop
         def column_operand
           operand0_value = operands[0].value
 
-          return operand0_value if operands.count == 1
+          return operand0_value if operands.one?
 
           operand1_value = operands[1].value
 
@@ -39,7 +39,7 @@ module RuboCop
 
         # @return [String,nil]
         def value_operand
-          return nil if operands.count == 1
+          return nil if operands.one?
 
           operand0_value = operands[0].value
           operand1_value = operands[1].value
