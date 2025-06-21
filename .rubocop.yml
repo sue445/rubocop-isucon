@@ -1,7 +1,5 @@
 plugins:
   - rubocop-performance
-
-require:
   - rubocop-yard
 
 AllCops:
