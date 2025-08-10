@@ -123,4 +123,4 @@ ISUCON is a trademark or registered trademark of LINE Corporation.
 https://isucon.net
 
 ## Presentation
-* [Fix SQL N\+1 queries with RuboCop](https://speakerdeck.com/sue445/fix-sql-n-plus-one-queries-with-rubocop) at [RubyKaigi 2023](https://rubykaigi.org/2013/) :gem:
+* [Fix SQL N\+1 queries with RuboCop](https://speakerdeck.com/sue445/fix-sql-n-plus-one-queries-with-rubocop) at [RubyKaigi 2023](https://rubykaigi.org/2023/) :gem:
