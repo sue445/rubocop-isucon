@@ -24,6 +24,7 @@ jobs:
           - "3.2"
           - "3.3"
           - "3.4"
+          - "4.0"
         gemfile:
           - activerecord_8_0
           - activerecord_8_1
