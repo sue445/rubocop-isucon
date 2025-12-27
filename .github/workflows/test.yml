@@ -24,6 +24,7 @@ jobs:
           - "3.2"
           - "3.3"
           - "3.4"
+          - "4.0"
         gemfile:
           - activerecord_8_0
           - activerecord_8_1
@@ -54,7 +55,12 @@ jobs:
 
       - run: bundle exec rspec
       - run: bundle exec rubocop
-      - run: bundle exec yard --fail-on-warning
+
+      - name: yard generating test
+        run: |
+          set -xe
+          bundle exec yard --fail-on-warning
+          ls -ld doc/
 
       - name: Slack Notification (not success)
         uses: act10ns/slack@cfcc30955fe9377f4f55e1079e5419ee1014269f # v2

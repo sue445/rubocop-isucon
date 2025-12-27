@@ -43,6 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rubocop-performance", ">= 1.24.0"
 
   spec.add_development_dependency "benchmark-ips"
+  spec.add_development_dependency "irb"
   spec.add_development_dependency "pry-byebug"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "redcarpet"
