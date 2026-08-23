@@ -1,5 +1,11 @@
 ## [Unreleased]
-[full changelog](http://github.com/sue445/rubocop-isucon/compare/v2.0.2...main)
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v2.0.3...main)
+
+## [2.0.3](https://github.com/sue445/rubocop-isucon/releases/tag/v2.0.3) - 2026-08-23
+[full changelog](http://github.com/sue445/rubocop-isucon/compare/v2.0.2...v2.0.3)
+
+* Migrate release_gem workflow to sue445/workflows (Also testing the gem release)
+  * https://github.com/sue445/rubocop-isucon/pull/311
 
 ## [2.0.2](https://github.com/sue445/rubocop-isucon/releases/tag/v2.0.2) - 2025-11-30
 [full changelog](http://github.com/sue445/rubocop-isucon/compare/v2.0.1...v2.0.2)
